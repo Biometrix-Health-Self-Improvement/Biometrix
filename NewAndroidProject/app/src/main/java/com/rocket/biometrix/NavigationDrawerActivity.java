@@ -13,20 +13,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-
 import com.rocket.biometrix.DietModule.DietEntry;
+import com.rocket.biometrix.DietModule.DietParent;
 import com.rocket.biometrix.ExerciseModule.ExerciseEntry;
+import com.rocket.biometrix.ExerciseModule.ExerciseParent;
+import com.rocket.biometrix.Login.CreateLogin;
+import com.rocket.biometrix.Login.GetLogin;
+import com.rocket.biometrix.Login.GoogleLogin;
 import com.rocket.biometrix.MedicationModule.MedicationEntry;
+import com.rocket.biometrix.MedicationModule.MedicationParent;
 import com.rocket.biometrix.MoodModule.MoodEntry;
 import com.rocket.biometrix.MoodModule.MoodParent;
-import com.rocket.biometrix.DietModule.DietParent;
-import com.rocket.biometrix.ExerciseModule.ExerciseParent;
-import com.rocket.biometrix.MedicationModule.MedicationParent;
-import com.rocket.biometrix.R;
 import com.rocket.biometrix.SleepModule.SleepEntry;
 import com.rocket.biometrix.SleepModule.SleepParent;
-import com.rocket.biometrix.Login.CreateLogin;
-import com.rocket.biometrix.Login.*;
 
 public class NavigationDrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -199,7 +198,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 ((SleepEntry) activeFragment).onDoneClick(v);
                 newFragment = new SleepParent();
             } else if (activeFragment.getClass() == ExerciseEntry.class){
-                ((ExerciseEntry) activeFragment).onDoneClick(v);
+                //TODO: Please implement Callback interface so I'm not forced to conform in a bad way
+                ((ExerciseEntry) activeFragment).onDoneClick();
                 newFragment = new ExerciseParent();
             } else if (activeFragment.getClass() == DietEntry.class){
 

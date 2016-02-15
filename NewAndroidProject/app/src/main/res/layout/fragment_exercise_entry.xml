@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rocket.biometrix.ExerciseModule.ExerciseEntry">
+    tools:context="com.rocket.biometrix.ExerciseModule.ExerciseEntry"
+                android:onClick="EntryDoneOnClick">
 
 
 
@@ -152,6 +153,7 @@
     <Button
         style="@style/done_button"
         android:id="@+id/ex_entry_done_button"
+        android:onClick="EntryDoneOnClick"
         />
     <CheckBox
         android:layout_width="wrap_content"
