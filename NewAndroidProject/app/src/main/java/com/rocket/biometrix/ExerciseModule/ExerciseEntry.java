@@ -231,8 +231,6 @@ public class ExerciseEntry extends Fragment {
                     }
                     //Call insert method
                     dbEx.insertFromContentValues(rowToBeInserted);
-
-                    //TODO: go to parent fraggle / Get big $$$ get big cars
                 }
 
             }

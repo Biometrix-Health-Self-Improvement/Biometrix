@@ -117,6 +117,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
             frag = new GetLogin();
         } else if (id == R.id.nav_create_account){
             frag = new CreateLogin();
+        } else if (id == R.id.nav_google_login){
+            frag = new GoogleLogin();
         }
         replaceFragment(frag);
 
@@ -212,4 +214,18 @@ public class NavigationDrawerActivity extends AppCompatActivity
         }
     }
 
+    public void resetPasswordButtonClick(View v){
+        ((com.rocket.biometrix.Login.GetLogin)activeFragment).resetPasswordClick();
+    }
+    public  void passwordSignIn(View v){
+        ((com.rocket.biometrix.Login.GetLogin)activeFragment).okayButtonClick(v);
+    }
+
+    public void cancelButton(View v){
+        replaceFragment(new HomeScreen());
+    }
+
+    public void createAccountButtonClick(View v){
+        ((CreateLogin)activeFragment).createAccount();
+    }
 }
