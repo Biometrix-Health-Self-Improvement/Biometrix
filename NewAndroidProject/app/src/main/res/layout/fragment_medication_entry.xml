@@ -1,13 +1,75 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.rocket.biometrix.MedicationModule.MedicationEntry">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="medication entry" />
+    <ScrollView
+        android:id="@+id/MedicationEntryScrollview"
+        style="@style/scrollview_parent_list"
+        android:layout_below="@+id/dividerUpper">
 
-</FrameLayout>
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/MedicationStartDateTextView"
+                android:text="@string/date_prompt"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
+
+            <TextView
+                android:id="@+id/MedicationStarTimeTextView"
+                android:text="@string/time_prompt"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                android:visibility="invisible" />
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/MedicationBrandName"
+                    android:text="@string/med_brand"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <EditText
+                    android:id="@+id/MedicationEditBrandName"
+                    android:maxLength="50"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/PrescriberName_View"
+                    android:text="@string/med_prescriber"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <EditText
+                    android:id="@+id/MedicationPrescriberName"
+                    android:maxLength="50"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+            </TableRow>
+
+            <EditText
+                android:id="@+id/medicationDetailsEditText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/colorButtonBackground"
+                android:hint="@string/med_notes"
+                android:maxLines="1"
+                android:singleLine="true" />
+
+            <Button
+                android:id="@+id/medicaiton_entry_done_button"
+                style="@style/done_button" />
+        </TableLayout>
+    </ScrollView>
+
+</RelativeLayout>
+

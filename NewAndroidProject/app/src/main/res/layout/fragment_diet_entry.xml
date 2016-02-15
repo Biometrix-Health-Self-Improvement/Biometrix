@@ -1,13 +1,334 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.rocket.biometrix.DietModule.DietEntry">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="diet entry" />
+    <ScrollView
+        android:id="@+id/DietEntryScrollview"
+        style="@style/scrollview_parent_list"
+        android:layout_below="@+id/dividerUpper">
 
-</FrameLayout>
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/DietStartDateTextView"
+                android:text="Date: "
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
+
+            <TextView
+                android:id="@+id/DietStarTimeTextView"
+                android:text="Time: "
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                android:visibility="invisible" />
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/FoodType_View"
+                    android:text="Food Type"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <EditText
+                    android:id="@+id/Food_Name"
+                    android:maxLength="50"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/Meal_View"
+                    android:layout_height="30dp"
+                    android:text="Meal"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Spinner
+                    android:id="@+id/Meal_Select"
+                    android:layout_height="30dp"
+                    android:entries="@array/Meal_Type"
+                    android:spinnerMode="dropdown" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/ServingSize_View"
+                    android:layout_height="30dp"
+                    android:text="Serving Size"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Spinner
+                    android:id="@+id/ServingSize_Select"
+                    android:layout_height="30dp"
+                    android:entries="@array/Serving_Size"
+                    android:spinnerMode="dropdown" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/Calories_View"
+                    android:text="Calories"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <EditText
+                    android:id="@+id/Calories_Amt"
+                    android:ems="10"
+                    android:inputType="numberSigned"
+                    android:longClickable="false"
+                    android:maxLength="4" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/TotalFat_View"
+                    android:text="Total Fat"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <EditText
+                    android:id="@+id/TotalFat_Amt"
+                    android:ems="10"
+                    android:inputType="numberSigned"
+                    android:longClickable="false"
+                    android:maxLength="4" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/SaturatedFat_View"
+                    android:text="Saturated Fat"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <EditText
+                    android:id="@+id/SaturatedFat_Amt"
+                    android:ems="10"
+                    android:inputType="numberSigned"
+                    android:longClickable="false"
+                    android:maxLength="4" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/TransFat_View"
+                    android:text="Trans Fat"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <EditText
+                    android:id="@+id/TransFat_Amt"
+                    android:ems="10"
+                    android:inputType="numberSigned"
+                    android:longClickable="false"
+                    android:maxLength="4" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/Cholesterol_View"
+                    android:text="Cholesterol"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <EditText
+                    android:id="@+id/Cholesterol_Amt"
+                    android:ems="10"
+                    android:inputType="numberSigned"
+                    android:longClickable="false"
+                    android:maxLength="4" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/Sodium_View"
+                    android:text="Sodium"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <EditText
+                    android:id="@+id/Sodium_Amt"
+                    android:ems="10"
+                    android:inputType="numberSigned"
+                    android:longClickable="false"
+                    android:maxLength="4" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/TotalCarbs_View"
+                    android:text="Total Carbohydrates"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <EditText
+                    android:id="@+id/TotalCarb_Amt"
+                    android:ems="10"
+                    android:inputType="numberSigned"
+                    android:longClickable="false"
+                    android:maxLength="4" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/DietaryFiber_View"
+                    android:text="Dietary Fiber"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <EditText
+                    android:id="@+id/DietaryFiber_Amt"
+                    android:ems="10"
+                    android:inputType="numberSigned"
+                    android:longClickable="false"
+                    android:maxLength="4" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/Sugars_View"
+                    android:text="Sugars"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <EditText
+                    android:id="@+id/Sugars_Amt"
+                    android:ems="10"
+                    android:inputType="numberSigned"
+                    android:longClickable="false"
+                    android:maxLength="4" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/Protein_View"
+                    android:text="Protein"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <EditText
+                    android:id="@+id/Protein_Amt"
+                    android:ems="10"
+                    android:inputType="numberSigned"
+                    android:longClickable="false"
+                    android:maxLength="4" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/VitaminA_View"
+                    android:text="Vitamin A"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <EditText
+                    android:id="@+id/VitaminA_Amt"
+                    android:ems="10"
+                    android:inputType="numberSigned"
+                    android:longClickable="false"
+                    android:maxLength="4" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/VitaminB_View"
+                    android:text="Vitamin B"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <EditText
+                    android:id="@+id/VitaminB_Amt"
+                    android:ems="10"
+                    android:inputType="numberSigned"
+                    android:longClickable="false"
+                    android:maxLength="4" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/Calcium_View"
+                    android:text="Calcium"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <EditText
+                    android:id="@+id/Calcium_Amt"
+                    android:ems="10"
+                    android:inputType="numberSigned"
+                    android:longClickable="false"
+                    android:maxLength="4" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/Iron_View"
+                    android:text="Iron"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <EditText
+                    android:id="@+id/Iron_Amt"
+                    android:ems="10"
+                    android:inputType="numberSigned"
+                    android:longClickable="false"
+                    android:maxLength="4" />
+
+            </TableRow>
+
+            <EditText
+                android:id="@+id/dietDetailsEditText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/colorBackgroundSecondary"
+                android:hint="@string/diet_details"
+                android:maxLines="1"
+                android:singleLine="true" />
+
+
+            <Button
+                android:id="@+id/diet_entry_done_button"
+                style="@style/done_button" />
+
+        </TableLayout>
+    </ScrollView>
+
+</RelativeLayout>

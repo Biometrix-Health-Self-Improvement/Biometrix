@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.rocket.biometrix.Common.DateTimeSelectorPopulateTextView;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -71,7 +72,13 @@ public class DietEntry extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_diet_entry, container, false);
+        View view = inflater.inflate(R.layout.fragment_diet_entry, container, false);
+
+        DateTimeSelectorPopulateTextView popDateTime = new DateTimeSelectorPopulateTextView
+                (getActivity(), view, R.id.DietStartDateTextView, R.id.DietStarTimeTextView);
+        popDateTime.Populate();
+
+        return view;
     }
 
     /**
