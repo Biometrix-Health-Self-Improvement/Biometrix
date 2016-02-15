@@ -2,6 +2,7 @@ package com.rocket.biometrix.Database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -130,6 +131,11 @@ public class LocalStorageAccessExercise extends LocalStorageAccessBase{
         //WHERE THE MAGIC HAPPENS //Table name is a string above "Exercise", columns[1] is just any column that can be null, then we pass in the clean cv
         safeInsert(TABLE_NAME, columns[1], dataToBeInserted );
     }//end insert
+
+    public Cursor selectByDate(String dayte){
+        //Module specific error checking could go here.
+        return super.selectByDate(dayte, TABLE_NAME, DATE);
+    }
 
     //TODO: Pull from database the exercise table.
 

@@ -115,6 +115,15 @@ public abstract class LocalStorageAccessBase  extends SQLiteOpenHelper {
         return cur;
     }
 
+    //Get all rows that match date YYYY-MM-DD (pass in date to search, then table you are looking at...)
+    protected Cursor selectByDate(String dayte, String tbl, String date_col){
+        SQLiteDatabase db=this.getReadableDatabase();
+        Cursor cur=db.rawQuery("SELECT * FROM "+tbl+" WHERE "+date_col+ " == "+dayte, null);
+
+        return cur;
+    }
+
+
     //A module's table create sql statement.
     protected abstract String createTable();
 
@@ -127,4 +136,8 @@ public abstract class LocalStorageAccessBase  extends SQLiteOpenHelper {
     //Version safe Alter table SQL called in onUpgrade, eventually might return some kind of error checking information...
     //Returns true if oldVersion was detected
     protected abstract boolean onUpgradeAlter(SQLiteDatabase db, int oldVersion, int newVersion);
+
+
+
+
 }
