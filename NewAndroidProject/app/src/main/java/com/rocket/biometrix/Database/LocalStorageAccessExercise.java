@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 /**
- * Created by tannalynn on 1/22/2016.
+ * Exercise Module's implementation of the SQLite database adapter: LocalStorageAccessBase
  */
 public class LocalStorageAccessExercise extends LocalStorageAccessBase{
 
@@ -132,9 +132,15 @@ public class LocalStorageAccessExercise extends LocalStorageAccessBase{
         safeInsert(TABLE_NAME, columns[1], dataToBeInserted );
     }//end insert
 
+    //Return cursor
     public Cursor selectByDate(String dayte){
         //Module specific error checking could go here.
         return super.selectByDate(dayte, TABLE_NAME, DATE);
+    }
+
+    @Override
+    public Cursor selectAllDatabyDateRange(String tablename, String date_col ) {
+        return super.selectAllDatabyDateRange(TABLE_NAME, DATE);
     }
 
     //TODO: Pull from database the exercise table.

@@ -35,7 +35,7 @@ public class ExerciseEntry extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    View onCreateView;
+    View onCreateView; //Saves inflated UI view inside onCreateView()
 
     private String mParam1;
     private String mParam2;
@@ -100,6 +100,7 @@ public class ExerciseEntry extends Fragment {
     }
 
 
+    //This is where the real inflater is, it inflate the actual UI layout of the 'entry'
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -173,13 +174,32 @@ public class ExerciseEntry extends Fragment {
         DateTimeSelectorPopulateTextView DTPOWAH = new DateTimeSelectorPopulateTextView(getActivity(), v, R.id.ex_tv_date, R.id.ex_tv_time);
         DTPOWAH.Populate(); //Change the text
 
-        onCreateView = v;
+        onCreateView = v; //This view (the inflated UI layout view ) is saved so onDoneClick() can use it.
         return v;
     }
 
 
-    //See NavigationDrawerActivity for documentation
+    //See NavigationDrawerActivity for documentation on why onDoneClick() exists as its own function
+
+    /*
+    * What is happening here?
+    * I pull data from the UI,
+    * Load that data into a ContentValues set (column, data in that column)
+    * Error check the CV
+    * Call LocalStorageAccessExercise' Insert method with the CV
+    *
+    * How did I pull data? Used the static helper methods in StringDateTimeConverter (YOU Could have the UI 'pulling' its own helper funtion and/or class if this is too messy)
+    * Everything is a string, relying on SQLite's implicit conversion here.
+    * I get the context and UI elements from the onCreateView, NOT the done button's view
+    * Notice that things like dateTV are declared way up at the top of the class and set in onCreateView() before being used here
+    * To 'error' check I just make sure the ContentValues I am passing the insertFromContentValues() has 100% correct column names
+    *
+    * That's it! I also make a bundle but do nothing with it, purely for future extensibility.
+    *
+     */
     public void onDoneClick() {
+        //Keep in mind that the 'View' you reference here is only the 'View' for the actual done button
+        //NOT the whole UI Layout you made.
 
         //Filling a string that holds title
         String titleString = StringDateTimeConverter.GetStringFromEditText(onCreateView.findViewById(R.id.ex_title));
@@ -210,14 +230,16 @@ public class ExerciseEntry extends Fragment {
         Bundle exerciseEntryBundle = new Bundle();
         exerciseEntryBundle.putStringArray("exEntBundKey", exerciseEntryData);
 
+
+        //Getting context for LSA constructor
         Context context = onCreateView.getContext();
 
-        //Pull keys from LSA Exercise
+        //Constructor for LSA Exercise
         LocalStorageAccessExercise dbEx = new LocalStorageAccessExercise(context);
 
         //You don't have to keep strings in the same order across classes, I just did to make the code easier.
         //{TITLE, TYPE, MINUTES, REPS, LAPS, WEIGHT, INTY, NOTES, DATE, TIME};
-        String[] columnNames = dbEx.getColumns();
+        String[] columnNames = dbEx.getColumns();//Pull keys from LSA Exercise
 
         //Making sure I have data for each column (even if null or empty, note that this is NOT required, you can insert columns individually if you wish.) @see putNull
         if (columnNames.length == exerciseEntryData.length) {

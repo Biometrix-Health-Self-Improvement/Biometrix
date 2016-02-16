@@ -8,8 +8,47 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 /**
- * Created by tannalynn on 1/22/2016.
+ * What even is this?
+ * LocalStorageAccessBase uses SQLiteOpenHelper to write/read from the local-on-device SQLite database
+ * It is an abstract base class that kinda uses the adapter pattern to have maximum code-reuse
+ * The class assumes that the WebServer is used as a file access system which 'backs up' the local DB, Loads into the local DB from the server, stores User logins, analytics, etc. The True master database resides on the WebServer
+ * The SQLite database is assumed to be storage for 'entries' where each module IS one table in the database.
+ *
+ * HOW TO USE IN YOUR MODULE:
+ * 1) Make new class that Extends this class and implement (@Override) the methods you're forced to (abstract methods like getColumns())
+ * 2) Hardcode your Columns as constant strings (Look at LocalStorageAccessExercise or LSA Sleep for examples) {Or create a manager class if have a TON of columns}
+ * 3) Write the CreateTable statement (Examples in Exercise or Sleep)
+ * 4) Write the onUpgradeAlter function (probably just want to drop table if it exists, this method is called when the version of the db is changed IE when we update the app when users are already using it, so not super important now)
+ * 5) Override base class methods that need to be more specific, for example JP calls the base class insert method only after he checks that every column has data to be inserted, he did not have to do this.
+ * 6) Write custom methods / Database Queries that make sense only in your module E.G. Totaling the Fiber of a given day
+ *
+ * HOW TO USE IN YOUR UI:
+ * 1) Decide how to prepare a ContentValues set to use an insert method like safeInsert() (Getting from UI, Error checking, Allowed values, etc.)
+ *
+ * 2) Pull data from the UI, StringDateTimeConverter has very helpful methods like GetStringFromEditText()
+ *    and if your using the DateTimePopulateTextView class in your UI it has methods to prepare the Dates and times
+ *    correctly for SQLite. Because SQLite has implicit conversion, you can pull a string from the UI then insert() it as a
+ *    String in the format YYYY-MM-DD and if you specified that column to be of DATETIME type (in createTable()), it will just work.
+ *    Consider making a helper class specific to your module to do this [don't have to] E.G. SleepData and things like in SleepEntry where you set up Views, and listeners all at once in one method
+ *
+ * 3) Tie-in your done button onClick event to the navigation drawer: in your UI layout file, go to the done button
+ *    and look at its onClick, use the drop down menu to reference "EntryDoneOnClick" should see a red M&M next to it
+ *    Don't even try to do this programmatically do this in the layout UI Design tab, see fragment_sleep_entry.xml for example
+ *
+ * 4) Go to the function EntryDoneOnClick in the NavigationDrawerActivity and hook in a method like 'DoneonClick()' that
+ *    you will implement in the your Entry Fragment. (This is one way to make the entry go back to 'parent' it just replaces the current fragment)
+ *
+ * 5) Implement that onClick method in your Entry fragment, Probably want to use an Insert method from this class
+ *    Create an instance of LocalStorageAccess and use its methods on the data you pulled from the UI
+ *    JP has comments explaining how he did it in ExerciseEntry.java
+ *
+ * 6) You can also use LSA to prepare data to be displayed or read from the database, see EditPastEntries
  */
 public abstract class LocalStorageAccessBase  extends SQLiteOpenHelper {
 
@@ -121,6 +160,50 @@ public abstract class LocalStorageAccessBase  extends SQLiteOpenHelper {
         Cursor cur=db.rawQuery("SELECT * FROM "+tbl+" WHERE "+date_col+ " == "+dayte, null);
 
         return cur;
+    }
+
+
+    //Query out all data related to a range of dates, default version
+    protected Cursor selectAllDatabyDateRange(String tablename, String date_col){
+
+        Date today = new Date();
+        Calendar cal = new GregorianCalendar();
+        String startDate; //default to 90 days
+        String endDate; //default to week from now
+
+
+        //Start 90 days back; see business rules
+        cal.setTime(today);
+        cal.add(Calendar.DAY_OF_MONTH, -90);
+        Date today90 = cal.getTime();
+        startDate = new SimpleDateFormat("YYYY-MM-DD").format(today90);
+
+
+        //One week into the future
+        cal.setTime(today);
+        cal.add(Calendar.DAY_OF_MONTH, 7);
+        Date nextWeek = cal.getTime();
+        endDate = new SimpleDateFormat("YYYY-MM-DD").format(nextWeek);
+
+
+        SQLiteDatabase db=this.getReadableDatabase();
+        Cursor cur=db.rawQuery("SELECT * FROM " + tablename + " WHERE " + date_col
+                + " >= " + startDate + " AND " + date_col + " <= " + endDate, null);
+
+        return cur;
+    }
+
+
+    //Give clean date strings in form YYYY-MM-DD (see StringDateTimeConverter Class) as parameters;
+    //Returns Cursor of rows, (see EditPastEntries)
+    protected Cursor selectAllDatabyDateRange(String tablename, String date_col, String startDate, String endDate){
+
+        SQLiteDatabase db=this.getReadableDatabase();
+        Cursor cur=db.rawQuery("SELECT * FROM " + tablename + " WHERE " + date_col
+                + " >= " + startDate + " AND " + date_col + " <= " + endDate, null);
+
+        return cur;
+
     }
 
 

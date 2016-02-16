@@ -2,6 +2,7 @@ package com.rocket.biometrix.Common;
 
 /**
  * Created by tannalynn on 1/22/2016.
+ * tanna ruined name of class, this has helper methods for UI materials as well!
  */
 
 import android.view.View;
