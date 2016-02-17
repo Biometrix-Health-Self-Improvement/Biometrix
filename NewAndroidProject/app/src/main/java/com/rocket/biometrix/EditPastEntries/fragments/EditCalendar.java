@@ -1,4 +1,4 @@
-package com.rocket.biometrix.EditPastEntries;
+package com.rocket.biometrix.EditPastEntries.fragments;
 
 import android.content.Context;
 import android.database.Cursor;
