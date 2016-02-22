@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.rocket.biometrix.DietModule.DietEntry;
 import com.rocket.biometrix.DietModule.DietParent;
@@ -20,6 +21,7 @@ import com.rocket.biometrix.ExerciseModule.ExerciseParent;
 import com.rocket.biometrix.Login.CreateLogin;
 import com.rocket.biometrix.Login.GetLogin;
 import com.rocket.biometrix.Login.GoogleLogin;
+import com.rocket.biometrix.Login.LocalAccount;
 import com.rocket.biometrix.MedicationModule.MedicationEntry;
 import com.rocket.biometrix.MedicationModule.MedicationParent;
 import com.rocket.biometrix.MoodModule.MoodEntry;
@@ -118,6 +120,9 @@ public class NavigationDrawerActivity extends AppCompatActivity
             frag = new CreateLogin();
         } else if (id == R.id.nav_google_login){
             frag = new GoogleLogin();
+        } else if (id == R.id.nav_logout)
+        {
+           LogoutUser();
         }
         replaceFragment(frag);
 
@@ -227,5 +232,25 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
     public void createAccountButtonClick(View v){
         ((CreateLogin)activeFragment).createAccount();
+    }
+
+    /**
+     * If the current user is logged in with Biometrix, sign them out. If they are logged in via
+     * google this directs them to that page instead.
+     */
+    private void LogoutUser()
+    {
+        if (LocalAccount.isLoggedIn())
+        {
+            if (LocalAccount.isGoogleAccountSignedIn())
+            {
+                Toast.makeText(getApplicationContext(), "Please logout from the google login page", Toast.LENGTH_LONG).show();
+            }
+            else
+            {
+                LocalAccount.Logout();
+                Toast.makeText(getApplicationContext(), "Account logged out", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }

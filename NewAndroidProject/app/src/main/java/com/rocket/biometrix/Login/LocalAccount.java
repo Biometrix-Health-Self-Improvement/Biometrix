@@ -77,6 +77,17 @@ public class LocalAccount
     }
 
     /**
+     * Returns whether a user is currently logged in or not
+     * @return True if there is a user logged in, false otherwise.
+     */
+    public static boolean isLoggedIn()
+    {
+        if (_instance == null) return false;
+
+        return true;
+    }
+
+    /**
      * Logs the user in with their google account instead of with their Biometrix account
      * @param googleSignInAccount A reference to the google account that will be held
      * @return A reference to the account that was logged in
