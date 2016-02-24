@@ -19,6 +19,12 @@
         android:textAppearance="?attr/textAppearanceListItem"/>
 
     <TextView
+        android:id="@+id/candy_misc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceListItem"/>
+
+    <TextView
         android:id="@+id/candy_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

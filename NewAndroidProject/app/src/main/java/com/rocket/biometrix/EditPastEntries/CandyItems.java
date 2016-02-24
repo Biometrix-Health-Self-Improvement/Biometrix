@@ -7,7 +7,8 @@ package com.rocket.biometrix.EditPastEntries;
 public class CandyItems {
     public String type, //module type
             title, //Entry title
-            time; //Time entered
+            time, //Time entered
+            misc; //Misc String field for future flexibility.
 
-    //Stylistic information here in future
+    //Stylistic information here in future (Colored border here or xml???)
 }

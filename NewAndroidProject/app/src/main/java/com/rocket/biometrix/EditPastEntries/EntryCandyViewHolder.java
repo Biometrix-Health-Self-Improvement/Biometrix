@@ -17,6 +17,7 @@ public class EntryCandyViewHolder extends RecyclerView.ViewHolder {
     protected TextView type;
     protected TextView title;
     protected TextView time;
+    protected TextView misc;
 
     public LinearLayout recLayout;
 
@@ -25,6 +26,7 @@ public class EntryCandyViewHolder extends RecyclerView.ViewHolder {
 
         this.type = (TextView)(itemView.findViewById(R.id.candy_type));
         this.title = (TextView)(itemView.findViewById(R.id.candy_title));
+        this.misc = (TextView)(itemView.findViewById(R.id.candy_misc));
         this.time = (TextView)(itemView.findViewById(R.id.candy_time));
         this.recLayout = (LinearLayout) (itemView.findViewById(R.id.candy_linearl));
 
