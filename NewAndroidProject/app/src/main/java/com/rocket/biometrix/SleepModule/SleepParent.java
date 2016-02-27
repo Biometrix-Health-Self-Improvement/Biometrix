@@ -1,5 +1,6 @@
 package com.rocket.biometrix.SleepModule;
 
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -84,11 +85,9 @@ public class SleepParent extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_sleep_parent, container, false);
 
-        //If the module is not enabled, perform no more setup and exit the activity
-        if (CheckEnabledStatus() ) {
-            displayEntriesLayout = (LinearLayout) v.findViewById(R.id.sleepDisplayEntriesLinearLayout);
-            UpdatePreviousEntries(v);
-        }
+        displayEntriesLayout = (LinearLayout) v.findViewById(R.id.sleepDisplayEntriesLinearLayout);
+        UpdatePreviousEntries(v);
+
         return v;
     }
 
@@ -97,54 +96,34 @@ public class SleepParent extends Fragment {
      */
     private void UpdatePreviousEntries(View v)
     {
-        LocalStorageAccessSleep fileAccess = new LocalStorageAccessSleep(v.getContext(), null, null, 1);
+        /*LocalStorageAccessSleep sleepSQL = new LocalStorageAccessSleep(v.getContext());
 
-        List<SleepData> sleepDataLinkedlist = fileAccess.GetSleepEntries();
+        Cursor sleepCursor = sleepSQL.selectAll();
 
         displayEntriesLayout.removeAllViews();
 
-        for (SleepData data : sleepDataLinkedlist) {
+        while (sleepCursor.moveToNext())
+        {
+
             TextView textView = new TextView(v.getContext());
 
             //Creates the string that will be displayed.
             StringBuilder dispString = new StringBuilder();
-            dispString.append(data.getStartTime());
+
+
+            dispString.append(sleepCursor.getString(sleepCursor.getColumnIndex(LocalStorageAccessSleep.DATE)));
             dispString.append(" for ");
-            dispString.append(data.getDuration());
+            dispString.append(sleepCursor.getString(sleepCursor.getColumnIndex(LocalStorageAccessSleep.DURATION)));
             dispString.append(". Quality: ");
-            dispString.append(data.getSleepQuality());
+            dispString.append(sleepCursor.getString(sleepCursor.getColumnIndex(LocalStorageAccessSleep.QUALITY)));
 
             textView.setText(dispString);
             displayEntriesLayout.addView(textView);
         }
+
+        sleepCursor.close();*/
     }
 
-
-
-    /**
-     * If the sleep module is not enabled for the current user, ask if they would like to re-enable it
-     */
-    protected boolean CheckEnabledStatus()
-    {
-        boolean enabled = true;
-
-/*
-        try
-        {
-            if (!LocalAccount.GetInstance().isSleepEnabled(getApplicationContext()))
-            {
-                enabled = false;
-            }
-        }
-        catch(NullPointerException except)
-        {
-            //Since the default is enabled, if the user is not logged in set it to enabled for now
-            enabled = true;
-        }
-*/
-
-        return enabled;
-    }
 
     /**
      * This interface must be implemented by activities that contain this

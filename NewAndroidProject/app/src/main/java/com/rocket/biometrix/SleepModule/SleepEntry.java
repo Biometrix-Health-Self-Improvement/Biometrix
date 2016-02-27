@@ -1,10 +1,13 @@
 package com.rocket.biometrix.SleepModule;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +19,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.rocket.biometrix.Common.DateTimeSelectorPopulateTextView;
+import com.rocket.biometrix.Common.StringDateTimeConverter;
+import com.rocket.biometrix.Database.AsyncResponse;
+import com.rocket.biometrix.Database.DatabaseConnect;
+import com.rocket.biometrix.Database.DatabaseConnectionTypes;
+import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.Database.LocalStorageAccessSleep;
+import com.rocket.biometrix.Login.LocalAccount;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -32,7 +41,7 @@ import java.util.GregorianCalendar;
  * Use the {@link SleepEntry#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SleepEntry extends Fragment {
+public class SleepEntry extends Fragment implements AsyncResponse{
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -53,6 +62,10 @@ public class SleepEntry extends Fragment {
     private Spinner generalHealthSpinner;
 
     private TextView noteTextView;
+
+    String[] sleepEntryData = {};
+
+    private View entryView;
 
 
     private String mParam1;
@@ -266,6 +279,8 @@ public class SleepEntry extends Fragment {
 
         UpdateEndTimes();
 
+        entryView = v;
+
         return v;
     }
     /**
@@ -346,7 +361,7 @@ public class SleepEntry extends Fragment {
      * Stores the information that was gathered if it is valid and then closes the activity.
      * @param view The button that made the call to exit the activity
      */
-    public void onDoneClick(View view)
+    /*public void onDoneClick(View view)
     {
         LocalStorageAccessSleep fileAccess = new LocalStorageAccessSleep(view.getContext(), null, null, 1);
 
@@ -369,9 +384,88 @@ public class SleepEntry extends Fragment {
         fileAccess.AddSleepEntry(sleepData);
 
        // finish();
+    }*/
+
+     /*
+    * Stores the users data when the done button is clicked
+    *
+     */
+    public void onDoneClick(View v) {
+        String dateText = startDateTextView.getText().toString();
+        String timeText = startTimeTextView.getText().toString();
+        String duration = sleptTimeTextView.getText().toString();
+
+        dateText = dateText.substring(dateText.indexOf(",") + 1).trim();
+        timeText = timeText.substring(timeText.indexOf(":") + 2).trim();
+        duration = duration.substring(duration.indexOf(":") + 2).trim();
+
+        Integer quality = qualitySeekBar.getProgress();
+
+        String notes = noteTextView.getText().toString();
+        String status = generalHealthSpinner.getSelectedItem().toString();
+
+        String username = "default";
+
+        if (LocalAccount.isLoggedIn() )
+        {
+            username = LocalAccount.GetInstance().GetUsername();
+        }
+
+        //Make string array for all of the above data
+        sleepEntryData = new String[]{"null", username, "null", dateText, timeText, duration, quality.toString(), notes, status };
+
+        Context context = entryView.getContext();
+
+
+
+        //Create the object that will update the sleep table
+        LocalStorageAccessSleep sleepSQL = new LocalStorageAccessSleep(context);
+
+        //Retrieves column names from the class
+        String[] columnNames = sleepSQL.getColumns();
+
+
+        if (columnNames.length == sleepEntryData.length)
+        {
+            ContentValues rowToBeInserted = new ContentValues();
+            int dataIndex = 0;
+
+            for (String column : columnNames)
+            {
+                //Insert column name ripped from LSA child class, and the user's entry data we gathered above
+                rowToBeInserted.put(column, sleepEntryData[dataIndex]);
+                dataIndex++;
+            }
+
+            //Call insert method
+            sleepSQL.insertFromContentValues(rowToBeInserted);
+
+            String jsonToInsert = DatabaseConnect.convertToJSON(rowToBeInserted);
+
+            //Trys to insert the user's data
+            try
+            {
+                new DatabaseConnect(this).execute(DatabaseConnectionTypes.INSERT_TABLE_VALUES, jsonToInsert,
+                        LocalAccount.GetInstance().GetToken(),
+                        //"asdf",
+                        DatabaseConnectionTypes.SLEEP_TABLE);
+            }
+            catch (NullPointerException except)
+            {
+                //TODO display error if user is not logged in.
+            }
+
+
+        }
+
     }
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void processFinish(String result)
+    {
+        Log.i("", result);
     }
 }

@@ -58,8 +58,9 @@ public abstract class LocalStorageAccessBase  extends SQLiteOpenHelper {
     * Please increment by 1 each time major changes are made in the database, document your change here
      * Version 1 on 1/08/16
      * Version 2 1/17 testing oncreate exercise
+     * Version 3 2/26/2016 adding sleep table.
     */
-    protected static final int DATABASE_VERSION = 2;
+    protected static final int DATABASE_VERSION = 3;
 
     //TODO: Pull user login information from SharedPreference Class and hash it somehow or use the webservice to get a UserID for all the tables.
 
@@ -176,14 +177,16 @@ public abstract class LocalStorageAccessBase  extends SQLiteOpenHelper {
         cal.setTime(today);
         cal.add(Calendar.DAY_OF_MONTH, -90);
         Date today90 = cal.getTime();
-        startDate = new SimpleDateFormat("YYYY-MM-DD").format(today90);
 
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        startDate = dateFormat.format(today90);
 
         //One week into the future
         cal.setTime(today);
         cal.add(Calendar.DAY_OF_MONTH, 7);
         Date nextWeek = cal.getTime();
-        endDate = new SimpleDateFormat("YYYY-MM-DD").format(nextWeek);
+        endDate = dateFormat.format(nextWeek);
 
 
         SQLiteDatabase db=this.getReadableDatabase();
