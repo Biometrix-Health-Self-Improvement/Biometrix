@@ -44,7 +44,7 @@ public class MyEntryCandiesRecyclerViewAdapter extends RecyclerView.Adapter<Entr
 
                     Log.d("List Size", Integer.toString(getItemCount()));
 
-                    //Open up edit entry with proper info for candy touched
+                    //TODO:Open up edit entry with proper info for candy touched
 
                     Toast.makeText(mContext, "EDITING ENTRY", Toast.LENGTH_LONG).show();
                 }
@@ -63,6 +63,8 @@ public class MyEntryCandiesRecyclerViewAdapter extends RecyclerView.Adapter<Entr
         //Fill all entry candies with appropriate data
 
         //TODO: FILL UI ELEMENTS HERE from cursor genned by calendar
+        //TODO: WRITE CURSOR PARSING CLASS
+        //TODO: GET CALENDAR FRAG "Broadcasting" ITS ARGS (CURSOR)
 
 
 
