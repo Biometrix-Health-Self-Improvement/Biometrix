@@ -1,5 +1,7 @@
 package com.rocket.biometrix.MoodModule;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -10,6 +12,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.rocket.biometrix.Common.DateTimeSelectorPopulateTextView;
+import com.rocket.biometrix.Database.LocalStorageAccessMood;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -28,6 +31,10 @@ public class MoodEntry extends Fragment {
 
     private String mParam1;
     private String mParam2;
+
+    View view;
+    int m_dep, m_elev, m_irr, m_anx;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -76,7 +83,7 @@ public class MoodEntry extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_mood_entry, container, false);
+        view = inflater.inflate(R.layout.fragment_mood_entry, container, false);
 
         setRatingBarListener(view);
 
@@ -106,6 +113,7 @@ public class MoodEntry extends Fragment {
             public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
                 TextView desc = (TextView) view.findViewById(R.id.moodDepressedDesc);//description of rating
                 setRatingLabel(desc, progress);
+                m_dep = progress;
             }
         });
 
@@ -122,6 +130,7 @@ public class MoodEntry extends Fragment {
             public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
                 TextView desc = (TextView) view.findViewById(R.id.moodElevatedDesc);//description of rating
                 setRatingLabel(desc, progress);
+                m_elev = progress;
             }
         });
 
@@ -138,6 +147,7 @@ public class MoodEntry extends Fragment {
             public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
                 TextView desc = (TextView) view.findViewById(R.id.moodIrritabilityDesc);//description of rating
                 setRatingLabel(desc, progress);
+                m_irr = progress;
             }
         });
 
@@ -154,6 +164,7 @@ public class MoodEntry extends Fragment {
             public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
                 TextView desc = (TextView) view.findViewById(R.id.moodAnxietyDesc);//description of rating
                 setRatingLabel(desc, progress);
+                m_anx = progress;
             }
         });
 
@@ -179,6 +190,38 @@ public class MoodEntry extends Fragment {
                 break;
         }
         desc.setText(str);
+    }
+
+
+    public void onDoneClick(View v)
+    {
+        //get date, time, and notes
+        String notes= ((TextView)view.findViewById(R.id.moodDetailsEditText)).getText().toString();
+        String date= ((TextView)view.findViewById(R.id.moodCreateEntryDateSelect)).getText().toString();
+        String time = ((TextView)view.findViewById(R.id.moodCreateEntryTimeSelect)).getText().toString();
+        String dep = Integer.toString(m_dep);
+        String elev = Integer.toString(m_dep);
+        String irr = Integer.toString(m_irr);
+        String anx = Integer.toString(m_anx);
+
+        String[] data = new String[]{date, time, dep, elev, irr, anx, notes};
+
+        Bundle moodBundle = new Bundle();
+        moodBundle.putStringArray("moodBundleKey", data);
+        Context context = view.getContext();
+
+        LocalStorageAccessMood strg = new LocalStorageAccessMood(context);
+
+        String[] cols = strg.getColumns();
+
+        ContentValues row= new ContentValues();
+        int dataIndex=0;
+        for(String col: cols){
+            row.put(col, data[dataIndex++]);
+        }
+        strg.insertFromContentValues(row);
+
+
     }
 
 

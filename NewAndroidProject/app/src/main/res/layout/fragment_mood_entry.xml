@@ -199,6 +199,7 @@
     <Button
         style="@style/done_button"
         android:id="@+id/mood_entry_done_button"
+        android:onClick="EntryDoneOnClick"
     />
 
 </RelativeLayout>
