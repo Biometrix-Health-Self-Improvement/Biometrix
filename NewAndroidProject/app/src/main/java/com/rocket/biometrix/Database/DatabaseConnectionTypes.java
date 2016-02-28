@@ -14,9 +14,11 @@ public final class DatabaseConnectionTypes
     public static final String LOGIN_DELETE = "Delete User Login";
     public static final String LOGIN_RESET = "Reset User Password";
     public static final String GOOGLE_TOKEN = "Verify Google Token";
-
+    public static final String INSERT_TABLE_VALUES = "Insert Table Values";
     public static final String CONNECTION_FAIL = "Unable to connect to database";
 
+    public static final String EXERCISE_TABLE = "Exercise";
+    public static final String SLEEP_TABLE = "Sleep";
 
     private DatabaseConnectionTypes() {}
 }

@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +16,15 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rocket.biometrix.Common.DateTimeSelectorPopulateTextView;
 import com.rocket.biometrix.Common.StringDateTimeConverter;
+import com.rocket.biometrix.Database.AsyncResponse;
+import com.rocket.biometrix.Database.DatabaseConnect;
+import com.rocket.biometrix.Database.DatabaseConnectionTypes;
 import com.rocket.biometrix.Database.LocalStorageAccessExercise;
+import com.rocket.biometrix.Login.LocalAccount;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -30,7 +36,7 @@ import com.rocket.biometrix.R;
  * Use the {@link ExerciseEntry#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ExerciseEntry extends Fragment {
+public class ExerciseEntry extends Fragment implements AsyncResponse{
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -253,6 +259,22 @@ public class ExerciseEntry extends Fragment {
             //Call insert method
             dbEx.insertFromContentValues(rowToBeInserted);
 
+            String jsonToInsert = DatabaseConnect.convertToJSON(rowToBeInserted);
+
+            //Trys to insert the user's data
+            try
+            {
+                new DatabaseConnect(this).execute(DatabaseConnectionTypes.INSERT_TABLE_VALUES, jsonToInsert,
+                        LocalAccount.GetInstance().GetToken(),
+                        //"asdf",
+                        DatabaseConnectionTypes.EXERCISE_TABLE);
+            }
+            catch (NullPointerException except)
+            {
+                //TODO display error if user is not logged in.
+            }
+
+
         }
 
     }
@@ -269,5 +291,10 @@ public class ExerciseEntry extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void processFinish(String result)
+    {
+        Log.i("",result);
     }
 }
