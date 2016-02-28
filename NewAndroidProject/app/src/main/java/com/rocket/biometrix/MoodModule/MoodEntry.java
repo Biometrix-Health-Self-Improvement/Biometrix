@@ -33,7 +33,7 @@ public class MoodEntry extends Fragment {
     private String mParam2;
 
     View view;
-    int m_dep, m_elev, m_irr, m_anx;
+    String dep="None", elev="None", irr="None", anx="None";
 
 
     private OnFragmentInteractionListener mListener;
@@ -112,8 +112,7 @@ public class MoodEntry extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
                 TextView desc = (TextView) view.findViewById(R.id.moodDepressedDesc);//description of rating
-                setRatingLabel(desc, progress);
-                m_dep = progress;
+                dep = setRatingLabel(desc, progress);
             }
         });
 
@@ -129,8 +128,8 @@ public class MoodEntry extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
                 TextView desc = (TextView) view.findViewById(R.id.moodElevatedDesc);//description of rating
-                setRatingLabel(desc, progress);
-                m_elev = progress;
+                elev = setRatingLabel(desc, progress);
+
             }
         });
 
@@ -146,8 +145,8 @@ public class MoodEntry extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
                 TextView desc = (TextView) view.findViewById(R.id.moodIrritabilityDesc);//description of rating
-                setRatingLabel(desc, progress);
-                m_irr = progress;
+                irr=setRatingLabel(desc, progress);
+
             }
         });
 
@@ -163,14 +162,13 @@ public class MoodEntry extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
                 TextView desc = (TextView) view.findViewById(R.id.moodAnxietyDesc);//description of rating
-                setRatingLabel(desc, progress);
-                m_anx = progress;
+                anx = setRatingLabel(desc, progress);
             }
         });
 
     }
 
-    private void setRatingLabel(TextView desc, int prog){
+    private String setRatingLabel(TextView desc, int prog){
         String str = null;
         switch (prog) { //get string based on rating
             case 0: //none
@@ -190,6 +188,7 @@ public class MoodEntry extends Fragment {
                 break;
         }
         desc.setText(str);
+        return str;
     }
 
 
@@ -197,20 +196,23 @@ public class MoodEntry extends Fragment {
     {
         //get date, time, and notes
         String notes= ((TextView)view.findViewById(R.id.moodDetailsEditText)).getText().toString();
-        String date= ((TextView)view.findViewById(R.id.moodCreateEntryDateSelect)).getText().toString();
-        String time = ((TextView)view.findViewById(R.id.moodCreateEntryTimeSelect)).getText().toString();
-        String dep = Integer.toString(m_dep);
-        String elev = Integer.toString(m_dep);
-        String irr = Integer.toString(m_irr);
-        String anx = Integer.toString(m_anx);
+        String dateLong = ((TextView)view.findViewById(R.id.moodCreateEntryDateSelect)).getText().toString();
+        String dateShort=((TextView)view.findViewById(R.id.moodCreateEntryDateSelect)).getText().toString().substring(11);
+        StringBuilder str;
 
-        String[] data = new String[]{date, time, dep, elev, irr, anx, notes};
+
+        String time = ((TextView)view.findViewById(R.id.moodCreateEntryTimeSelect)).getText().toString().substring(7);
+
+
+
+
+        String[] data = new String[]{dateLong, time, dep, elev, irr, anx, notes, dateShort};
 
         Bundle moodBundle = new Bundle();
         moodBundle.putStringArray("moodBundleKey", data);
         Context context = view.getContext();
 
-        LocalStorageAccessMood strg = new LocalStorageAccessMood(context);
+        LocalStorageAccessMood strg = new LocalStorageAccessMood(context, null,null,1);
 
         String[] cols = strg.getColumns();
 
@@ -219,7 +221,7 @@ public class MoodEntry extends Fragment {
         for(String col: cols){
             row.put(col, data[dataIndex++]);
         }
-        strg.insertFromContentValues(row);
+        strg.AddEntry(row);
 
 
     }

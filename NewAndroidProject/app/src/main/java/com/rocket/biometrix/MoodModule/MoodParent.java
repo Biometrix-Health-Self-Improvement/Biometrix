@@ -6,9 +6,16 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.rocket.biometrix.Database.LocalStorageAccessMood;
+import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
+import com.rocket.biometrix.SleepModule.SleepData;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,6 +32,7 @@ public class MoodParent extends Fragment {
 
     private String mParam1;
     private String mParam2;
+    private LinearLayout displayEntriesLayout;
 
     private OnFragmentInteractionListener mListener;
 
@@ -71,10 +79,45 @@ public class MoodParent extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_mood_parent, container, false);
+        View v = inflater.inflate(R.layout.fragment_mood_parent, container, false);
+        displayEntriesLayout = (LinearLayout) v.findViewById(R.id.pastMoodEntries);
+        UpdatePreviousEntries(v);
+        return v;
     }
 
 
+    private void UpdatePreviousEntries(View v)
+    {
+        try {
+            LocalStorageAccessMood fileAccess = new LocalStorageAccessMood(v.getContext(),null,null,1);
+
+            List<String[]> moodData = fileAccess.getEntries();
+
+            displayEntriesLayout.removeAllViews();
+
+            for (String[] data : moodData) {
+                TextView textView = new TextView(v.getContext());
+
+                //Creates the string that will be displayed.
+                StringBuilder str = new StringBuilder();
+                //str.append("Date: ");
+                str.append(data[0]);
+                //str.append(" Time: ");
+                //str.append(data[1]);
+                str.append("   Depr.: ");
+                str.append(data[2]);
+                str.append("   Elev.: ");
+                str.append(data[3]);
+                /*str.append(" Irritability: ");
+                str.append(data[4]);
+                str.append(" Anxiety: ");
+                str.append(data[5]);*/
+
+                textView.setText(str);
+                displayEntriesLayout.addView(textView);
+            }
+        } catch (Exception x){}
+    }
 
 
     /**

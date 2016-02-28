@@ -2,18 +2,30 @@ package com.rocket.biometrix.Database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import com.rocket.biometrix.SleepModule.SleepData;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by tannalynn on 1/22/2016.
  */
-public class LocalStorageAccessMood extends LocalStorageAccessBase{
+public class LocalStorageAccessMood extends SQLiteOpenHelper /* extends LocalStorageAccessBase*/{
+
+    private static final String LOCAL_DB_NAME = "BiometrixLocal";
+    private static final int LOCAL_DB_VERSION = 1;
 
     static final String TABLE_NAME = "Mood";
     static final String UID = "Mood_id";
 
-    static final String DATE= "Date";
+    static final String DATEL= "DateLong";
+    static final String DATES= "DateShort";
     static final String TIME= "Time";
     static final String DEP = "Depression";
     static final String ELEV= "Elevated";
@@ -21,76 +33,86 @@ public class LocalStorageAccessMood extends LocalStorageAccessBase{
     static final String ANX = "Anxiety";
     static final String NOTE= "Notes";
 
-    private final static String[] cols = {DATE, TIME, DEP, ELEV, IRR, ANX, NOTE};
+    private final static String[] cols = {DATEL, TIME, DEP, ELEV, IRR, ANX, NOTE, DATES};
 
 
-    public LocalStorageAccessMood(Context context){
-        super(context);
+    public LocalStorageAccessMood(Context context, String name, SQLiteDatabase.CursorFactory factory, int version){
+        super(context, LOCAL_DB_NAME, factory, LOCAL_DB_VERSION);
     }
 
-    //A module's table create sql statement.
-    protected  String createTable(){
-        String createTbl =  "CREATE TABLE " + TABLE_NAME + "(" +
-                UID + " INTEGER PRIMARY KEY AUTOINCREMENT, "+
-                DATE + " DATE, "+
-                TIME + " VARCHAR(50), "+
-                DEP + " TINYINT, " +
-                ELEV + " TINYINT, "+
-                IRR + " TINYINT, " +
-                ANX + " TINYINT, " +
-                NOTE + " VARCHAR(255) );";
-        return createTbl;
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        //Creates the SQL string to make the SLEEP table
+        String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " ( " +
+                DATEL + " date Not Null, " +
+                DATES + " date Not Null, "+
+                TIME + " time Not null, " +
+                DEP + " VARCHAR(50), " +
+                ELEV + " VARCHAR(50), " +
+                IRR + " VARCHAR(50), " +
+                ANX + " VARCHAR(50), " +
+                NOTE + " varchar(255) " + ");";
+        db.execSQL(CREATE_TABLE);
     }
 
-    //Returns string array of private string variables representing Columns in child module class
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion,
+                          int newVersion)
+    {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        onCreate(db);
+    }
+
+    public void AddEntry(ContentValues cv){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.insert(TABLE_NAME, null, cv);
+        db.close();
+    }
+
     public   String[] getColumns(){
-        for (String s : cols) {
-            System.out.println(s);
-            Log.d("column: ", s);
-        }
         return cols;
     }
 
-    //Returns UID (primary key) column name
-    protected  String getUIDColumn(){
-        return UID;
 
-    }
+    public List<String[]> getEntries(){
+        String query = "Select " + DATES + ", " + TIME + ", " +
+                DEP + ", " + ELEV + ", " + IRR + ", " + ANX + ", " + NOTE +
+                " FROM " + TABLE_NAME + " Order By " + DATES;
 
-    //Version safe Alter table SQL called in onUpgrade, eventually might return some kind of error checking information...
-    //Returns true if oldVersion was detected
-    protected  boolean onUpgradeAlter(SQLiteDatabase db, int oldVersion, int newVersion){
-        boolean versionDetected = true; //version of db is found in parent class
 
-        //In future, will need to test version to upgrade properly.
-        if (oldVersion < getDBVersion() - 1) {
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-            onCreate(db); //Drop and recreate
-        }
-        else {
-            versionDetected = false;
-        }
+        SQLiteDatabase db = this.getWritableDatabase();
 
-        return versionDetected;
-    }
+        Cursor cursor = db.rawQuery(query, null);
 
-    public void insertFromContentValues(ContentValues cv) {
+        List<String[]> lst = new LinkedList<String[]>();
 
-        //Real ContentValues that will be passed to the base class' insert method.
-        ContentValues dataToBeInserted = new ContentValues();
+        String date, time, dep, elev, irr, anx, note;
 
-        for (String columnName : getColumns()) {
-            if (cv.containsKey(columnName)) {
-                //if the key pulled out of the parameter cv is equal to any string inside columns:
-                dataToBeInserted.put(columnName,cv.getAsString(columnName)); //put the key and its value into the new CV
-            }
-            else{
-                Log.d("insertFromContentValues"," Key " + columnName+" not found");
+        //If there is a valid entry move to it
+        if (cursor.moveToFirst()) {
+
+            while (!cursor.isAfterLast())
+            {
+                date = cursor.getString(0);
+                time = cursor.getString(1);
+                dep = cursor.getString(2);
+                elev = cursor.getString(3);
+                irr = cursor.getString(4);
+                anx = cursor.getString(5);
+                note = cursor.getString(6);
+
+                String[] data = {date, time, dep, elev, irr, anx, note};
+                lst.add(data);
+
+                cursor.moveToNext();
             }
         }
 
-        //WHERE THE MAGIC HAPPENS //Table name is a string above "Exercise", columns[1] is just any column that can be null, then we pass in the clean cv
-        safeInsert(TABLE_NAME, cols[1], dataToBeInserted );
-    }
+        cursor.close();
 
+        db.close();
+
+        return lst;
+    }
 }
