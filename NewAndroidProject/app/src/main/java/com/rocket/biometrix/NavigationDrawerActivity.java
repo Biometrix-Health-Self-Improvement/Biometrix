@@ -197,13 +197,14 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
             //Determines which module entry activity is active and then replaces it with its parent fragment
             if(activeFragment.getClass() == MoodEntry.class) {
-                //TODO: Probably will want to save the entry data. Cast activeFragment to Entry type and call a function to handle it
+                ((MoodEntry) activeFragment).onDoneClick(v);
                 newFragment = new MoodParent();
             } else if (activeFragment.getClass() == SleepEntry.class){
                 ((SleepEntry) activeFragment).onDoneClick(v);
                 newFragment = new SleepParent();
             } else if (activeFragment.getClass() == ExerciseEntry.class){
                 //TODO: Please implement Callback interface so I'm not forced to conform in a bad way
+                //TODO: let's not be a little bitch about it
                 ((ExerciseEntry) activeFragment).onDoneClick();
                 newFragment = new ExerciseParent();
             } else if (activeFragment.getClass() == DietEntry.class){
