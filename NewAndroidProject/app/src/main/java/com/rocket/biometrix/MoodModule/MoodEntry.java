@@ -1,5 +1,6 @@
 package com.rocket.biometrix.MoodModule;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.rocket.biometrix.Common.DateTimeSelectorPopulateTextView;
+import com.rocket.biometrix.Database.LocalStorageAccessMood;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -201,12 +203,23 @@ public class MoodEntry extends Fragment {
         String elev = Integer.toString(m_dep);
         String irr = Integer.toString(m_irr);
         String anx = Integer.toString(m_anx);
-        //MoodData data = new MoodData(date, time, m_dep, m_elev, m_irr, m_anx, notes);
+
         String[] data = new String[]{date, time, dep, elev, irr, anx, notes};
 
         Bundle moodBundle = new Bundle();
         moodBundle.putStringArray("moodBundleKey", data);
         Context context = view.getContext();
+
+        LocalStorageAccessMood strg = new LocalStorageAccessMood(context);
+
+        String[] cols = strg.getColumns();
+
+        ContentValues row= new ContentValues();
+        int dataIndex=0;
+        for(String col: cols){
+            row.put(col, data[dataIndex++]);
+        }
+        strg.insertFromContentValues(row);
 
 
     }

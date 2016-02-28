@@ -194,7 +194,6 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
         //if fragment exists
         if (activeFragment != null && activeFragment.isVisible()) {
-
             //Determines which module entry activity is active and then replaces it with its parent fragment
             if(activeFragment.getClass() == MoodEntry.class) {
                 ((MoodEntry) activeFragment).onDoneClick(v);
