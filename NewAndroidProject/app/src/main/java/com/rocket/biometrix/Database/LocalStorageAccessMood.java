@@ -76,7 +76,7 @@ public class LocalStorageAccessMood extends SQLiteOpenHelper /* extends LocalSto
 
 
     public List<String[]> getEntries(){
-        String query = "Select " + DATES + ", " + TIME + ", " +
+        String query = "Select " + DATEL + ", " + DATES + ", " + TIME + ", " +
                 DEP + ", " + ELEV + ", " + IRR + ", " + ANX + ", " + NOTE +
                 " FROM " + TABLE_NAME + " Order By " + DATES;
 
@@ -87,22 +87,23 @@ public class LocalStorageAccessMood extends SQLiteOpenHelper /* extends LocalSto
 
         List<String[]> lst = new LinkedList<String[]>();
 
-        String date, time, dep, elev, irr, anx, note;
+        String datel, dates, time, dep, elev, irr, anx, note;
 
         //If there is a valid entry move to it
         if (cursor.moveToFirst()) {
 
             while (!cursor.isAfterLast())
             {
-                date = cursor.getString(0);
-                time = cursor.getString(1);
-                dep = cursor.getString(2);
-                elev = cursor.getString(3);
-                irr = cursor.getString(4);
-                anx = cursor.getString(5);
-                note = cursor.getString(6);
+                datel = cursor.getString(0);
+                dates = cursor.getString(1);
+                time = cursor.getString(2);
+                dep = cursor.getString(3);
+                elev = cursor.getString(4);
+                irr = cursor.getString(5);
+                anx = cursor.getString(6);
+                note = cursor.getString(7);
 
-                String[] data = {date, time, dep, elev, irr, anx, note};
+                String[] data = {datel, dates, time, dep, elev, irr, anx, note};
                 lst.add(data);
 
                 cursor.moveToNext();

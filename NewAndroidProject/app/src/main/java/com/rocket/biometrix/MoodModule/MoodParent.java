@@ -100,18 +100,11 @@ public class MoodParent extends Fragment {
 
                 //Creates the string that will be displayed.
                 StringBuilder str = new StringBuilder();
-                //str.append("Date: ");
-                str.append(data[0]);
-                //str.append(" Time: ");
-                //str.append(data[1]);
+                str.append(data[1]);
                 str.append("   Depr.: ");
-                str.append(data[2]);
-                str.append("   Elev.: ");
                 str.append(data[3]);
-                /*str.append(" Irritability: ");
+                str.append("   Elev.: ");
                 str.append(data[4]);
-                str.append(" Anxiety: ");
-                str.append(data[5]);*/
 
                 textView.setText(str);
                 displayEntriesLayout.addView(textView);
