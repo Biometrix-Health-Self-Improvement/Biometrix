@@ -198,13 +198,8 @@ public class MoodEntry extends Fragment {
         String notes= ((TextView)view.findViewById(R.id.moodDetailsEditText)).getText().toString();
         String dateLong = ((TextView)view.findViewById(R.id.moodCreateEntryDateSelect)).getText().toString();
         String dateShort=((TextView)view.findViewById(R.id.moodCreateEntryDateSelect)).getText().toString().substring(11);
-        StringBuilder str;
-
 
         String time = ((TextView)view.findViewById(R.id.moodCreateEntryTimeSelect)).getText().toString().substring(7);
-
-
-
 
         String[] data = new String[]{dateLong, time, dep, elev, irr, anx, notes, dateShort};
 
@@ -222,7 +217,6 @@ public class MoodEntry extends Fragment {
             row.put(col, data[dataIndex++]);
         }
         strg.AddEntry(row);
-
 
     }
 

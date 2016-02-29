@@ -109,11 +109,8 @@ public class LocalStorageAccessMood extends SQLiteOpenHelper /* extends LocalSto
                 cursor.moveToNext();
             }
         }
-
         cursor.close();
-
         db.close();
-
         return lst;
     }
 }
