@@ -55,9 +55,7 @@ public class LocalStorageAccessMood {
 
 
     public static void AddEntry(ContentValues cv, Context c){
-        SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
-        db.insert(TABLE_NAME, null, cv);
-        db.close();
+        LocalStorageAccess.safeInsert(TABLE_NAME, null, cv);
     }
 
     public static String[] getColumns(){

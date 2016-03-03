@@ -45,8 +45,9 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
         db.execSQL(LocalStorageAccessExercise.createTable());
         //db.execSQL(LocalStorageAccessDiet.createTable()); TODO: uncomment when written
         //db.execSQL(LocalStorageAccessMedication.createTable());
-        db.execSQL(LocalStorageAccessMood.createTable());
         db.execSQL(LocalStorageAccessSleep.createTable());
+        db.execSQL(LocalStorageAccessMood.createTable());
+
     }
 
     private void dropTables(SQLiteDatabase db){
