@@ -207,16 +207,16 @@ public class MoodEntry extends Fragment {
         moodBundle.putStringArray("moodBundleKey", data);
         Context context = view.getContext();
 
-        LocalStorageAccessMood strg = new LocalStorageAccessMood(context, null,null,1);
+        //LocalStorageAccessMood strg = new LocalStorageAccessMood(context, null,null,1);
 
-        String[] cols = strg.getColumns();
+        String[] cols = LocalStorageAccessMood.getColumns();
 
         ContentValues row= new ContentValues();
         int dataIndex=0;
         for(String col: cols){
             row.put(col, data[dataIndex++]);
         }
-        strg.AddEntry(row);
+        LocalStorageAccessMood.AddEntry(row, v.getContext());
 
     }
 

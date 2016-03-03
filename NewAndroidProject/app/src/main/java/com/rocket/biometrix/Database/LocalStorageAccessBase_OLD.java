@@ -15,7 +15,7 @@ import java.util.GregorianCalendar;
 
 /**
  * What even is this?
- * LocalStorageAccessBase uses SQLiteOpenHelper to write/read from the local-on-device SQLite database
+ * LocalStorageAccessBase_OLD uses SQLiteOpenHelper to write/read from the local-on-device SQLite database
  * It is an abstract base class that kinda uses the adapter pattern to have maximum code-reuse
  * The class assumes that the WebServer is used as a file access system which 'backs up' the local DB, Loads into the local DB from the server, stores User logins, analytics, etc. The True master database resides on the WebServer
  * The SQLite database is assumed to be storage for 'entries' where each module IS one table in the database.
@@ -50,7 +50,7 @@ import java.util.GregorianCalendar;
  *
  * 6) You can also use LSA to prepare data to be displayed or read from the database, see EditPastEntries
  */
-public abstract class LocalStorageAccessBase  extends SQLiteOpenHelper {
+public abstract class LocalStorageAccessBase_OLD extends SQLiteOpenHelper {
 
     //Name of database that won't change throughout all the implementations of this class.
     protected static final String DATABASE_NAME = "BiometrixLAS";
@@ -64,12 +64,12 @@ public abstract class LocalStorageAccessBase  extends SQLiteOpenHelper {
 
     //TODO: Pull user login information from SharedPreference Class and hash it somehow or use the webservice to get a UserID for all the tables.
 
-    public LocalStorageAccessBase(Context context) {
+    public LocalStorageAccessBase_OLD(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     //SQLiteOpenHelper default Ctor
-    public LocalStorageAccessBase(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
+    public LocalStorageAccessBase_OLD(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
         super(context, name, factory, version, errorHandler);
     }
 

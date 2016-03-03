@@ -12,7 +12,7 @@ import com.rocket.biometrix.SleepModule.SleepData;
 import java.util.LinkedList;
 import java.util.List;
 
-public class LocalStorageAccessSleep extends LocalStorageAccessBase {
+public class LocalStorageAccessSleep {
 
     //Sleep table and columns
     public static final String TABLE_SLEEP = "Sleep";
@@ -34,13 +34,11 @@ public class LocalStorageAccessSleep extends LocalStorageAccessBase {
 
     private static final String[] columns = {LOCAL_SLEEP_ID, USER_NAME, WEB_SLEEP_ID, DATE, TIME, DURATION, QUALITY, NOTES, HEALTH};
 
-    public LocalStorageAccessSleep(Context context) {
-        super(context);
+    public LocalStorageAccessSleep(Context context){
     }
 
 
-    @Override
-    public String createTable()
+    public static String createTable()
     {
         //Creates the SQL string to make the SLEEP table
         return "CREATE TABLE " + TABLE_SLEEP
@@ -56,32 +54,15 @@ public class LocalStorageAccessSleep extends LocalStorageAccessBase {
                 + HEALTH + " varchar(20) " + ");";
     }
 
-    //Update table on user upgrade
-    protected boolean onUpgradeAlter(SQLiteDatabase db, int oldVersion, int newVersion)
-    {
-        boolean versionDetected = true; //version of db is found in parent class
+    public static String getTableName(){ return TABLE_SLEEP; }
 
-        if (oldVersion < getDBVersion() - 1)
-        {
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_SLEEP);
-            onCreate(db); //Drop and recreate
-        }
-        else
-        {
-            versionDetected = false;
-        }
-
-        return versionDetected;
-    }
 
     //Returns the columns for the table
-    @Override
     public String[] getColumns()
     {
         return columns;
     }
 
-    @Override
     public String getUIDColumn()
     {
         return USER_NAME;
@@ -112,14 +93,14 @@ public class LocalStorageAccessSleep extends LocalStorageAccessBase {
             }
         }
 
-        safeInsert(TABLE_SLEEP, columns[1], dataToBeInserted );
+        LocalStorageAccess.safeInsert(TABLE_SLEEP, columns[1], dataToBeInserted);
     }
 
 
 
-    public Cursor selectAll()
+    public Cursor selectAll(Context c)
     {
-        SQLiteDatabase database = this.getReadableDatabase();
+        SQLiteDatabase database = LocalStorageAccess.getInstance(c).getReadableDatabase();
 
         String username = "default";
 

@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Created by tannalynn on 1/22/2016.
  */
-public class LocalStorageAccessMood extends SQLiteOpenHelper /* extends LocalStorageAccessBase*/{
+public class LocalStorageAccessMood {
 
     private static final String LOCAL_DB_NAME = "BiometrixLocal";
     private static final int LOCAL_DB_VERSION = 1;
@@ -35,13 +35,9 @@ public class LocalStorageAccessMood extends SQLiteOpenHelper /* extends LocalSto
 
     private final static String[] cols = {DATEL, TIME, DEP, ELEV, IRR, ANX, NOTE, DATES};
 
+    private LocalStorageAccessMood(){}
 
-    public LocalStorageAccessMood(Context context, String name, SQLiteDatabase.CursorFactory factory, int version){
-        super(context, LOCAL_DB_NAME, factory, LOCAL_DB_VERSION);
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
+    public static String createTable() {
         //Creates the SQL string to make the SLEEP table
         String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " ( " +
                 DATEL + " date Not Null, " +
@@ -52,36 +48,30 @@ public class LocalStorageAccessMood extends SQLiteOpenHelper /* extends LocalSto
                 IRR + " VARCHAR(50), " +
                 ANX + " VARCHAR(50), " +
                 NOTE + " varchar(255) " + ");";
-        db.execSQL(CREATE_TABLE);
+        return CREATE_TABLE;
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion,
-                          int newVersion)
-    {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-        onCreate(db);
-    }
+    public static String getTableName() {return  TABLE_NAME;}
 
-    public void AddEntry(ContentValues cv){
-        SQLiteDatabase db = this.getWritableDatabase();
 
+    public static void AddEntry(ContentValues cv, Context c){
+        SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
         db.insert(TABLE_NAME, null, cv);
         db.close();
     }
 
-    public   String[] getColumns(){
+    public static String[] getColumns(){
         return cols;
     }
 
 
-    public List<String[]> getEntries(){
+    public static List<String[]> getEntries(Context c){
         String query = "Select " + DATEL + ", " + DATES + ", " + TIME + ", " +
                 DEP + ", " + ELEV + ", " + IRR + ", " + ANX + ", " + NOTE +
                 " FROM " + TABLE_NAME + " Order By " + DATES;
 
 
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
 
         Cursor cursor = db.rawQuery(query, null);
 
