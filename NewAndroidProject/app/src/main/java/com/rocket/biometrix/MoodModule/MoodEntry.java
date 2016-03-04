@@ -203,10 +203,9 @@ public class MoodEntry extends Fragment implements AsyncResponse {
     {
         //get date, time, and notes
         String notes= ((TextView)view.findViewById(R.id.moodDetailsEditText)).getText().toString();
-        String dateLong = ((TextView)view.findViewById(R.id.moodCreateEntryDateSelect)).getText().toString();
         String dateShort=((TextView)view.findViewById(R.id.moodCreateEntryDateSelect)).getText().toString().substring(11);
 
-        String time = ((TextView)view.findViewById(R.id.moodCreateEntryTimeSelect)).getText().toString().substring(7);
+        String time = ((TextView)view.findViewById(R.id.moodCreateEntryTimeSelect)).getText().toString().substring(6);
 
         String username = "default";
 
@@ -215,8 +214,8 @@ public class MoodEntry extends Fragment implements AsyncResponse {
             username = LocalAccount.GetInstance().GetUsername();
         }
 
-        //Strings in order are LOCAL_MOOD_ID, USER_NAME, WEB_MOOD_ID, DATEL, TIME, DEP, ELEV, IRR, ANX, NOTE, UPDATED, DATES
-        String[] data = new String[]{null, username, null, dateLong, time, dep, elev, irr, anx, notes, "0", dateShort};
+        //Strings in order are LOCAL_MOOD_ID, USER_NAME, WEB_MOOD_ID, DATE, TIME, DEP, ELEV, IRR, ANX, NOTE, UPDATED
+        String[] data = new String[]{null, username, null, dateShort, time, dep, elev, irr, anx, notes, "0"};
 
         Bundle moodBundle = new Bundle();
         moodBundle.putStringArray("moodBundleKey", data);

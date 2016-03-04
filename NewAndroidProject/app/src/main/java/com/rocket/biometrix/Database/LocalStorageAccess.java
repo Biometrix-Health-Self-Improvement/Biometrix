@@ -13,8 +13,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class LocalStorageAccess extends SQLiteOpenHelper {
     protected static final String DATABASE_NAME = "BiometrixLAS";
 
-    //Incremented to 5. Implemented ID fields for sleep, exercise, and mood. Also implemented, needs update
-    protected static final int DATABASE_VERSION = 5;
+    //Incremented to 4. Implemented ID fields for sleep, exercise, and mood. Also implemented, needs update
+    protected static final int DATABASE_VERSION = 4;
     protected static LocalStorageAccess m_instance = null;
 
 
@@ -30,7 +30,7 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    //Called when app is installed
+    //Called first time the database is requested to be used
     @Override
     public void onCreate(SQLiteDatabase db) {
         try{
@@ -54,8 +54,12 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
 
     private void dropTables(SQLiteDatabase db){
         db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessExercise.getTableName());
-        db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessDiet.getTableName());
-        db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessMedication.getTableName());
+
+        //For whatever reason, the two statements below crash if the table doesn't exist..
+        //Which is basically the exact opposite of what they SHOULD do. I am clueless -TJ
+        //TODO: uncomment when written
+        //db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessDiet.getTableName());
+        //db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessMedication.getTableName());
         db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessMood.getTableName());
         db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessSleep.getTableName());
     }
@@ -65,30 +69,43 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
         //For now call onUpgradeAlter. I know this breaks OO principles, but seems like a good solution since the modules tables can be so different, and the whole db has to be updated at once.
-        if (oldVersion < DATABASE_VERSION - 1) {
+        if (oldVersion < DATABASE_VERSION) {
             dropTables(db);
             onCreate(db); //Drop and recreate
         }
     }
 
-    protected static long safeInsert(String tablename, String nullColumn, ContentValues columnsAndValues){
+    protected long safeInsert(String tablename, String nullColumn, ContentValues columnsAndValues){
 
-        SQLiteDatabase db = m_instance.getWritableDatabase();
+        SQLiteDatabase db = null;
+
+        try
+        {
+            db = m_instance.getWritableDatabase();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+
         long rowNumberInserted = -1; //-1 if fail
 
-        db.beginTransaction();
+        if (db != null)
+        {
+            db.beginTransaction();
 
-        try {
-            rowNumberInserted = db.insertOrThrow(tablename, nullColumn, columnsAndValues);
-            db.setTransactionSuccessful();
+            try {
+                rowNumberInserted = db.insertOrThrow(tablename, nullColumn, columnsAndValues);
+                db.setTransactionSuccessful();
 
-        } catch(SQLException e) {
+            } catch (SQLException e) {
 
-            e.printStackTrace();
+                e.printStackTrace();
 
-        } finally {
-            db.endTransaction(); //rollback is automatic
-            db.close(); //breaks sometimes?
+            } finally {
+                db.endTransaction(); //rollback is automatic
+                db.close(); //breaks sometimes?
+            }
         }
 
         return rowNumberInserted;

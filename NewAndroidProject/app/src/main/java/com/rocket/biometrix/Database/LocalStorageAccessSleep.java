@@ -54,7 +54,7 @@ public class LocalStorageAccessSleep {
                 + DURATION + " time Not Null, "
                 + QUALITY + " int Not Null, "
                 + NOTES + " varchar(300), "
-                + HEALTH + " varchar(20) "
+                + HEALTH + " varchar(20), "
                 + UPDATED + " int default 0" +
                 ");";
     }
@@ -79,8 +79,8 @@ public class LocalStorageAccessSleep {
      * it is ignored
      * @param cv The content values to insert.
      */
-    public static void insertFromContentValues(ContentValues cv) {
-        LocalStorageAccess.safeInsert(TABLE_SLEEP, columns[1], cv);
+    public static void insertFromContentValues(ContentValues cv, Context c) {
+        LocalStorageAccess.getInstance(c).safeInsert(TABLE_SLEEP, columns[1], cv);
     }
 
 

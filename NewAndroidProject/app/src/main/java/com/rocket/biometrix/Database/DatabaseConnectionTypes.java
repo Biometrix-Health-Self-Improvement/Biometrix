@@ -19,7 +19,7 @@ public final class DatabaseConnectionTypes
 
     public static final String EXERCISE_TABLE = "Exercise";
     public static final String SLEEP_TABLE = "Sleep";
-    public static final String MOOD_TABLE = "Sleep";
+    public static final String MOOD_TABLE = "Mood";
 
     private DatabaseConnectionTypes() {}
 }

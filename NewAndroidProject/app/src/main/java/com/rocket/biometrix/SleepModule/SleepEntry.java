@@ -358,35 +358,6 @@ public class SleepEntry extends Fragment implements AsyncResponse{
     }
 
 
-    /**
-     * Stores the information that was gathered if it is valid and then closes the activity.
-     //* @param view The button that made the call to exit the activity
-     */
-    /*public void onDoneClick(View view)
-    {
-        LocalStorageAccessSleep fileAccess = new LocalStorageAccessSleep(view.getContext(), null, null, 1);
-
-        String dateText = startDateTextView.getText().toString();
-        String timeText = startTimeTextView.getText().toString();
-        String duration = sleptTimeTextView.getText().toString();
-
-        dateText = dateText.substring(dateText.indexOf(",") + 1).trim();
-        timeText = timeText.substring(timeText.indexOf(":") + 2).trim();
-        duration = duration.substring(duration.indexOf(":") + 2).trim();
-
-        int quality = qualitySeekBar.getProgress();
-
-        String notes = noteTextView.getText().toString();
-        String status = generalHealthSpinner.getSelectedItem().toString();
-
-
-        SleepData sleepData = new SleepData(dateText + " " + timeText, duration, quality, status, notes);
-
-        fileAccess.AddSleepEntry(sleepData);
-
-       // finish();
-    }*/
-
      /*
     * Stores the users data when the done button is clicked
     *
@@ -413,7 +384,7 @@ public class SleepEntry extends Fragment implements AsyncResponse{
         }
 
         //Make string array for all of the above data
-        sleepEntryData = new String[]{"null", username, "null", dateText, timeText, duration, quality.toString(), notes, status };
+        sleepEntryData = new String[]{null, username, null, dateText, timeText, duration, quality.toString(), notes, status, "0" };
 
         Context context = entryView.getContext();
 
@@ -434,15 +405,14 @@ public class SleepEntry extends Fragment implements AsyncResponse{
             for (String column : columnNames)
             {
                 //Insert column name ripped from LSA child class, and the user's entry data we gathered above
-                if(column != "LocalSleepID") {
+                if(column != LocalStorageAccessSleep.LOCAL_SLEEP_ID) {
                     rowToBeInserted.put(column, sleepEntryData[dataIndex]);
-
                 }
                 dataIndex++;
             }
 
             //Call insert method
-            LocalStorageAccessSleep.insertFromContentValues(rowToBeInserted);
+            LocalStorageAccessSleep.insertFromContentValues(rowToBeInserted, v.getContext());
 
             String jsonToInsert = DatabaseConnect.convertToJSON(rowToBeInserted);
 

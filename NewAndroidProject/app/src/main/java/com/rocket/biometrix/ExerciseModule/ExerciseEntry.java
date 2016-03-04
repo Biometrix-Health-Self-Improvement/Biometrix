@@ -203,7 +203,7 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
     * That's it! I also make a bundle but do nothing with it, purely for future extensibility.
     *
      */
-    public void onDoneClick() {
+    public void onDoneClick(View v) {
         //Keep in mind that the 'View' you reference here is only the 'View' for the actual done button
         //NOT the whole UI Layout you made.
 
@@ -227,9 +227,16 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
         //Filling notes string
         String notesString = StringDateTimeConverter.GetStringFromEditText(onCreateView.findViewById(R.id.ex_notes));
 
+        String username = "default";
+
+        if (LocalAccount.isLoggedIn() )
+        {
+            username = LocalAccount.GetInstance().GetUsername();
+        }
+
         //Make string array to hold all the strings extracted from the user's input on this entry activity
-        //{TITLE, TYPE, MINUTES, REPS, LAPS, WEIGHT, INTY, NOTES, DATE, TIME}; //No distinction between reps and laps, weight and intensity.
-        exerciseEntryData = new String[]{titleString, typeSelected, minSelected, repsString, repsString, weightString, weightString, notesString, dateString, timeString};
+        //{LOCALEXERCISEID, USERNAME, WEBEXERCISEID, TITLE, TYPE, MINUTES, REPS, LAPS, WEIGHT, INTY, NOTES, DATE, TIME, UPDATED}; //No distinction between reps and laps, weight and intensity.
+        exerciseEntryData = new String[]{null, username, null, titleString, typeSelected, minSelected, repsString, repsString, weightString, weightString, notesString, dateString, timeString, "0"};
 
         //https://developer.android.com/reference/android/os/Bundle.html
         //Put string array that has all the entries data points in it into a Bundle. This bundle is for future extensibility it is NOT for the parent class.
@@ -257,7 +264,7 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
                 dataIndex++;
             }
             //Call insert method
-            dbEx.insertFromContentValues(rowToBeInserted);
+            dbEx.insertFromContentValues(rowToBeInserted, v.getContext());
 
             String jsonToInsert = DatabaseConnect.convertToJSON(rowToBeInserted);
 

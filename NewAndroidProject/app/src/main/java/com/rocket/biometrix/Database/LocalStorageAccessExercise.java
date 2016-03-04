@@ -33,7 +33,7 @@ public class LocalStorageAccessExercise{
     public static final String UPDATED = "Updated";
 
     // All the columns above, see getColumns() below
-    private static final String[] columns = {LOCAL_EXERCISE_ID, USER_NAME, WEB_EXERCISE_ID, TITLE, TYPE, MINUTES, REPS, LAPS, WEIGHT, INTY, NOTES, DATE, TIME};
+    private static final String[] columns = {LOCAL_EXERCISE_ID, USER_NAME, WEB_EXERCISE_ID, TITLE, TYPE, MINUTES, REPS, LAPS, WEIGHT, INTY, NOTES, DATE, TIME, UPDATED};
 
     //Later, we'll hopefully get to a shared preferences class that stores BMI and weight information.
 
@@ -43,8 +43,8 @@ public class LocalStorageAccessExercise{
         //Some SQL
         String createTableSQL = "CREATE TABLE " + TABLE_NAME +
                 " (" + LOCAL_EXERCISE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                USER_NAME + "VARCHAR(50) not null" +
-                WEB_EXERCISE_ID + "INT NULL" +
+                USER_NAME + " VARCHAR(50) not null, " +
+                WEB_EXERCISE_ID + " INT NULL, " +
                 TITLE + " VARCHAR(255), " +
                 TYPE + " VARCHAR(140), " +
                 MINUTES + " TINYINT, " +
@@ -54,7 +54,7 @@ public class LocalStorageAccessExercise{
                 INTY + " TINYINT, " +
                 NOTES + " VARCHAR(255), " +
                 DATE + " DATE, " +
-                TIME + " VARCHAR(50)" +
+                TIME + " VARCHAR(50), " +
                 UPDATED + " int default 0" +
                 ");";
 
@@ -86,7 +86,7 @@ public class LocalStorageAccessExercise{
      * @param  cv  a ContentValues map with key values that match the private String column names
      * {@see safeInsert} in parent is called from
      */
-    public void insertFromContentValues(ContentValues cv) {
+    public void insertFromContentValues(ContentValues cv, Context c) {
 
         //Real ContentValues that will be passed to the base class' insert method.
         ContentValues dataToBeInserted = new ContentValues();
@@ -104,7 +104,7 @@ public class LocalStorageAccessExercise{
         }
 
         //WHERE THE MAGIC HAPPENS //Table name is a string above "Exercise", columns[1] is just any column that can be null, then we pass in the clean cv
-        LocalStorageAccess.safeInsert(TABLE_NAME, columns[1], dataToBeInserted);
+        LocalStorageAccess.getInstance(c).safeInsert(TABLE_NAME, columns[1], dataToBeInserted);
 
     }//end insert
 
