@@ -30,9 +30,12 @@ public class LocalStorageAccessSleep {
     public static final String NOTES = "Notes";
     public static final String HEALTH = "Health";
 
+    //Updated = Has the field changed from what the webserver has? This has to be an int, so 0 =false 1 =true
+    static final String UPDATED = "Updated";
+
     //Exercise Add Entry Table strings
 
-    private static final String[] columns = {LOCAL_SLEEP_ID, USER_NAME, WEB_SLEEP_ID, DATE, TIME, DURATION, QUALITY, NOTES, HEALTH};
+    private static final String[] columns = {LOCAL_SLEEP_ID, USER_NAME, WEB_SLEEP_ID, DATE, TIME, DURATION, QUALITY, NOTES, HEALTH, UPDATED};
 
     public LocalStorageAccessSleep(Context context){
     }
@@ -44,14 +47,16 @@ public class LocalStorageAccessSleep {
         return "CREATE TABLE " + TABLE_SLEEP
                 //Integer primary key gives auto-increment for free
                 + " ( " + LOCAL_SLEEP_ID + " int primary key, "
-                + USER_NAME + " int Not Null, "
+                + USER_NAME + " varchar(50) Not Null, "
                 + WEB_SLEEP_ID + " int NULL, "
                 + DATE + " date Not Null, "
                 + TIME + " time Not Null, "
                 + DURATION + " time Not Null, "
                 + QUALITY + " int Not Null, "
                 + NOTES + " varchar(300), "
-                + HEALTH + " varchar(20) " + ");";
+                + HEALTH + " varchar(20) "
+                + UPDATED + " int default 0" +
+                ");";
     }
 
     public static String getTableName(){ return TABLE_SLEEP; }

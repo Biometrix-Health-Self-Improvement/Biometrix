@@ -22,8 +22,9 @@ public class LocalStorageAccessMood {
     private static final int LOCAL_DB_VERSION = 1;
 
     static final String TABLE_NAME = "Mood";
-    static final String UID = "Mood_id";
-
+    static final String LOCAL_MOOD_ID = "LocalMoodID";
+    static final String USER_NAME = "UserName";
+    static final String WEB_MOOD_ID = "WebMoodID";
     static final String DATEL= "DateLong";
     static final String DATES= "DateShort";
     static final String TIME= "Time";
@@ -33,13 +34,19 @@ public class LocalStorageAccessMood {
     static final String ANX = "Anxiety";
     static final String NOTE= "Notes";
 
-    private final static String[] cols = {DATEL, TIME, DEP, ELEV, IRR, ANX, NOTE, DATES};
+    //Updated = Has the field changed from what the webserver has? This has to be an int, so 0 =false 1 =true
+    static final String UPDATED = "Updated";
+
+    private final static String[] cols = {LOCAL_MOOD_ID, USER_NAME, WEB_MOOD_ID, DATEL, TIME, DEP, ELEV, IRR, ANX, NOTE, UPDATED, DATES};
 
     private LocalStorageAccessMood(){}
 
     public static String createTable() {
         //Creates the SQL string to make the SLEEP table
         String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " ( " +
+                LOCAL_MOOD_ID + " int primary key, " +
+                USER_NAME + " varchar(50) Not Null, " +
+                WEB_MOOD_ID + "int Null" +
                 DATEL + " date Not Null, " +
                 DATES + " date Not Null, "+
                 TIME + " time Not null, " +
@@ -47,7 +54,8 @@ public class LocalStorageAccessMood {
                 ELEV + " VARCHAR(50), " +
                 IRR + " VARCHAR(50), " +
                 ANX + " VARCHAR(50), " +
-                NOTE + " varchar(255) " + ");";
+                NOTE + " varchar(255) " +
+                UPDATED + " int default 0" +");";
         return CREATE_TABLE;
     }
 

@@ -12,7 +12,9 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class LocalStorageAccess extends SQLiteOpenHelper {
     protected static final String DATABASE_NAME = "BiometrixLAS";
-    protected static final int DATABASE_VERSION = 3;
+
+    //Incremented to 5. Implemented ID fields for sleep, exercise, and mood. Also implemented, needs update
+    protected static final int DATABASE_VERSION = 5;
     protected static LocalStorageAccess m_instance = null;
 
 

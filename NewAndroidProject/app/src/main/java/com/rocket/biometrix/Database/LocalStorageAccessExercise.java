@@ -13,9 +13,10 @@ public class LocalStorageAccessExercise{
 
     //Strings that represent table and column names in the database for Exercise X
     public static final String TABLE_NAME = "Exercise";
-    public static final String UID = "Exercise_id"; //ID used for primary key
-    //private static final String USER_ID = "not implemented yet, will be in shared preferences";
-    public static final String MODE = "Mode"; //String to for mode which is not implemented yet. Think: Belly fat reduction mode - probably needs laps, won't need weight. Yada yada YODA
+    public static final String LOCAL_EXERCISE_ID = "LocalExerciseID"; //ID used for primary key
+    public static final String USER_NAME = "UserName"; //Username from shared preferences
+    public static final String WEB_EXERCISE_ID = "WebExerciseID";
+    //public static final String MODE = "Mode"; //String to for mode which is not implemented yet. Think: Belly fat reduction mode - probably needs laps, won't need weight. Yada yada YODA
     //Columns
     public static final String TITLE = "Title"; //Title will help co-determine the module mode e.g. Simple mode (yay I walked to the fridge), Gainz mode (weight and reps etc.)
     public static final String TYPE = "Type"; //light, cardio, etc.
@@ -28,8 +29,11 @@ public class LocalStorageAccessExercise{
     public static final String DATE = "DateEx";
     public static final String TIME = "TimeEx";
 
+    //Updated = Has the field changed from what the webserver has? This has to be an int, so 0 =false 1 =true
+    public static final String UPDATED = "Updated";
+
     // All the columns above, see getColumns() below
-    private static final String[] columns = {TITLE, TYPE, MINUTES, REPS, LAPS, WEIGHT, INTY, NOTES, DATE, TIME};
+    private static final String[] columns = {LOCAL_EXERCISE_ID, USER_NAME, WEB_EXERCISE_ID, TITLE, TYPE, MINUTES, REPS, LAPS, WEIGHT, INTY, NOTES, DATE, TIME};
 
     //Later, we'll hopefully get to a shared preferences class that stores BMI and weight information.
 
@@ -38,7 +42,9 @@ public class LocalStorageAccessExercise{
     protected static String createTable() {
         //Some SQL
         String createTableSQL = "CREATE TABLE " + TABLE_NAME +
-                " (" + UID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                " (" + LOCAL_EXERCISE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                USER_NAME + "VARCHAR(50) not null" +
+                WEB_EXERCISE_ID + "INT NULL" +
                 TITLE + " VARCHAR(255), " +
                 TYPE + " VARCHAR(140), " +
                 MINUTES + " TINYINT, " +
@@ -49,6 +55,7 @@ public class LocalStorageAccessExercise{
                 NOTES + " VARCHAR(255), " +
                 DATE + " DATE, " +
                 TIME + " VARCHAR(50)" +
+                UPDATED + " int default 0" +
                 ");";
 
         return createTableSQL;
@@ -62,10 +69,6 @@ public class LocalStorageAccessExercise{
             Log.d("column: ", s);
         }
         return columns;
-    }
-
-    public String getUIDColumn(){
-        return UID;
     }
 
     public static String getTableName(){
