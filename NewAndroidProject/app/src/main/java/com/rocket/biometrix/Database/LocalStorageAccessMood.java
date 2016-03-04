@@ -21,33 +21,39 @@ public class LocalStorageAccessMood {
     private static final String LOCAL_DB_NAME = "BiometrixLocal";
     private static final int LOCAL_DB_VERSION = 1;
 
-    static final String TABLE_NAME = "Mood";
-    static final String UID = "Mood_id";
+    public static final String TABLE_NAME = "Mood";
+    public static final String LOCAL_MOOD_ID = "LocalMoodID";
+    public static final String USER_NAME = "UserName";
+    public static final String WEB_MOOD_ID = "WebMoodID";
+    public static final String DATE= "Date";
+    public static final String TIME= "Time";
+    public static final String DEP = "Depression";
+    public static final String ELEV= "Elevated";
+    public static final String IRR = "Irritable";
+    public static final String ANX = "Anxiety";
+    public static final String NOTE= "Notes";
 
-    static final String DATEL= "DateLong";
-    static final String DATES= "DateShort";
-    static final String TIME= "Time";
-    static final String DEP = "Depression";
-    static final String ELEV= "Elevated";
-    static final String IRR = "Irritable";
-    static final String ANX = "Anxiety";
-    static final String NOTE= "Notes";
+    //Updated = Has the field changed from what the webserver has? This has to be an int, so 0 =false 1 =true
+    public static final String UPDATED = "Updated";
 
-    private final static String[] cols = {DATEL, TIME, DEP, ELEV, IRR, ANX, NOTE, DATES};
+    private final static String[] cols = {LOCAL_MOOD_ID, USER_NAME, WEB_MOOD_ID, DATE, TIME, DEP, ELEV, IRR, ANX, NOTE, UPDATED};
 
     private LocalStorageAccessMood(){}
 
     public static String createTable() {
         //Creates the SQL string to make the SLEEP table
         String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " ( " +
-                DATEL + " date Not Null, " +
-                DATES + " date Not Null, "+
+                LOCAL_MOOD_ID + " int primary key, " +
+                USER_NAME + " varchar(50) Not Null, " +
+                WEB_MOOD_ID + " int Null, " +
+                DATE + " date Not Null, " +
                 TIME + " time Not null, " +
                 DEP + " VARCHAR(50), " +
                 ELEV + " VARCHAR(50), " +
                 IRR + " VARCHAR(50), " +
                 ANX + " VARCHAR(50), " +
-                NOTE + " varchar(255) " + ");";
+                NOTE + " varchar(255), " +
+                UPDATED + " int default 0" +");";
         return CREATE_TABLE;
     }
 
@@ -55,7 +61,7 @@ public class LocalStorageAccessMood {
 
 
     public static void AddEntry(ContentValues cv, Context c){
-        LocalStorageAccess.safeInsert(TABLE_NAME, null, cv);
+        LocalStorageAccess.getInstance(c).safeInsert(TABLE_NAME, null, cv);
     }
 
     public static String[] getColumns(){
@@ -64,9 +70,9 @@ public class LocalStorageAccessMood {
 
 
     public static List<String[]> getEntries(Context c){
-        String query = "Select " + DATEL + ", " + DATES + ", " + TIME + ", " +
+        String query = "Select " + DATE + ", " + TIME + ", " +
                 DEP + ", " + ELEV + ", " + IRR + ", " + ANX + ", " + NOTE +
-                " FROM " + TABLE_NAME + " Order By " + DATES;
+                " FROM " + TABLE_NAME + " Order By " + DATE;
 
 
         SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
@@ -75,23 +81,22 @@ public class LocalStorageAccessMood {
 
         List<String[]> lst = new LinkedList<String[]>();
 
-        String datel, dates, time, dep, elev, irr, anx, note;
+        String date, time, dep, elev, irr, anx, note;
 
         //If there is a valid entry move to it
         if (cursor.moveToFirst()) {
 
             while (!cursor.isAfterLast())
             {
-                datel = cursor.getString(0);
-                dates = cursor.getString(1);
-                time = cursor.getString(2);
-                dep = cursor.getString(3);
-                elev = cursor.getString(4);
-                irr = cursor.getString(5);
-                anx = cursor.getString(6);
-                note = cursor.getString(7);
+                date = cursor.getString(0);
+                time = cursor.getString(1);
+                dep = cursor.getString(2);
+                elev = cursor.getString(3);
+                irr = cursor.getString(4);
+                anx = cursor.getString(5);
+                note = cursor.getString(6);
 
-                String[] data = {datel, dates, time, dep, elev, irr, anx, note};
+                String[] data = {date, time, dep, elev, irr, anx, note};
                 lst.add(data);
 
                 cursor.moveToNext();
