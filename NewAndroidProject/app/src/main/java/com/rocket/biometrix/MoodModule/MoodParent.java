@@ -89,9 +89,9 @@ public class MoodParent extends Fragment {
     private void UpdatePreviousEntries(View v)
     {
         try {
-            LocalStorageAccessMood fileAccess = new LocalStorageAccessMood(v.getContext(),null,null,1);
+            //LocalStorageAccessMood fileAccess = new LocalStorageAccessMood(v.getContext(),null,null,1);
 
-            List<String[]> moodData = fileAccess.getEntries();
+            List<String[]> moodData = LocalStorageAccessMood.getEntries(v.getContext());
 
             displayEntriesLayout.removeAllViews();
 

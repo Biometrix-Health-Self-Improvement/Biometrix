@@ -23,6 +23,7 @@ import com.rocket.biometrix.Common.StringDateTimeConverter;
 import com.rocket.biometrix.Database.AsyncResponse;
 import com.rocket.biometrix.Database.DatabaseConnect;
 import com.rocket.biometrix.Database.DatabaseConnectionTypes;
+import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.Login.LocalAccount;
@@ -359,7 +360,7 @@ public class SleepEntry extends Fragment implements AsyncResponse{
 
     /**
      * Stores the information that was gathered if it is valid and then closes the activity.
-     * @param view The button that made the call to exit the activity
+     //* @param view The button that made the call to exit the activity
      */
     /*public void onDoneClick(View view)
     {
@@ -419,10 +420,10 @@ public class SleepEntry extends Fragment implements AsyncResponse{
 
 
         //Create the object that will update the sleep table
-        LocalStorageAccessSleep sleepSQL = new LocalStorageAccessSleep(context);
+        //LocalStorageAccessSleep sleepSQL = new LocalStorageAccessSleep(context);
 
         //Retrieves column names from the class
-        String[] columnNames = sleepSQL.getColumns();
+        String[] columnNames = LocalStorageAccessSleep.getColumns();
 
 
         if (columnNames.length == sleepEntryData.length)
@@ -433,12 +434,15 @@ public class SleepEntry extends Fragment implements AsyncResponse{
             for (String column : columnNames)
             {
                 //Insert column name ripped from LSA child class, and the user's entry data we gathered above
-                rowToBeInserted.put(column, sleepEntryData[dataIndex]);
+                if(column != "LocalSleepID") {
+                    rowToBeInserted.put(column, sleepEntryData[dataIndex]);
+
+                }
                 dataIndex++;
             }
 
             //Call insert method
-            sleepSQL.insertFromContentValues(rowToBeInserted);
+            LocalStorageAccessSleep.insertFromContentValues(rowToBeInserted);
 
             String jsonToInsert = DatabaseConnect.convertToJSON(rowToBeInserted);
 

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
@@ -96,9 +97,7 @@ public class SleepParent extends Fragment {
      */
     private void UpdatePreviousEntries(View v)
     {
-        /*LocalStorageAccessSleep sleepSQL = new LocalStorageAccessSleep(v.getContext());
-
-        Cursor sleepCursor = sleepSQL.selectAll();
+        Cursor sleepCursor = LocalStorageAccessSleep.selectAll(v.getContext());
 
         displayEntriesLayout.removeAllViews();
 
@@ -121,7 +120,32 @@ public class SleepParent extends Fragment {
             displayEntriesLayout.addView(textView);
         }
 
-        sleepCursor.close();*/
+        sleepCursor.close();
+
+/*
+        try {
+            //LocalStorageAccessMood fileAccess = new LocalStorageAccessMood(v.getContext(),null,null,1);
+
+            List<String[]> moodData = LocalStorageAccessMood.getEntries(v.getContext());
+
+            displayEntriesLayout.removeAllViews();
+
+            for (String[] data : moodData) {
+                TextView textView = new TextView(v.getContext());
+
+                //Creates the string that will be displayed.
+                StringBuilder str = new StringBuilder();
+                str.append(data[1]);
+                str.append("   Depr.: ");
+                str.append(data[3]);
+                str.append("   Elev.: ");
+                str.append(data[4]);
+
+                textView.setText(str);
+                displayEntriesLayout.addView(textView);
+            }
+        } catch (Exception x){}
+    */
     }
 
 

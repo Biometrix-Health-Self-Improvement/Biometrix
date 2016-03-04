@@ -7,9 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 /**
- * Exercise Module's implementation of the SQLite database adapter: LocalStorageAccessBase
+ * Exercise Module's implementation of the SQLite database adapter: LocalStorageAccessBase_OLD
  */
-public class LocalStorageAccessExercise extends LocalStorageAccessBase{
+public class LocalStorageAccessExercise{
 
     //Strings that represent table and column names in the database for Exercise X
     public static final String TABLE_NAME = "Exercise";
@@ -33,14 +33,9 @@ public class LocalStorageAccessExercise extends LocalStorageAccessBase{
 
     //Later, we'll hopefully get to a shared preferences class that stores BMI and weight information.
 
-    public LocalStorageAccessExercise(Context context) {
-        super(context);
-    }
+    public LocalStorageAccessExercise(Context context) {    }
 
-
-    //onCreate in parent will call this.
-    @Override
-    protected String createTable() {
+    protected static String createTable() {
         //Some SQL
         String createTableSQL = "CREATE TABLE " + TABLE_NAME +
                 " (" + UID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -59,30 +54,8 @@ public class LocalStorageAccessExercise extends LocalStorageAccessBase{
         return createTableSQL;
     }
 
-    //Update table on user upgrade
-    protected boolean onUpgradeAlter(SQLiteDatabase db, int oldVersion, int newVersion) {
-        boolean versionDetected = true; //version of db is found in parent class
-
-        //In future, will need to test version to upgrade properly.
-        if (oldVersion < getDBVersion() - 1) {
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-            onCreate(db); //Drop and recreate
-        }
-//        else if (oldVersion < 2) {
-//            db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-//            onCreate(db); //Drop and recreated
-//            //update to appropriate version (e.g. if user has skipped updates)
-//        }
-        else {
-            versionDetected = false;
-        }
-
-        return versionDetected;
-    }
-
 
     //Prints all column names and returns a string array with them in it.
-    @Override
     public String[] getColumns() {
         for (String s : columns) {
             System.out.println(s);
@@ -91,12 +64,11 @@ public class LocalStorageAccessExercise extends LocalStorageAccessBase{
         return columns;
     }
 
-    @Override
     public String getUIDColumn(){
         return UID;
     }
 
-    public String getTableName(){
+    public static String getTableName(){
         return TABLE_NAME;
     }
 
@@ -129,21 +101,15 @@ public class LocalStorageAccessExercise extends LocalStorageAccessBase{
         }
 
         //WHERE THE MAGIC HAPPENS //Table name is a string above "Exercise", columns[1] is just any column that can be null, then we pass in the clean cv
-        safeInsert(TABLE_NAME, columns[1], dataToBeInserted );
+        LocalStorageAccess.safeInsert(TABLE_NAME, columns[1], dataToBeInserted);
+
     }//end insert
 
-    //Return cursor
-    public Cursor selectByDate(String dayte){
-        //Module specific error checking could go here.
-        return super.selectByDate(dayte, TABLE_NAME, DATE);
-    }
 
-    @Override
-    public Cursor selectAllDatabyDateRange(String tablename, String date_col ) {
-        return super.selectAllDatabyDateRange(TABLE_NAME, DATE);
+    //Get all rows that match date YYYY-MM-DD (pass in date to search, then table you are looking at...)
+    public static Cursor selectByDate(String date){
+        return LocalStorageAccess.selectByDate(date, TABLE_NAME, DATE);
     }
-
-    //TODO: Pull from database the exercise table.
 
 
 

@@ -12,7 +12,7 @@ import com.rocket.biometrix.SleepModule.SleepData;
 import java.util.LinkedList;
 import java.util.List;
 
-public class LocalStorageAccessSleep extends LocalStorageAccessBase {
+public class LocalStorageAccessSleep {
 
     //Sleep table and columns
     public static final String TABLE_SLEEP = "Sleep";
@@ -34,55 +34,36 @@ public class LocalStorageAccessSleep extends LocalStorageAccessBase {
 
     private static final String[] columns = {LOCAL_SLEEP_ID, USER_NAME, WEB_SLEEP_ID, DATE, TIME, DURATION, QUALITY, NOTES, HEALTH};
 
-    public LocalStorageAccessSleep(Context context) {
-        super(context);
+    public LocalStorageAccessSleep(Context context){
     }
 
 
-    @Override
-    public String createTable()
+    public static String createTable()
     {
         //Creates the SQL string to make the SLEEP table
         return "CREATE TABLE " + TABLE_SLEEP
                 //Integer primary key gives auto-increment for free
-                + " ( " + LOCAL_SLEEP_ID + " int primary key"
-                + USER_NAME + " int Not Null"
-                + WEB_SLEEP_ID + " int NULL"
-                + DATE + " date Not Null,"
+                + " ( " + LOCAL_SLEEP_ID + " int primary key, "
+                + USER_NAME + " int Not Null, "
+                + WEB_SLEEP_ID + " int NULL, "
+                + DATE + " date Not Null, "
                 + TIME + " time Not Null, "
                 + DURATION + " time Not Null, "
-                + QUALITY + " int Not Null,"
+                + QUALITY + " int Not Null, "
                 + NOTES + " varchar(300), "
                 + HEALTH + " varchar(20) " + ");";
     }
 
-    //Update table on user upgrade
-    protected boolean onUpgradeAlter(SQLiteDatabase db, int oldVersion, int newVersion)
-    {
-        boolean versionDetected = true; //version of db is found in parent class
+    public static String getTableName(){ return TABLE_SLEEP; }
 
-        if (oldVersion < getDBVersion() - 1)
-        {
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_SLEEP);
-            onCreate(db); //Drop and recreate
-        }
-        else
-        {
-            versionDetected = false;
-        }
-
-        return versionDetected;
-    }
 
     //Returns the columns for the table
-    @Override
-    public String[] getColumns()
+    public static String[] getColumns()
     {
         return columns;
     }
 
-    @Override
-    public String getUIDColumn()
+    public static String getUIDColumn()
     {
         return USER_NAME;
     }
@@ -93,33 +74,15 @@ public class LocalStorageAccessSleep extends LocalStorageAccessBase {
      * it is ignored
      * @param cv The content values to insert.
      */
-    public void insertFromContentValues(ContentValues cv)
-    {
-
-        //Real ContentValues that will be passed to the base class' insert method.
-        ContentValues dataToBeInserted = new ContentValues();
-
-        //Loop through every column and plase the content values for that column
-        for (String columnName : getColumns())
-        {
-            if (cv.containsKey(columnName))
-            {
-                //if the key pulled out of the parameter cv is equal to any string inside columns:
-                dataToBeInserted.put(columnName,cv.getAsString(columnName)); //put the key and its value into the new CV
-            }
-            else{
-                Log.d("insertFromContentValues"," Key " + columnName+" not found");
-            }
-        }
-
-        safeInsert(TABLE_SLEEP, columns[1], dataToBeInserted );
+    public static void insertFromContentValues(ContentValues cv) {
+        LocalStorageAccess.safeInsert(TABLE_SLEEP, columns[1], cv);
     }
 
 
 
-    public Cursor selectAll()
+    public static Cursor selectAll(Context c)
     {
-        SQLiteDatabase database = this.getReadableDatabase();
+        SQLiteDatabase database = LocalStorageAccess.getInstance(c).getReadableDatabase();
 
         String username = "default";
 
@@ -130,8 +93,7 @@ public class LocalStorageAccessSleep extends LocalStorageAccessBase {
 
         String[] usernameArgs = {username};
 
-        //return database.query(TABLE_SLEEP, null, "Username = ?", usernameArgs, null, null, DATE);
-        return database.query(LocalStorageAccessExercise.TABLE_NAME, null, null, null, null, null, DATE);
+        return database.query(TABLE_SLEEP, null, "Username = ?", usernameArgs, null, null, DATE);
     }
 
 
