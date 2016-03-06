@@ -121,7 +121,7 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
 
     //About the only Query I can think of that all modules will have in common.
     //These params will be from the module table's classes, with an abstract base class to 'guard' the gate so bad strings don't get sent in to this
-    protected String selectALLasStrings(String tableName, String[] gotColumns, String UIDcol){
+    public String selectALLasStrings(String tableName, String[] gotColumns, String UIDcol){
         SQLiteDatabase db = this.getWritableDatabase(); //Readable?
         String[] columns = gotColumns;
         Cursor cursor = db.query(tableName, columns, null, null, null, null, null);
