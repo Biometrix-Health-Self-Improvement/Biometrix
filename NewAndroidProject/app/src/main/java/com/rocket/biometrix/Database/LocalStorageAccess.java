@@ -68,7 +68,7 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
     //When database version has changed, call the child module implementation of updating the database.
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
-        //For now call onUpgradeAlter. I know this breaks OO principles, but seems like a good solution since the modules tables can be so different, and the whole db has to be updated at once.
+        //NEED to allow specific upgrade version for EACH module because a user can have an old database on a NEWly updated app.
         if (oldVersion < DATABASE_VERSION) {
             dropTables(db);
             onCreate(db); //Drop and recreate
@@ -117,5 +117,30 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
         Cursor cur=db.rawQuery("SELECT * FROM "+tbl+" WHERE "+date_col+ " == "+dayte, null);
 
         return cur;
+    }
+
+    //About the only Query I can think of that all modules will have in common.
+    //These params will be from the module table's classes, with an abstract base class to 'guard' the gate so bad strings don't get sent in to this
+    protected String selectALLasStrings(String tableName, String[] gotColumns, String UIDcol){
+        SQLiteDatabase db = this.getWritableDatabase(); //Readable?
+        String[] columns = gotColumns;
+        Cursor cursor = db.query(tableName, columns, null, null, null, null, null);
+        StringBuffer buf = new StringBuffer();
+
+        while (cursor.moveToNext()){
+            int[] indexArray = new int[columns.length+1];
+            indexArray[0] = cursor.getColumnIndex(UIDcol);
+            int indexesIndex = 0;
+
+            for (String column : columns) {
+                indexArray[indexesIndex] = cursor.getColumnIndex(column);
+                buf.append( column+": "+cursor.getString(indexArray[indexesIndex])+" " );
+                indexesIndex++;
+            }
+
+            int cid = cursor.getInt(indexArray[0]); //cursor id, references rows by their primary key
+        }
+
+        return buf.toString();
     }
 }
