@@ -204,7 +204,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
             } else if (activeFragment.getClass() == ExerciseEntry.class){
                 //TODO: Please implement Callback interface so I'm not forced to conform in a bad way
                 //TODO: let's not be a little bitch about it
-                ((ExerciseEntry) activeFragment).onDoneClick();
+                ((ExerciseEntry) activeFragment).onDoneClick(v);
                 newFragment = new ExerciseParent();
             } else if (activeFragment.getClass() == DietEntry.class){
 

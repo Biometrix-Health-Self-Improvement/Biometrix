@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,11 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.rocket.biometrix.Common.DateTimeSelectorPopulateTextView;
+import com.rocket.biometrix.Database.AsyncResponse;
+import com.rocket.biometrix.Database.DatabaseConnect;
+import com.rocket.biometrix.Database.DatabaseConnectionTypes;
 import com.rocket.biometrix.Database.LocalStorageAccessMood;
+import com.rocket.biometrix.Login.LocalAccount;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -24,7 +29,7 @@ import com.rocket.biometrix.R;
  * Use the {@link MoodEntry#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MoodEntry extends Fragment {
+public class MoodEntry extends Fragment implements AsyncResponse {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -154,13 +159,15 @@ public class MoodEntry extends Fragment {
         rating = (SeekBar) view.findViewById(R.id.moodAnxietyRating);//the rating bar
         rating.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 TextView desc = (TextView) view.findViewById(R.id.moodAnxietyDesc);//description of rating
                 anx = setRatingLabel(desc, progress);
             }
@@ -196,33 +203,49 @@ public class MoodEntry extends Fragment {
     {
         //get date, time, and notes
         String notes= ((TextView)view.findViewById(R.id.moodDetailsEditText)).getText().toString();
-        String dateLong = ((TextView)view.findViewById(R.id.moodCreateEntryDateSelect)).getText().toString();
         String dateShort=((TextView)view.findViewById(R.id.moodCreateEntryDateSelect)).getText().toString().substring(11);
-        StringBuilder str;
 
+        String time = ((TextView)view.findViewById(R.id.moodCreateEntryTimeSelect)).getText().toString().substring(6);
 
-        String time = ((TextView)view.findViewById(R.id.moodCreateEntryTimeSelect)).getText().toString().substring(7);
+        String username = "default";
 
+        if (LocalAccount.isLoggedIn())
+        {
+            username = LocalAccount.GetInstance().GetUsername();
+        }
 
-
-
-        String[] data = new String[]{dateLong, time, dep, elev, irr, anx, notes, dateShort};
+        //Strings in order are LOCAL_MOOD_ID, USER_NAME, WEB_MOOD_ID, DATE, TIME, DEP, ELEV, IRR, ANX, NOTE, UPDATED
+        String[] data = new String[]{null, username, null, dateShort, time, dep, elev, irr, anx, notes, "0"};
 
         Bundle moodBundle = new Bundle();
         moodBundle.putStringArray("moodBundleKey", data);
-        Context context = view.getContext();
 
-        LocalStorageAccessMood strg = new LocalStorageAccessMood(context, null,null,1);
+        //LocalStorageAccessMood strg = new LocalStorageAccessMood(context, null,null,1);
 
-        String[] cols = strg.getColumns();
+        String[] cols = LocalStorageAccessMood.getColumns();
 
         ContentValues row= new ContentValues();
         int dataIndex=0;
         for(String col: cols){
             row.put(col, data[dataIndex++]);
         }
-        strg.AddEntry(row);
+        LocalStorageAccessMood.AddEntry(row, v.getContext());
 
+
+        String jsonToInsert = DatabaseConnect.convertToJSON(row);
+
+        //Trys to insert the user's data
+        try
+        {
+            new DatabaseConnect(this).execute(DatabaseConnectionTypes.INSERT_TABLE_VALUES, jsonToInsert,
+                    LocalAccount.GetInstance().GetToken(),
+                    //"asdf",
+                    DatabaseConnectionTypes.MOOD_TABLE);
+        }
+        catch (NullPointerException except)
+        {
+            //TODO display error if user is not logged in.
+        }
 
     }
 
@@ -242,6 +265,9 @@ public class MoodEntry extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-
+    public void processFinish(String result)
+    {
+        Log.i("", result);
+    }
 
 }

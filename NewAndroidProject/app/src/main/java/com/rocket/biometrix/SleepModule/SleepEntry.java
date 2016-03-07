@@ -23,6 +23,7 @@ import com.rocket.biometrix.Common.StringDateTimeConverter;
 import com.rocket.biometrix.Database.AsyncResponse;
 import com.rocket.biometrix.Database.DatabaseConnect;
 import com.rocket.biometrix.Database.DatabaseConnectionTypes;
+import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.Login.LocalAccount;
@@ -72,6 +73,10 @@ public class SleepEntry extends Fragment implements AsyncResponse{
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    //Sets the minimum and the maximum for sleep quality.
+    private static final int minQuality = 1;
+    private static final int maxQuality = 10;
 
     public SleepEntry() {
         // Required empty public constructor
@@ -175,9 +180,9 @@ public class SleepEntry extends Fragment implements AsyncResponse{
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
                 //Ensures that a quality too low cannot be given
-                if(progress < SleepData.minQuality)
+                if(progress < minQuality)
                 {
-                    qualitySeekBar.setProgress(SleepData.minQuality);
+                    qualitySeekBar.setProgress(minQuality);
                 }
 
                 qualityNumberTextView.setText(Integer.toString(qualitySeekBar.getProgress()));
@@ -275,7 +280,7 @@ public class SleepEntry extends Fragment implements AsyncResponse{
         //Moves listener setups to another function to avoid clutter
         SetupListeners(v);
 
-        qualitySeekBar.setMax(SleepData.maxQuality);
+        qualitySeekBar.setMax(maxQuality);
 
         UpdateEndTimes();
 
@@ -357,35 +362,6 @@ public class SleepEntry extends Fragment implements AsyncResponse{
     }
 
 
-    /**
-     * Stores the information that was gathered if it is valid and then closes the activity.
-     * @param view The button that made the call to exit the activity
-     */
-    /*public void onDoneClick(View view)
-    {
-        LocalStorageAccessSleep fileAccess = new LocalStorageAccessSleep(view.getContext(), null, null, 1);
-
-        String dateText = startDateTextView.getText().toString();
-        String timeText = startTimeTextView.getText().toString();
-        String duration = sleptTimeTextView.getText().toString();
-
-        dateText = dateText.substring(dateText.indexOf(",") + 1).trim();
-        timeText = timeText.substring(timeText.indexOf(":") + 2).trim();
-        duration = duration.substring(duration.indexOf(":") + 2).trim();
-
-        int quality = qualitySeekBar.getProgress();
-
-        String notes = noteTextView.getText().toString();
-        String status = generalHealthSpinner.getSelectedItem().toString();
-
-
-        SleepData sleepData = new SleepData(dateText + " " + timeText, duration, quality, status, notes);
-
-        fileAccess.AddSleepEntry(sleepData);
-
-       // finish();
-    }*/
-
      /*
     * Stores the users data when the done button is clicked
     *
@@ -412,17 +388,17 @@ public class SleepEntry extends Fragment implements AsyncResponse{
         }
 
         //Make string array for all of the above data
-        sleepEntryData = new String[]{"null", username, "null", dateText, timeText, duration, quality.toString(), notes, status };
+        sleepEntryData = new String[]{null, username, null, dateText, timeText, duration, quality.toString(), notes, status, "0" };
 
         Context context = entryView.getContext();
 
 
 
         //Create the object that will update the sleep table
-        LocalStorageAccessSleep sleepSQL = new LocalStorageAccessSleep(context);
+        //LocalStorageAccessSleep sleepSQL = new LocalStorageAccessSleep(context);
 
         //Retrieves column names from the class
-        String[] columnNames = sleepSQL.getColumns();
+        String[] columnNames = LocalStorageAccessSleep.getColumns();
 
 
         if (columnNames.length == sleepEntryData.length)
@@ -433,12 +409,14 @@ public class SleepEntry extends Fragment implements AsyncResponse{
             for (String column : columnNames)
             {
                 //Insert column name ripped from LSA child class, and the user's entry data we gathered above
-                rowToBeInserted.put(column, sleepEntryData[dataIndex]);
+                if(column != LocalStorageAccessSleep.LOCAL_SLEEP_ID) {
+                    rowToBeInserted.put(column, sleepEntryData[dataIndex]);
+                }
                 dataIndex++;
             }
 
             //Call insert method
-            sleepSQL.insertFromContentValues(rowToBeInserted);
+            LocalStorageAccessSleep.insertFromContentValues(rowToBeInserted, v.getContext());
 
             String jsonToInsert = DatabaseConnect.convertToJSON(rowToBeInserted);
 

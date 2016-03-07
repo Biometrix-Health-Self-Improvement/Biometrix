@@ -4,15 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.rocket.biometrix.Login.LocalAccount;
-import com.rocket.biometrix.SleepModule.SleepData;
 
-import java.util.LinkedList;
-import java.util.List;
-
-public class LocalStorageAccessSleep extends LocalStorageAccessBase {
+public class LocalStorageAccessSleep {
 
     //Sleep table and columns
     public static final String TABLE_SLEEP = "Sleep";
@@ -30,59 +25,45 @@ public class LocalStorageAccessSleep extends LocalStorageAccessBase {
     public static final String NOTES = "Notes";
     public static final String HEALTH = "Health";
 
+    //Updated = Has the field changed from what the webserver has? This has to be an int, so 0 =false 1 =true
+    static final String UPDATED = "Updated";
+
     //Exercise Add Entry Table strings
 
-    private static final String[] columns = {LOCAL_SLEEP_ID, USER_NAME, WEB_SLEEP_ID, DATE, TIME, DURATION, QUALITY, NOTES, HEALTH};
+    private static final String[] columns = {LOCAL_SLEEP_ID, USER_NAME, WEB_SLEEP_ID, DATE, TIME, DURATION, QUALITY, NOTES, HEALTH, UPDATED};
 
-    public LocalStorageAccessSleep(Context context) {
-        super(context);
+    public LocalStorageAccessSleep(Context context){
     }
 
 
-    @Override
-    public String createTable()
+    public static String createTable()
     {
         //Creates the SQL string to make the SLEEP table
         return "CREATE TABLE " + TABLE_SLEEP
                 //Integer primary key gives auto-increment for free
-                + " ( " + LOCAL_SLEEP_ID + " int primary key"
-                + USER_NAME + " int Not Null"
-                + WEB_SLEEP_ID + " int NULL"
-                + DATE + " date Not Null,"
+                + " ( " + LOCAL_SLEEP_ID + " int primary key, "
+                + USER_NAME + " varchar(50) Not Null, "
+                + WEB_SLEEP_ID + " int NULL, "
+                + DATE + " date Not Null, "
                 + TIME + " time Not Null, "
                 + DURATION + " time Not Null, "
-                + QUALITY + " int Not Null,"
+                + QUALITY + " int Not Null, "
                 + NOTES + " varchar(300), "
-                + HEALTH + " varchar(20) " + ");";
+                + HEALTH + " varchar(20), "
+                + UPDATED + " int default 0" +
+                ");";
     }
 
-    //Update table on user upgrade
-    protected boolean onUpgradeAlter(SQLiteDatabase db, int oldVersion, int newVersion)
-    {
-        boolean versionDetected = true; //version of db is found in parent class
+    public static String getTableName(){ return TABLE_SLEEP; }
 
-        if (oldVersion < getDBVersion() - 1)
-        {
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_SLEEP);
-            onCreate(db); //Drop and recreate
-        }
-        else
-        {
-            versionDetected = false;
-        }
-
-        return versionDetected;
-    }
 
     //Returns the columns for the table
-    @Override
-    public String[] getColumns()
+    public static String[] getColumns()
     {
         return columns;
     }
 
-    @Override
-    public String getUIDColumn()
+    public static String getUIDColumn()
     {
         return USER_NAME;
     }
@@ -93,33 +74,15 @@ public class LocalStorageAccessSleep extends LocalStorageAccessBase {
      * it is ignored
      * @param cv The content values to insert.
      */
-    public void insertFromContentValues(ContentValues cv)
-    {
-
-        //Real ContentValues that will be passed to the base class' insert method.
-        ContentValues dataToBeInserted = new ContentValues();
-
-        //Loop through every column and plase the content values for that column
-        for (String columnName : getColumns())
-        {
-            if (cv.containsKey(columnName))
-            {
-                //if the key pulled out of the parameter cv is equal to any string inside columns:
-                dataToBeInserted.put(columnName,cv.getAsString(columnName)); //put the key and its value into the new CV
-            }
-            else{
-                Log.d("insertFromContentValues"," Key " + columnName+" not found");
-            }
-        }
-
-        safeInsert(TABLE_SLEEP, columns[1], dataToBeInserted );
+    public static void insertFromContentValues(ContentValues cv, Context c) {
+        LocalStorageAccess.getInstance(c).safeInsert(TABLE_SLEEP, columns[1], cv);
     }
 
 
 
-    public Cursor selectAll()
+    public static Cursor selectAll(Context c)
     {
-        SQLiteDatabase database = this.getReadableDatabase();
+        SQLiteDatabase database = LocalStorageAccess.getInstance(c).getReadableDatabase();
 
         String username = "default";
 
@@ -130,118 +93,7 @@ public class LocalStorageAccessSleep extends LocalStorageAccessBase {
 
         String[] usernameArgs = {username};
 
-        //return database.query(TABLE_SLEEP, null, "Username = ?", usernameArgs, null, null, DATE);
-        return database.query(LocalStorageAccessExercise.TABLE_NAME, null, null, null, null, null, DATE);
+        return database.query(TABLE_SLEEP, null, "Username = ?", usernameArgs, null, null, DATE);
     }
 
-
-    /**
-     * Creates an SQL entry for the passed in sleep data
-     * @param sleepData The data to be stored.
-     */
-/*
-    public void AddSleepEntry(SleepData sleepData)
-    {
-        ContentValues values = new ContentValues();
-        values.put(DATE, sleepData.getStartTime());
-        values.put(DURATION, sleepData.getDuration());
-        values.put(HEALTH, sleepData.getHealthStatus());
-        values.put(QUALITY, sleepData.getSleepQuality());
-        values.put(NOTES, sleepData.getNotes());
-
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        db.insert(TABLE_SLEEP, null, values);
-        db.close();
-    }*/
-
-
-    /**
-     * Returns the top row from the database sleep table
-     * @return Returns a sleepdata object with the information from the database
-     */
-   /* public SleepData GetTopSleepEntry()
-    {
-        //Select Top 1 * From Sleep Order By StartDate
-        String query = "Select * FROM " + TABLE_SLEEP + " Order By " + DATE;
-
-        SQLiteDatabase db = this.getWritableDatabase();
-
-
-        Cursor cursor = db.rawQuery(query, null);
-
-        String date;
-        String duration;
-        int quality;
-        String status;
-        String notes;
-
-        SleepData data = null;
-
-        if (cursor.moveToFirst()) {
-            cursor.moveToFirst();
-            date = cursor.getString(0);
-            duration = cursor.getString(1);
-            quality = cursor.getInt(2);
-            notes = cursor.getString(3);
-            status = cursor.getString(4);
-
-
-            data = new SleepData(date, duration, quality, status, notes);
-        }
-
-        cursor.close();
-
-        db.close();
-        return data;
-    }*/
-
-    /**
-     * Returns the rows from the sleep data table
-     * @return Returns a list of sleepdata objects with the information from the database
-     */
-    /*(public List<SleepData> GetSleepEntries()
-    {
-        String query = "Select " + DATE + ", " + SLEEP_COLUMN_DURATION + ", " +
-                QUALITY + ", " + HEALTH + ", " + NOTES +
-                " FROM " + TABLE_SLEEP + " Order By " + DATE;
-
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        Cursor cursor = db.rawQuery(query, null);
-
-        String date;
-        String duration;
-        int quality;
-        String status;
-        String notes;
-
-        List<SleepData> sleepDataList = new LinkedList<SleepData>();
-        SleepData data = null;
-
-        //If there is a valid entry move to it
-        if (cursor.moveToFirst()) {
-            cursor.moveToFirst();
-
-            while (!cursor.isAfterLast())
-            {
-                date = cursor.getString(0);
-                duration = cursor.getString(1);
-                quality = cursor.getInt(2);
-                status = cursor.getString(3);
-                notes = cursor.getString(4);
-
-                data = new SleepData(date, duration, quality, status, notes);
-                sleepDataList.add(data);
-
-                cursor.moveToNext();
-            }
-        }
-
-        cursor.close();
-
-        db.close();
-
-        return sleepDataList;
-    }*/
 }

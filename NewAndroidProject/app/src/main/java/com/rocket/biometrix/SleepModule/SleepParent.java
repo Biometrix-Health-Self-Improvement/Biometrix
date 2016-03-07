@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
@@ -96,9 +97,7 @@ public class SleepParent extends Fragment {
      */
     private void UpdatePreviousEntries(View v)
     {
-        /*LocalStorageAccessSleep sleepSQL = new LocalStorageAccessSleep(v.getContext());
-
-        Cursor sleepCursor = sleepSQL.selectAll();
+        Cursor sleepCursor = LocalStorageAccessSleep.selectAll(v.getContext());
 
         displayEntriesLayout.removeAllViews();
 
@@ -121,7 +120,8 @@ public class SleepParent extends Fragment {
             displayEntriesLayout.addView(textView);
         }
 
-        sleepCursor.close();*/
+        sleepCursor.close();
+
     }
 
 
