@@ -3,7 +3,6 @@ package com.rocket.biometrix.Database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 /**
@@ -63,7 +62,7 @@ public class LocalStorageAccessExercise{
 
 
     //Prints all column names and returns a string array with them in it.
-    public String[] getColumns() {
+    public static String[] getColumns() {
         for (String s : columns) {
             System.out.println(s);
             Log.d("column: ", s);
@@ -71,9 +70,7 @@ public class LocalStorageAccessExercise{
         return columns;
     }
 
-    public static String getTableName(){
-        return TABLE_NAME;
-    }
+    public static String getTableName() {return TABLE_NAME;}
 
     /**
      * Tests the passed in ContentValues against the private Strings
@@ -114,6 +111,9 @@ public class LocalStorageAccessExercise{
         return LocalStorageAccess.selectByDate(date, TABLE_NAME, DATE);
     }
 
+    public static String selectAllasStrings(){
+        return LocalStorageAccess.selectALLasStrings(TABLE_NAME, getColumns(), LOCAL_EXERCISE_ID );
+    }
 
 
 }
