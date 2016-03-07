@@ -4,11 +4,19 @@
     android:layout_height="match_parent"
     tools:context="com.rocket.biometrix.MoodModule.MoodEntry">
 
+    <ScrollView
+        android:id="@+id/MoodEntryScrollview"
+        style="@style/scrollview_parent_list"
+        android:layout_below="@+id/dividerUpper">
+
+
     <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:baselineAligned="false"
-        android:id="@+id/tableLayout">
+        android:id="@+id/tableLayout"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
 
         <TableRow
             android:layout_width="match_parent"
@@ -184,22 +192,22 @@
             android:layout_height="match_parent"
             android:id="@+id/moodDetailsTableRow">
 
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/moodDetailsEditText"
-                android:layout_weight="1"
-                android:hint="@string/mood_details"
-                android:maxLines="5"
-                android:background="@color/colorBackgroundSecondary" />
         </TableRow>
 
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/moodDetailsEditText"
+            android:hint="@string/mood_details"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:background="@color/colorBackgroundSecondary" />
+
+        <Button
+            style="@style/done_button"
+            android:id="@+id/mood_entry_done_button"
+            android:onClick="EntryDoneOnClick" />
+
     </TableLayout>
-
-    <Button
-        style="@style/done_button"
-        android:id="@+id/mood_entry_done_button"
-        android:onClick="EntryDoneOnClick"
-    />
-
+    </ScrollView>
 </RelativeLayout>

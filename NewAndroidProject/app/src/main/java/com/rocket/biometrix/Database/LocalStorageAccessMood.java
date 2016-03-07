@@ -3,12 +3,7 @@ package com.rocket.biometrix.Database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
-
-import com.rocket.biometrix.SleepModule.SleepData;
 
 import java.util.LinkedList;
 import java.util.List;

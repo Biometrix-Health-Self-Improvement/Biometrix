@@ -4,13 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.rocket.biometrix.Login.LocalAccount;
-import com.rocket.biometrix.SleepModule.SleepData;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public class LocalStorageAccessSleep {
 
@@ -101,114 +96,4 @@ public class LocalStorageAccessSleep {
         return database.query(TABLE_SLEEP, null, "Username = ?", usernameArgs, null, null, DATE);
     }
 
-
-    /**
-     * Creates an SQL entry for the passed in sleep data
-     * @param sleepData The data to be stored.
-     */
-/*
-    public void AddSleepEntry(SleepData sleepData)
-    {
-        ContentValues values = new ContentValues();
-        values.put(DATE, sleepData.getStartTime());
-        values.put(DURATION, sleepData.getDuration());
-        values.put(HEALTH, sleepData.getHealthStatus());
-        values.put(QUALITY, sleepData.getSleepQuality());
-        values.put(NOTES, sleepData.getNotes());
-
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        db.insert(TABLE_SLEEP, null, values);
-        db.close();
-    }*/
-
-
-    /**
-     * Returns the top row from the database sleep table
-     * @return Returns a sleepdata object with the information from the database
-     */
-   /* public SleepData GetTopSleepEntry()
-    {
-        //Select Top 1 * From Sleep Order By StartDate
-        String query = "Select * FROM " + TABLE_SLEEP + " Order By " + DATE;
-
-        SQLiteDatabase db = this.getWritableDatabase();
-
-
-        Cursor cursor = db.rawQuery(query, null);
-
-        String date;
-        String duration;
-        int quality;
-        String status;
-        String notes;
-
-        SleepData data = null;
-
-        if (cursor.moveToFirst()) {
-            cursor.moveToFirst();
-            date = cursor.getString(0);
-            duration = cursor.getString(1);
-            quality = cursor.getInt(2);
-            notes = cursor.getString(3);
-            status = cursor.getString(4);
-
-
-            data = new SleepData(date, duration, quality, status, notes);
-        }
-
-        cursor.close();
-
-        db.close();
-        return data;
-    }*/
-
-    /**
-     * Returns the rows from the sleep data table
-     * @return Returns a list of sleepdata objects with the information from the database
-     */
-    /*(public List<SleepData> GetSleepEntries()
-    {
-        String query = "Select " + DATE + ", " + SLEEP_COLUMN_DURATION + ", " +
-                QUALITY + ", " + HEALTH + ", " + NOTES +
-                " FROM " + TABLE_SLEEP + " Order By " + DATE;
-
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        Cursor cursor = db.rawQuery(query, null);
-
-        String date;
-        String duration;
-        int quality;
-        String status;
-        String notes;
-
-        List<SleepData> sleepDataList = new LinkedList<SleepData>();
-        SleepData data = null;
-
-        //If there is a valid entry move to it
-        if (cursor.moveToFirst()) {
-            cursor.moveToFirst();
-
-            while (!cursor.isAfterLast())
-            {
-                date = cursor.getString(0);
-                duration = cursor.getString(1);
-                quality = cursor.getInt(2);
-                status = cursor.getString(3);
-                notes = cursor.getString(4);
-
-                data = new SleepData(date, duration, quality, status, notes);
-                sleepDataList.add(data);
-
-                cursor.moveToNext();
-            }
-        }
-
-        cursor.close();
-
-        db.close();
-
-        return sleepDataList;
-    }*/
 }
