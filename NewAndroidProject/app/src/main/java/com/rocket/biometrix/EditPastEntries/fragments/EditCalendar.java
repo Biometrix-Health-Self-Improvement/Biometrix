@@ -12,7 +12,6 @@ import android.widget.CalendarView;
 import android.widget.Toast;
 
 import com.rocket.biometrix.Common.StringDateTimeConverter;
-import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.R;
 
@@ -92,8 +91,6 @@ public class EditCalendar extends Fragment {
                 //snipe the day
                 String[] dateSelected = { Integer.toString(year),Integer.toString(month),Integer.toString(dayOfMonth)};
                 String dateSelectedFormatted = StringDateTimeConverter.convertCalDateString(dateSelected);
-
-                //LocalStorageAccessExercise dbEx = new LocalStorageAccessExercise(getActivity());
 
                 //Pass selectByDate() cursor to fill ListView
                 Cursor exercise = LocalStorageAccessExercise.selectByDate(dateSelectedFormatted);
