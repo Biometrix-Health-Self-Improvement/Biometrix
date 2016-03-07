@@ -11,30 +11,57 @@
 
         <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:stretchColumns="0">
+
+            <Switch
+                android:id="@+id/MedicationRefillReminderSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/med_refill_reminder_switch" />
+
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="10dp" />
+
+            <Switch
+                android:id="@+id/MedicationTakeReminderSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/med_take_reminder_switch" />
+
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="10dp" />
 
             <TextView
                 android:id="@+id/MedicationStartDateTextView"
                 android:text="@string/date_prompt"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
 
+            <Space
+                android:layout_width="5dp"
+                android:layout_height="5dp" />
+
             <TextView
                 android:id="@+id/MedicationStarTimeTextView"
                 android:text="@string/time_prompt"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                android:visibility="invisible" />
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
+
+            <Space
+                android:layout_width="25dp"
+                android:layout_height="25dp" />
 
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-
-                <TextView
-                    android:id="@+id/MedicationBrandName"
-                    android:text="@string/med_brand"
-                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
 
                 <EditText
                     android:id="@+id/MedicationEditBrandName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/med_brand"
+                    android:textAlignment="center"
                     android:maxLength="50"
                     android:maxLines="1"
                     android:singleLine="true" />
@@ -44,17 +71,69 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <TextView
-                    android:id="@+id/PrescriberName_View"
-                    android:text="@string/med_prescriber"
-                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
-
                 <EditText
                     android:id="@+id/MedicationPrescriberName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/med_prescriber"
+                    android:textAlignment="center"
                     android:maxLength="50"
                     android:maxLines="1"
                     android:singleLine="true" />
             </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/MedicationInstructionEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/med_Consumption"
+                    android:textAlignment="center"
+                    android:maxLength="50"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+            </TableRow>
+
+            <LinearLayout android:layout_height="50dp">
+
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/MedicationPillAmountSpinner"
+                    android:spinnerMode="dropdown"
+                    android:entries="@array/pill_amount"
+                    android:hint="@string/med_pill_amount" />
+
+                <Spinner
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:id="@+id/MedicationTimesDailySpinner"
+                    android:spinnerMode="dropdown"
+                    android:entries="@array/times_daily"
+                    android:hint="@string/med_times_daily" />
+            </LinearLayout>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/MedicationWarningsEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/med_Warnings"
+                    android:textAlignment="center"
+                    android:maxLength="50"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
 
             <EditText
                 android:id="@+id/medicationDetailsEditText"
@@ -68,6 +147,7 @@
             <Button
                 android:id="@+id/medicaiton_entry_done_button"
                 style="@style/done_button" />
+
         </TableLayout>
     </ScrollView>
 
