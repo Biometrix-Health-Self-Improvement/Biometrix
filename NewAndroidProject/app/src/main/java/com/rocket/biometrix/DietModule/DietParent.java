@@ -3,12 +3,19 @@ package com.rocket.biometrix.DietModule;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.rocket.biometrix.Database.LocalStorageAccessDiet;
+import com.rocket.biometrix.Database.LocalStorageAccessMood;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,6 +34,7 @@ public class DietParent extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private LinearLayout displayEntriesLayout;
 
     public DietParent() {
         // Required empty public constructor
@@ -70,8 +78,10 @@ public class DietParent extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_diet_parent, container, false);
+        View v = inflater.inflate(R.layout.fragment_diet_parent, container, false);
+        displayEntriesLayout = (LinearLayout)v.findViewById(R.id.pastDietEntries);
+        UpdatePreviousEntries(v);
+        return v;
     }
 
     /**
@@ -86,5 +96,34 @@ public class DietParent extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
+    }
+
+    private void UpdatePreviousEntries(View v)
+    {
+        try {
+            //LocalStorageAccessMood fileAccess = new LocalStorageAccessMood(v.getContext(),null,null,1);
+
+            List<String[]> dietData = LocalStorageAccessDiet.getEntries(v.getContext());
+
+            displayEntriesLayout.removeAllViews();
+
+            for (String[] data : dietData) {
+                TextView textView = new TextView(v.getContext());
+
+                //Creates the string that will be displayed.
+                StringBuilder str = new StringBuilder();
+                str.append(data[0]);
+                str.append(" - ");
+                str.append(data[1]);
+                str.append(" - Calories: ");
+                str.append(data[2]);
+
+                textView.setText(str);
+                displayEntriesLayout.addView(textView);
+            }
+        } catch (Exception e)
+        {
+            Log.i("", e.toString() );
+        }
     }
 }

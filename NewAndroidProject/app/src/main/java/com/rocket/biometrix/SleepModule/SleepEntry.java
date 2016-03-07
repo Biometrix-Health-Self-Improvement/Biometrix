@@ -64,8 +64,6 @@ public class SleepEntry extends Fragment implements AsyncResponse{
 
     private TextView noteTextView;
 
-    String[] sleepEntryData = {};
-
     private View entryView;
 
 
@@ -388,14 +386,7 @@ public class SleepEntry extends Fragment implements AsyncResponse{
         }
 
         //Make string array for all of the above data
-        sleepEntryData = new String[]{null, username, null, dateText, timeText, duration, quality.toString(), notes, status, "0" };
-
-        Context context = entryView.getContext();
-
-
-
-        //Create the object that will update the sleep table
-        //LocalStorageAccessSleep sleepSQL = new LocalStorageAccessSleep(context);
+        String[] sleepEntryData = {null, username, null, dateText, timeText, duration, quality.toString(), notes, status, "0" };
 
         //Retrieves column names from the class
         String[] columnNames = LocalStorageAccessSleep.getColumns();
