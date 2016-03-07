@@ -11,6 +11,4 @@ package com.rocket.biometrix.EditPastEntries;
  */
 public class CursorHelper {
     //TODO: Research best practices for managing fragments; and passing bundles of complex data structures through frag args
-
-
 }

@@ -111,11 +111,6 @@ public class LocalStorageAccessExercise{
         return LocalStorageAccess.selectByDate(date, TABLE_NAME, DATE);
     }
 
-    public static Cursor selectAllDatabyDateRange(String startDate, String endDate){
-
-        return LocalStorageAccess.selectAllDatabyDateRange(TABLE_NAME, DATE, startDate, endDate);
-    }
-
     public static String selectAllasStrings(){
         return LocalStorageAccess.selectALLasStrings(TABLE_NAME, getColumns(), LOCAL_EXERCISE_ID );
     }
