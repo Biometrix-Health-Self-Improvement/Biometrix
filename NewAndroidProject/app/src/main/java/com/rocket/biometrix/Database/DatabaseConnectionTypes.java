@@ -3,7 +3,7 @@ package com.rocket.biometrix.Database;
 /**
  * Created by Troy Riblett, troy.riblett@oit.edu
  * DatabaseConnectionTypes
- * This class is a container class to test which type of operation should be performed by the
+ * This class is a container class to choose which type of operation should be performed by the
  * database
  */
 public final class DatabaseConnectionTypes
@@ -20,6 +20,8 @@ public final class DatabaseConnectionTypes
     public static final String EXERCISE_TABLE = "Exercise";
     public static final String SLEEP_TABLE = "Sleep";
     public static final String MOOD_TABLE = "Mood";
+    public static final String DIET_TABLE = "Diet";
+    public static final String MEDICATION_TABLE = "Medication";
 
     private DatabaseConnectionTypes() {}
 }
