@@ -102,7 +102,15 @@ public class DatabaseConnect extends AsyncTask<String, Void, Void>
                 //Inserting a row into a table requires the params (as json), the user's token
                 //And the table to insert into. This determines which stored procedure is called.
                 case DatabaseConnectionTypes.INSERT_TABLE_VALUES:
-                    db_operation = "Insert";
+                case DatabaseConnectionTypes.UPDATE_TABLE_VALUES:
+                    if(params[0] == DatabaseConnectionTypes.INSERT_TABLE_VALUES)
+                    {
+                        db_operation = "Insert";
+                    }
+                    else
+                    {
+                        db_operation = "Update";
+                    }
                     jsonParam.put("Params", params[1]);
                     jsonParam.put("Token", params[2]);
                     jsonParam.put("Table", params[3]);
