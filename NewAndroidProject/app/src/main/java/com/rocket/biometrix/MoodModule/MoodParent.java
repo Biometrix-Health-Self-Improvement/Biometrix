@@ -10,10 +10,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.rocket.biometrix.Database.LocalStorageAccessMood;
-import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
-import com.rocket.biometrix.SleepModule.SleepData;
 
 import java.util.List;
 
