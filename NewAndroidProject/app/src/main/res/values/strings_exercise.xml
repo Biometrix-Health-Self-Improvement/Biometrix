@@ -3,7 +3,7 @@
 
     <!--Exercise Module Strings-->
     <string name="newEntryButton">+ Add Exercise</string>
-
+    <string name="exerciseDetails">Enter notes...</string>
     <!--Add New Entry Styling-->
     <string name="ex_time">Minutes:</string>
     <string name="ex_prompt">How many minutes Exercised? :)</string>

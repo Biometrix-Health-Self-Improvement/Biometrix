@@ -2,177 +2,166 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rocket.biometrix.ExerciseModule.ExerciseEntry"
-                android:onClick="EntryDoneOnClick">
+    android:onClick="EntryDoneOnClick"
+    tools:context="com.rocket.biometrix.ExerciseModule.ExerciseEntry">
 
+    <ScrollView
+        android:id="@+id/ExerciseEntryScrollview"
+        style="@style/scrollview_parent_list"
+        android:layout_below="@+id/dividerUpper">
 
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-        android:text="@string/date_prompt"
-        android:layout_marginBottom="4dp"
-        android:id="@+id/ex_tv_date"
-        />
+            <TextView
+                android:id="@+id/ex_tv_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/date_prompt"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
 
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="10dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-        android:layout_below="@id/ex_tv_date"
-        android:text="@string/time_prompt"
-        android:layout_marginBottom="8dp"
-        android:id="@+id/ex_tv_time"
-         />
+            <TextView
+                android:id="@+id/ex_tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="@string/time_prompt"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
 
+            <EditText
+                android:id="@+id/ex_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:gravity="start"
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:text="@string/ex_et_title"
-        android:id="@+id/ex_title"
-        android:gravity="start"
+                android:hint="@string/ex_ex_name"
+                android:inputType="textPersonName"
+                android:text="@string/ex_et_title"
+                android:textAlignment="center" />
 
-        android:layout_marginBottom="20dp"
-        android:layout_below="@id/ex_tv_time"
-        android:hint="@string/ex_ex_name"
-        android:textAlignment="center" />
+            <TableRow>
 
+                <TextView
+                    android:id="@+id/ex_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/ex_time"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
 
+                <Spinner
+                    android:id="@+id/ex_min_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:gravity="start"
+                    android:minWidth="60dp"
+                    android:prompt="@string/ex_prompt" />
+            </TableRow>
 
-    <TextView
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/ex_time"
-        android:layout_below="@id/ex_title"
-        android:id="@+id/ex_time"
-        />
+                <RadioGroup
+                    android:id="@+id/ex_radioGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_gravity="start"
+                    android:orientation="horizontal">
 
+                    <RadioButton
+                        android:id="@+id/ex_rb_a"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ex_rb_a_t" />
 
-    <Spinner
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:minWidth="60dp"
-        android:id="@+id/ex_min_spinner"
-        android:focusable="false"
-        android:layout_marginLeft="8dp"
-        android:layout_toEndOf="@id/ex_time"
-        android:layout_below="@id/ex_title"
-        android:focusableInTouchMode="false"
-        android:gravity="start"
-        android:prompt="@string/ex_prompt"
-        />
+                    <RadioButton
+                        android:id="@+id/ex_rb_b"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ex_rb_b_t" />
 
+                    <RadioButton
+                        android:id="@+id/ex_rb_c"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ex_rb_c_t" />
 
-    <RadioGroup
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_gravity="start"
-        android:layout_below="@id/ex_time"
-        android:orientation="horizontal"
-        android:layout_marginTop="25dp"
-        android:id="@+id/ex_radioGroup">
+                    <RadioButton
+                        android:id="@+id/ex_rb_d"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/ex_rb_d_t" />
+                </RadioGroup>
 
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/ex_rb_a_t"
-            android:id="@+id/ex_rb_a" />
+            <TableRow>
 
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/ex_rb_b_t"
-            android:id="@+id/ex_rb_b" />
+                <TextView
+                    android:id="@+id/ex_t_rep"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ex_reps"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/ex_rb_c_t"
-            android:id="@+id/ex_rb_c" />
+                <EditText
+                    android:id="@+id/ex_et_reps"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+            </TableRow>
 
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/ex_rb_d_t"
-            android:id="@+id/ex_rb_d" />
-    </RadioGroup>
+            <TableRow>
 
+                <TextView
+                    android:id="@+id/ex_t_weight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ex_weight"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/ex_reps"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/ex_t_rep"
-        android:layout_below="@id/ex_radioGroup"
-        android:layout_marginTop="20dp"
-        android:layout_alignParentStart="false"
+                <EditText
+                    android:id="@+id/ex_et_weight"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+            </TableRow>
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
 
+                <CheckBox
+                    android:id="@+id/ex_cb_plan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ex_plan"
+                    android:textSize="16sp" />
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
 
-       />
+            <EditText
+                android:id="@+id/ex_notes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/colorBackgroundSecondary"
+                android:hint="@string/exerciseDetails"
+                android:maxLines="1"
+                android:singleLine="true" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/ex_weight"
-        android:layout_below="@id/ex_t_rep"
-        android:layout_marginTop="20dp"
-        android:id="@+id/ex_t_weight"
+            <Button
+                android:id="@+id/ex_entry_done_button"
+                style="@style/done_button"
+                android:onClick="EntryDoneOnClick" />
 
-
-        />
-
-    <EditText
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/ex_et_reps"
-        android:inputType="number"
-        android:text="@string/ex_et_reps"
-        android:layout_below="@id/ex_radioGroup"
-        android:layout_toEndOf="@id/ex_t_rep"
-        />
-
-    <EditText
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:id="@+id/ex_et_weight"
-        android:text="@string/ex_et_weight"
-        android:singleLine="true"
-        android:layout_below="@id/ex_et_reps"
-        android:layout_toEndOf="@id/ex_t_weight" />
-
-
-
-    <Button
-        style="@style/done_button"
-        android:id="@+id/ex_entry_done_button"
-        android:onClick="EntryDoneOnClick"
-        />
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/ex_plan"
-        android:id="@+id/ex_cb_plan"
-        android:layout_centerHorizontal="true"
-        android:layout_above="@id/ex_entry_done_button"
-        android:textSize="16sp" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/ex_notes"
-        android:hint="@string/mood_details"
-        android:layout_above="@id/ex_cb_plan"
-        android:layout_marginBottom="20dp"
-        android:maxLines="5"
-        android:background="@color/colorBackgroundSecondary" />
-
-
+        </TableLayout>
+    </ScrollView>
 </RelativeLayout>
