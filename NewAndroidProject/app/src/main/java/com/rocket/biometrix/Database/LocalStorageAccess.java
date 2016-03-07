@@ -7,8 +7,13 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 /**
- * Created by tannalynn on 3/3/2016.
+ * Created by alder on 3/3/2016.
  */
 public class LocalStorageAccess extends SQLiteOpenHelper {
     protected static final String DATABASE_NAME = "BiometrixLAS";
@@ -142,4 +147,46 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
 
         return buf.toString();
     }
+
+    //Give clean date strings in form YYYY-MM-DD (see StringDateTimeConverter Class) as parameters;
+    //Returns Cursor of rows, (see EditPastEntries)
+    public static Cursor selectAllDatabyDateRange(String tablename, String date_col, String startDate, String endDate){
+
+        SQLiteDatabase db=m_instance.getReadableDatabase();
+        Cursor cur=db.rawQuery("SELECT * FROM " + tablename + " WHERE " + date_col
+                + " >= " + startDate + " AND " + date_col + " <= " + endDate, null);
+
+        return cur;
+    }
+
+    //Query out all data related to a range of dates, default version
+    public static Cursor selectAllDatabyDateRange(String tablename, String date_col){
+
+        Date today = new Date();
+        Calendar cal = new GregorianCalendar();
+        String startDate; //default to 90 days
+        String endDate; //default to week from now
+
+
+        //Start 90 days back; see business rules
+        cal.setTime(today);
+        cal.add(Calendar.DAY_OF_MONTH, -90);
+        Date today90 = cal.getTime();
+        startDate = new SimpleDateFormat("YYYY-MM-DD").format(today90);
+
+
+        //One week into the future
+        cal.setTime(today);
+        cal.add(Calendar.DAY_OF_MONTH, 7);
+        Date nextWeek = cal.getTime();
+        endDate = new SimpleDateFormat("YYYY-MM-DD").format(nextWeek);
+
+
+        SQLiteDatabase db=m_instance.getReadableDatabase();
+        Cursor cur=db.rawQuery("SELECT * FROM " + tablename + " WHERE " + date_col
+                + " >= " + startDate + " AND " + date_col + " <= " + endDate, null);
+
+        return cur;
+    }
+
 }

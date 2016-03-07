@@ -74,6 +74,10 @@ public class SleepEntry extends Fragment implements AsyncResponse{
 
     private OnFragmentInteractionListener mListener;
 
+    //Sets the minimum and the maximum for sleep quality.
+    private static final int minQuality = 1;
+    private static final int maxQuality = 10;
+
     public SleepEntry() {
         // Required empty public constructor
     }
@@ -176,9 +180,9 @@ public class SleepEntry extends Fragment implements AsyncResponse{
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
                 //Ensures that a quality too low cannot be given
-                if(progress < SleepData.minQuality)
+                if(progress < minQuality)
                 {
-                    qualitySeekBar.setProgress(SleepData.minQuality);
+                    qualitySeekBar.setProgress(minQuality);
                 }
 
                 qualityNumberTextView.setText(Integer.toString(qualitySeekBar.getProgress()));
@@ -276,7 +280,7 @@ public class SleepEntry extends Fragment implements AsyncResponse{
         //Moves listener setups to another function to avoid clutter
         SetupListeners(v);
 
-        qualitySeekBar.setMax(SleepData.maxQuality);
+        qualitySeekBar.setMax(maxQuality);
 
         UpdateEndTimes();
 

@@ -1,13 +1,15 @@
 package com.rocket.biometrix;
 
+import android.app.Fragment;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
-import com.rocket.biometrix.R;
+import com.rocket.biometrix.EditPastEntries.EditPastActivity;
 
 
 /**
@@ -70,9 +72,23 @@ public class HomeScreen extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        final View v = inflater.inflate(R.layout.fragment_home_screen, container, false);
 
-        return inflater.inflate(R.layout.fragment_home_screen, container, false);
+        final Button btnEdit = (Button) v.findViewById(R.id.home_edit);
+        btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(),EditPastActivity.class);
+
+                //Future extensibility:
+                //intent.putExtra("NavBar Fragment Stack",fraggle);
+                startActivity(intent);
+            }
+        });
+
+        return v;
     }
+
 
     /**
      * This interface must be implemented by activities that contain this
