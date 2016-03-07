@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="med_notes">Enter notes...</string>
-    <string name="med_brand">Brand Name: </string>
-    <string name="med_prescriber">Prescriber\'s Name: </string>
+    <string name="med_brand">Brand Name</string>
+    <string name="med_prescriber">Prescriber\'s Name</string>
+    <string name="med_refill_reminder_switch">Refill Reminder</string>
+    <string name="med_take_reminder_switch">Medication Use Reminder</string>
+    <string name="med_Consumption">Consumption Instructions</string>
+    <string name="med_Warnings">Consumption Warnings</string>
+
+    <string name="med_pill_amount">Amount of Pills Per Day</string>
+    <string-array name="pill_amount">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    <string name="med_times_daily">Number of Times Per Day</string>
+    <string-array name="times_daily">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
 </resources>
