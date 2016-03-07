@@ -169,6 +169,11 @@ public class DietEntry extends Fragment implements AsyncResponse {
 
             String jsonToInsert = DatabaseConnect.convertToJSON(rowToBeInserted);
 
+            int id = LocalStorageAccessDiet.GetLastID(v.getContext());
+
+            rowToBeInserted.put(LocalStorageAccessDiet.LOCAL_DIET_ID, id);
+            rowToBeInserted.remove(LocalStorageAccessDiet.USER_NAME);
+
             //Trys to insert the user's data
             try
             {

@@ -3,7 +3,11 @@ package com.rocket.biometrix.Database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Exercise Module's implementation of the SQLite database adapter: LocalStorageAccessBase_OLD
@@ -41,7 +45,7 @@ public class LocalStorageAccessExercise{
     protected static String createTable() {
         //Some SQL
         String createTableSQL = "CREATE TABLE " + TABLE_NAME +
-                " (" + LOCAL_EXERCISE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                " (" + LOCAL_EXERCISE_ID + " INTEGER PRIMARY KEY , " +
                 USER_NAME + " VARCHAR(50) not null, " +
                 WEB_EXERCISE_ID + " INT NULL, " +
                 TITLE + " VARCHAR(255), " +
@@ -71,6 +75,17 @@ public class LocalStorageAccessExercise{
     }
 
     public static String getTableName() {return TABLE_NAME;}
+
+    /**
+     * Makes a call to the base class with the needed parameters to pull out the last primary key
+     * entered
+     * @param c
+     * @return The integer value of the last primary key entered.
+     */
+    public static int GetLastID(Context c)
+    {
+        return LocalStorageAccess.getInstance(c).GetLastID(c, LOCAL_EXERCISE_ID, TABLE_NAME);
+    }
 
     /**
      * Tests the passed in ContentValues against the private Strings
@@ -117,8 +132,41 @@ public class LocalStorageAccessExercise{
     }
 
     public static String selectAllasStrings(){
-        return LocalStorageAccess.selectALLasStrings(TABLE_NAME, getColumns(), LOCAL_EXERCISE_ID );
+        return LocalStorageAccess.selectALLasStrings(TABLE_NAME, getColumns(), LOCAL_EXERCISE_ID);
     }
 
+    public static List<String[]> getEntries(Context c){
+        String query = "Select " + DATE + ", " + TIME + ", " +
+               TITLE  + ", " + TYPE  +
+                " FROM " + TABLE_NAME + " Order By " + DATE;
 
+
+        SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        List<String[]> lst = new LinkedList<String[]>();
+
+        String date, time, title, type;
+
+        //If there is a valid entry move to it
+        if (cursor.moveToFirst()) {
+
+            while (!cursor.isAfterLast())
+            {
+                date = cursor.getString(0);
+                time = cursor.getString(1);
+                title = cursor.getString(2);
+                type = cursor.getString(3);
+
+                String[] data = {date, time, title, type};
+                lst.add(data);
+
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+        db.close();
+        return lst;
+    }
 }

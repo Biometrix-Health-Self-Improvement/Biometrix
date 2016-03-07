@@ -38,7 +38,7 @@ public class LocalStorageAccessMood {
     public static String createTable() {
         //Creates the SQL string to make the SLEEP table
         String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " ( " +
-                LOCAL_MOOD_ID + " int primary key, " +
+                LOCAL_MOOD_ID + " integer primary key, " +
                 USER_NAME + " varchar(50) Not Null, " +
                 WEB_MOOD_ID + " int Null, " +
                 DATE + " date Not Null, " +
@@ -63,6 +63,16 @@ public class LocalStorageAccessMood {
         return cols;
     }
 
+    /**
+     * Makes a call to the base class with the needed parameters to pull out the last primary key
+     * entered
+     * @param c
+     * @return The integer value of the last primary key entered.
+     */
+    public static int GetLastID(Context c)
+    {
+        return LocalStorageAccess.getInstance(c).GetLastID(c, LOCAL_MOOD_ID, TABLE_NAME);
+    }
 
     public static List<String[]> getEntries(Context c){
         String query = "Select " + DATE + ", " + TIME + ", " +

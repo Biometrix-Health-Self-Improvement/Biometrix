@@ -58,7 +58,7 @@ public class LocalStorageAccessDiet {
         StringBuilder tableSQL = new StringBuilder();
 
         tableSQL.append("CREATE TABLE " + TABLE_NAME + " ( " +
-                LOCAL_DIET_ID + " int primary key, " +
+                LOCAL_DIET_ID + " integer primary key, " +
                 USER_NAME + " varchar(50) Not Null, " +
                 WEB_DIET_ID + " int Null, " +
                 DATE + " date Not Null, " +
@@ -78,6 +78,17 @@ public class LocalStorageAccessDiet {
     }
 
     public static String getTableName() {return  TABLE_NAME;}
+
+    /**
+     * Makes a call to the base class with the needed parameters to pull out the last primary key
+     * entered
+     * @param c
+     * @return The integer value of the last primary key entered.
+     */
+    public static int GetLastID(Context c)
+    {
+        return LocalStorageAccess.getInstance(c).GetLastID(c, LOCAL_DIET_ID, TABLE_NAME);
+    }
 
     public static String[] getColumns(){
         return cols;

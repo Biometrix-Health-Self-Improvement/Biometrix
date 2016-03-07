@@ -20,7 +20,8 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
 
     //Incremented to 4. Implemented ID fields for sleep, exercise, and mood. Also implemented, needs update
     //Incremented to 5. Diet Table added
-    protected static final int DATABASE_VERSION = 5;
+    //Incremented to 6. To autoincrement, the primary key must say integer, not int
+    protected static final int DATABASE_VERSION = 6;
     protected static LocalStorageAccess m_instance = null;
 
 
@@ -79,6 +80,32 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
             dropTables(db);
             onCreate(db); //Drop and recreate
         }
+    }
+
+    /**
+     * Retrieves the largest of the primary key fields and returns it as an int
+     * @param c
+     * @param idField
+     * @param tableName
+     * @return
+     */
+    public int GetLastID(Context c, String idField, String tableName)
+    {
+        String query = "Select " + idField +
+                " FROM " + tableName + " Order By " + idField + " DESC LIMIT 1";
+
+        SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        int id = 0;
+
+        if (cursor.moveToFirst())
+        {
+            id = cursor.getInt(0);
+        }
+
+        return id;
     }
 
     protected long safeInsert(String tablename, String nullColumn, ContentValues columnsAndValues){

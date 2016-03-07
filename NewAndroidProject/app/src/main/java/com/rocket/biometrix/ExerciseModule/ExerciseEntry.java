@@ -266,6 +266,11 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
             //Call insert method
             dbEx.insertFromContentValues(rowToBeInserted, v.getContext());
 
+            int id = LocalStorageAccessExercise.GetLastID(v.getContext());
+
+            rowToBeInserted.put(LocalStorageAccessExercise.LOCAL_EXERCISE_ID, id);
+            rowToBeInserted.remove(LocalStorageAccessExercise.USER_NAME);
+
             String jsonToInsert = DatabaseConnect.convertToJSON(rowToBeInserted);
 
             //Trys to insert the user's data

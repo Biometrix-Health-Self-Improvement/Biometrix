@@ -16,7 +16,7 @@
         />
 
     <ScrollView style="@style/scrollview_parent_list"
-        android:id="@+id/sleepDisplayEntriesScrollView"
+        android:id="@+id/exerciseDisplayEntriesScrollView"
         android:layout_below="@+id/dividerUpper" >
 
         <LinearLayout
