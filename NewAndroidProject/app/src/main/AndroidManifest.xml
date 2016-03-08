@@ -20,9 +20,8 @@
         </activity>
         <activity
             android:name=".EditPastEntries.EditPastActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_edit_past"
-            android:theme="@style/FullscreenTheme">
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>
 
