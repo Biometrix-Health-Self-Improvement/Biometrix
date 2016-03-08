@@ -6,9 +6,14 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,6 +31,7 @@ public class ExerciseParent extends Fragment {
 
     private String mParam1;
     private String mParam2;
+    private LinearLayout displayEntriesLayout;
 
     private OnFragmentInteractionListener mListener;
 
@@ -70,8 +76,11 @@ public class ExerciseParent extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_exercise_parent, container, false);
+        displayEntriesLayout = (LinearLayout) v.findViewById(R.id.exerciseDisplayEntriesLinearLayout);
+        UpdatePreviousEntries(v);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_exercise_parent, container, false);
+        return v;
     }
 
 
@@ -87,5 +96,34 @@ public class ExerciseParent extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
+    }
+
+    private void UpdatePreviousEntries(View v) {
+        try {
+            //LocalStorageAccessMood fileAccess = new LocalStorageAccessMood(v.getContext(),null,null,1);
+
+            List<String[]> exerciseData = LocalStorageAccessExercise.getEntries(v.getContext());
+
+            displayEntriesLayout.removeAllViews();
+
+            for (String[] data : exerciseData) {
+                TextView textView = new TextView(v.getContext());
+
+                //Creates the string that will be displayed.
+                StringBuilder str = new StringBuilder();
+                str.append(data[0]);
+                str.append(" ");
+                str.append(data[1]);
+                str.append(" - ");
+                str.append(data[2]);
+                str.append(" ");
+                str.append(data[3]);
+
+                textView.setText(str);
+                displayEntriesLayout.addView(textView);
+            }
+        } catch (Exception x) {
+        }
+
     }
 }

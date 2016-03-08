@@ -64,8 +64,6 @@ public class SleepEntry extends Fragment implements AsyncResponse{
 
     private TextView noteTextView;
 
-    String[] sleepEntryData = {};
-
     private View entryView;
 
 
@@ -388,14 +386,7 @@ public class SleepEntry extends Fragment implements AsyncResponse{
         }
 
         //Make string array for all of the above data
-        sleepEntryData = new String[]{null, username, null, dateText, timeText, duration, quality.toString(), notes, status, "0" };
-
-        Context context = entryView.getContext();
-
-
-
-        //Create the object that will update the sleep table
-        //LocalStorageAccessSleep sleepSQL = new LocalStorageAccessSleep(context);
+        String[] sleepEntryData = {null, username, null, dateText, timeText, duration, quality.toString(), notes, status, "0" };
 
         //Retrieves column names from the class
         String[] columnNames = LocalStorageAccessSleep.getColumns();
@@ -417,6 +408,11 @@ public class SleepEntry extends Fragment implements AsyncResponse{
 
             //Call insert method
             LocalStorageAccessSleep.insertFromContentValues(rowToBeInserted, v.getContext());
+
+            int id = LocalStorageAccessSleep.GetLastID(v.getContext());
+
+            rowToBeInserted.put(LocalStorageAccessSleep.LOCAL_SLEEP_ID, id);
+            rowToBeInserted.remove(LocalStorageAccessSleep.USER_NAME);
 
             String jsonToInsert = DatabaseConnect.convertToJSON(rowToBeInserted);
 

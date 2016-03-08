@@ -10,7 +10,7 @@ import com.rocket.biometrix.Login.LocalAccount;
 public class LocalStorageAccessSleep {
 
     //Sleep table and columns
-    public static final String TABLE_SLEEP = "Sleep";
+    public static final String TABLE_NAME = "Sleep";
     public static final String USER_NAME = "UserName";
 
     //The local sleep ID is a unique identifier for each entry on the local datbase
@@ -39,9 +39,9 @@ public class LocalStorageAccessSleep {
     public static String createTable()
     {
         //Creates the SQL string to make the SLEEP table
-        return "CREATE TABLE " + TABLE_SLEEP
-                //Integer primary key gives auto-increment for free
-                + " ( " + LOCAL_SLEEP_ID + " int primary key, "
+        return "CREATE TABLE " + TABLE_NAME
+                //Integer primary key gives auto-increment for free, but it must be "integer" not int
+                + " ( " + LOCAL_SLEEP_ID + " integer primary key, "
                 + USER_NAME + " varchar(50) Not Null, "
                 + WEB_SLEEP_ID + " int NULL, "
                 + DATE + " date Not Null, "
@@ -54,8 +54,18 @@ public class LocalStorageAccessSleep {
                 ");";
     }
 
-    public static String getTableName(){ return TABLE_SLEEP; }
+    public static String getTableName(){ return TABLE_NAME; }
 
+    /**
+     * Makes a call to the base class with the needed parameters to pull out the last primary key
+     * entered
+     * @param c
+     * @return The integer value of the last primary key entered.
+     */
+    public static int GetLastID(Context c)
+    {
+        return LocalStorageAccess.getInstance(c).GetLastID(c, LOCAL_SLEEP_ID, TABLE_NAME);
+    }
 
     //Returns the columns for the table
     public static String[] getColumns()
@@ -75,7 +85,7 @@ public class LocalStorageAccessSleep {
      * @param cv The content values to insert.
      */
     public static void insertFromContentValues(ContentValues cv, Context c) {
-        LocalStorageAccess.getInstance(c).safeInsert(TABLE_SLEEP, columns[1], cv);
+        LocalStorageAccess.getInstance(c).safeInsert(TABLE_NAME, columns[2], cv);
     }
 
 
@@ -93,7 +103,7 @@ public class LocalStorageAccessSleep {
 
         String[] usernameArgs = {username};
 
-        return database.query(TABLE_SLEEP, null, "Username = ?", usernameArgs, null, null, DATE);
+        return database.query(TABLE_NAME, null, "Username = ?", usernameArgs, null, null, DATE);
     }
 
 }

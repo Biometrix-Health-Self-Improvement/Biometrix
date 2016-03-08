@@ -19,7 +19,9 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
     protected static final String DATABASE_NAME = "BiometrixLAS";
 
     //Incremented to 4. Implemented ID fields for sleep, exercise, and mood. Also implemented, needs update
-    protected static final int DATABASE_VERSION = 4;
+    //Incremented to 5. Diet Table added
+    //Incremented to 6. To autoincrement, the primary key must say integer, not int
+    protected static final int DATABASE_VERSION = 6;
     protected static LocalStorageAccess m_instance = null;
 
 
@@ -50,7 +52,7 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
     private void createTables(SQLiteDatabase db){
         //Create all the tables
         db.execSQL(LocalStorageAccessExercise.createTable());
-        //db.execSQL(LocalStorageAccessDiet.createTable()); TODO: uncomment when written
+        db.execSQL(LocalStorageAccessDiet.createTable());
         //db.execSQL(LocalStorageAccessMedication.createTable());
         db.execSQL(LocalStorageAccessSleep.createTable());
         db.execSQL(LocalStorageAccessMood.createTable());
@@ -63,7 +65,7 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
         //For whatever reason, the two statements below crash if the table doesn't exist..
         //Which is basically the exact opposite of what they SHOULD do. I am clueless -TJ
         //TODO: uncomment when written
-        //db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessDiet.getTableName());
+        db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessDiet.getTableName());
         //db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessMedication.getTableName());
         db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessMood.getTableName());
         db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessSleep.getTableName());
@@ -78,6 +80,32 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
             dropTables(db);
             onCreate(db); //Drop and recreate
         }
+    }
+
+    /**
+     * Retrieves the largest of the primary key fields and returns it as an int
+     * @param c
+     * @param idField
+     * @param tableName
+     * @return
+     */
+    public int GetLastID(Context c, String idField, String tableName)
+    {
+        String query = "Select " + idField +
+                " FROM " + tableName + " Order By " + idField + " DESC LIMIT 1";
+
+        SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        int id = 0;
+
+        if (cursor.moveToFirst())
+        {
+            id = cursor.getInt(0);
+        }
+
+        return id;
     }
 
     protected long safeInsert(String tablename, String nullColumn, ContentValues columnsAndValues){

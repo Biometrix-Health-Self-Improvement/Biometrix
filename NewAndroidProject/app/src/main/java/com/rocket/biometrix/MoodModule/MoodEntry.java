@@ -16,6 +16,7 @@ import com.rocket.biometrix.Common.DateTimeSelectorPopulateTextView;
 import com.rocket.biometrix.Database.AsyncResponse;
 import com.rocket.biometrix.Database.DatabaseConnect;
 import com.rocket.biometrix.Database.DatabaseConnectionTypes;
+import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessMood;
 import com.rocket.biometrix.Login.LocalAccount;
 import com.rocket.biometrix.NavigationDrawerActivity;
@@ -231,6 +232,10 @@ public class MoodEntry extends Fragment implements AsyncResponse {
         }
         LocalStorageAccessMood.AddEntry(row, v.getContext());
 
+        int id = LocalStorageAccessMood.GetLastID(v.getContext());
+
+        row.put(LocalStorageAccessMood.LOCAL_MOOD_ID, id);
+        row.remove(LocalStorageAccessMood.USER_NAME);
 
         String jsonToInsert = DatabaseConnect.convertToJSON(row);
 
