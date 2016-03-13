@@ -1,0 +1,2 @@
+use visio 'UML Sequence'
+toolbar will give you all powers neccessary to write SD.
