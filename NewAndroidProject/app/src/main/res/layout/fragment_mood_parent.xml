@@ -8,6 +8,16 @@
         android:id="@+id/createMoodEntryButton"
         android:onClick="CreateEntryOnClick" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/goToGraphMood"
+        android:layout_margin="1dp"
+        android:text="graph"
+        android:layout_toLeftOf="@id/createMoodEntryButton"
+        android:onClick="MoodGraph"
+        />
+
     <View
         style="@style/Divider"
         android:layout_below="@+id/createMoodEntryButton"

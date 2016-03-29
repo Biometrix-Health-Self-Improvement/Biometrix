@@ -39,7 +39,7 @@ public class MoodEntry extends Fragment implements AsyncResponse {
     private String mParam2;
 
     View view;
-    String dep="None", elev="None", irr="None", anx="None";
+    String dep="0", elev="0", irr="0", anx="0";
 
 
     private OnFragmentInteractionListener mListener;
@@ -196,7 +196,7 @@ public class MoodEntry extends Fragment implements AsyncResponse {
                 break;
         }
         desc.setText(str);
-        return str;
+        return Integer.toString(prog);
     }
 
 

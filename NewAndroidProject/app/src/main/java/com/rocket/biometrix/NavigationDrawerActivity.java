@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.rocket.biometrix.Analysis.MoodGraph;
 import com.rocket.biometrix.DietModule.DietEntry;
 import com.rocket.biometrix.DietModule.DietParent;
 import com.rocket.biometrix.ExerciseModule.ExerciseEntry;
@@ -26,7 +27,9 @@ import com.rocket.biometrix.MedicationModule.MedicationEntry;
 import com.rocket.biometrix.MedicationModule.MedicationParent;
 import com.rocket.biometrix.MoodModule.MoodEntry;
 import com.rocket.biometrix.MoodModule.MoodParent;
+import com.rocket.biometrix.Analysis.MoodGraph;
 import com.rocket.biometrix.SleepModule.SleepEntry;
+
 import com.rocket.biometrix.SleepModule.SleepParent;
 
 public class NavigationDrawerActivity extends AppCompatActivity
@@ -252,5 +255,12 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 Toast.makeText(getApplicationContext(), "Account logged out", Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+
+
+
+    public void MoodGraph(View v) {
+        replaceFragment(new MoodGraph());
     }
 }
