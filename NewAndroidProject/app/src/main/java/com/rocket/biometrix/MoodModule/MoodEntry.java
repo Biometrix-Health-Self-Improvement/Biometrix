@@ -22,6 +22,11 @@ import com.rocket.biometrix.Login.LocalAccount;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -204,8 +209,13 @@ public class MoodEntry extends Fragment implements AsyncResponse {
     {
         //get date, time, and notes
         String notes= ((TextView)view.findViewById(R.id.moodDetailsEditText)).getText().toString();
-        String dateShort=((TextView)view.findViewById(R.id.moodCreateEntryDateSelect)).getText().toString().substring(11);
+        String datetmp=((TextView)view.findViewById(R.id.moodCreateEntryDateSelect)).getText().toString().substring(11);
 
+        DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+        Date date = null;
+        try{ date = format.parse(datetmp); } catch (Exception e) { }
+        format = new SimpleDateFormat("yyyy-MM-dd");
+        String dateShort = format.format(date);
         String time = ((TextView)view.findViewById(R.id.moodCreateEntryTimeSelect)).getText().toString().substring(6);
 
         String username = "default";

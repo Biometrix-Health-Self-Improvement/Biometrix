@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -77,7 +78,7 @@ public class LocalStorageAccessMood {
     public static List<String[]> getEntries(Context c){
         String query = "Select " + DATE + ", " + TIME + ", " +
                 DEP + ", " + ELEV + ", " + IRR + ", " + ANX + ", " + NOTE +
-                " FROM " + TABLE_NAME + " Order By " + DATE;
+                " FROM " + TABLE_NAME + " Order By " + DATE + " DESC";
 
 
         SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
@@ -110,5 +111,18 @@ public class LocalStorageAccessMood {
         cursor.close();
         db.close();
         return lst;
+    }
+
+    public static Cursor getCurrentMonthEntries(Context c)
+    {
+        String query = "Select " + DATE + ", " + TIME + ", " +
+                DEP + ", " + ELEV + ", " + IRR + ", " + ANX + ", " + NOTE +
+                " FROM " + TABLE_NAME + " WHERE " + DATE+ " BETWEEN (date('now', 'start of month')) AND (date('now')) Order By " + DATE;
+
+        SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        return cursor;
     }
 }
