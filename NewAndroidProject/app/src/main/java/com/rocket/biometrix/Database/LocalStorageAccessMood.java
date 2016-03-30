@@ -68,7 +68,7 @@ public class LocalStorageAccessMood {
      * Makes a call to the base class with the needed parameters to pull out the last primary key
      * entered
      * @param c
-     * @return The integer value of the last primary key entered.
+     * @return The integer value of the last primary key entered.cc
      */
     public static int GetLastID(Context c)
     {

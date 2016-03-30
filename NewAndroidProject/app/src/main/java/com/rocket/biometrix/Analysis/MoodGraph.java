@@ -76,9 +76,7 @@ View v;
 
         StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
         staticLabelsFormatter.setVerticalLabels(new String[]{"None", "Mild", "Moderate", "Severe", "Very Severe"});
-
-
-        //will set x axis as dates
+        
         graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
 
         graph.addSeries(dep);
