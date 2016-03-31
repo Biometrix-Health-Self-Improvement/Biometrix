@@ -113,11 +113,15 @@ public class LocalStorageAccessMood {
         return lst;
     }
 
-    public static Cursor getCurrentMonthEntries(Context c)
+    public static Cursor getCurrentMonthEntries(Context c, int year, int month)
     {
+        String date = year + "-";
+        if(month <10)
+            date +="0";
+        date += month + "-01";
         String query = "Select " + DATE + ", " + TIME + ", " +
                 DEP + ", " + ELEV + ", " + IRR + ", " + ANX + ", " + NOTE +
-                " FROM " + TABLE_NAME + " WHERE " + DATE+ " BETWEEN (date('now', 'start of month')) AND (date('now')) Order By " + DATE;
+                " FROM " + TABLE_NAME + " WHERE " + DATE+ " BETWEEN (date('"+date+"')) AND (date('"+date+"', '+1 month','-1 day')) Order By " + DATE;
 
         SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
 

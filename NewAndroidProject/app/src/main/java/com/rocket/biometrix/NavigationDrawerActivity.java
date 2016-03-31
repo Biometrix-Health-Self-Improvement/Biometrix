@@ -261,6 +261,13 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
 
     public void MoodGraph(View v) {
-        replaceFragment(new MoodGraph());
+        activeFragment = new MoodGraph();
+        replaceFragment(activeFragment);
+    }
+    public void moodGraphNext(View v) {
+        ((MoodGraph)activeFragment).nextMonth();
+    }
+    public void moodGraphPrev(View v) {
+        ((MoodGraph)activeFragment).prevMonth();
     }
 }
