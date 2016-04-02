@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.rocket.biometrix.Database.AsyncResponse;
 import com.rocket.biometrix.Database.DatabaseConnect;
 import com.rocket.biometrix.Database.DatabaseConnectionTypes;
+import com.rocket.biometrix.Database.JsonCVHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -161,52 +162,25 @@ public class GetLogin extends Fragment implements AsyncResponse {
 
         JSONObject jsonObject;
 
-        //Tries to parse the returned result as a json object.
-        try
-        {
-            jsonObject = new JSONObject(returnResult);
-        }
-        catch (JSONException jsonExcept)
-        {
-            jsonObject = null;
-        }
+        jsonObject = JsonCVHelper.processServerJsonString(returnResult, v.getContext(), "Login Failed");
 
-        //If the return could not be parsed, then it was not a successful login
-        if (jsonObject == null)
-        {
-            Toast.makeText(v.getContext(), returnResult, Toast.LENGTH_LONG).show();
-        }
-        else
+        if (jsonObject != null)
         {
             try
             {
-                if (jsonObject.has("Error"))
+                //If the json object passes back a token then it was a login
+                if (jsonObject.has("Token"))
                 {
-                    Toast.makeText(v.getContext(), jsonObject.getString("Error"), Toast.LENGTH_LONG).show();
-                }
-                //If the operation succeeded
-                else if ((Boolean)jsonObject.get("Verified") )
+                    Toast.makeText(v.getContext(), "Login Successful!", Toast.LENGTH_LONG).show();
+
+                    //Logs the user in with their login token.
+                    LocalAccount.Login(username, jsonObject.getString("Token"));
+
+                    getActivity().getFragmentManager().popBackStack();
+                } else
+                //Assume it was a password reset
                 {
-                    //If the json object passes back a token then it was a login
-                    if ( jsonObject.has("Token"))
-                    {
-                        Toast.makeText(v.getContext(), "Login Successful!", Toast.LENGTH_LONG).show();
-
-                        //Logs the user in with their login token.
-                        LocalAccount.Login(username, jsonObject.getString("Token"));
-
-                        getActivity().getFragmentManager().popBackStack();
-                    }
-                    else
-                    //Assume it was a password reset
-                    {
-                        Toast.makeText(v.getContext(), "Check your email (and your spam folder) for your reset link", Toast.LENGTH_LONG).show();
-                    }
-
-                }
-                else
-                {
-                    Toast.makeText(v.getContext(), "Login failed", Toast.LENGTH_LONG).show();
+                    Toast.makeText(v.getContext(), "Check your email (and your spam folder) for your reset link", Toast.LENGTH_LONG).show();
                 }
             }
             catch (JSONException jsonExcept)

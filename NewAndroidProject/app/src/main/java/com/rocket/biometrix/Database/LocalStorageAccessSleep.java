@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
 
 import com.rocket.biometrix.Login.LocalAccount;
 
@@ -89,7 +90,12 @@ public class LocalStorageAccessSleep {
     }
 
 
-
+    /**
+     * Returns all rows for the currently logged in user. If no user is logged in, returns the
+     * columns for the user "default"
+     * @param c
+     * @return A Cursor to all of the columns for the sleep table for the current user
+     */
     public static Cursor selectAll(Context c)
     {
         SQLiteDatabase database = LocalStorageAccess.getInstance(c).getReadableDatabase();
@@ -101,9 +107,29 @@ public class LocalStorageAccessSleep {
             username = LocalAccount.GetInstance().GetUsername();
         }
 
-        String[] usernameArgs = {username};
-
-        return database.query(TABLE_NAME, null, "Username = ?", usernameArgs, null, null, DATE);
+        return database.query(TABLE_NAME, null, "Username = ?", new String[] {username}, null, null, DATE + " DESC, " + TIME + " DESC");
     }
 
+    /**
+     * Updates the ID that is stored locally for reference to the entry on the webserver
+     * @param localID The ID number locally
+     * @param webID The ID number on the web
+     */
+    public static void updateWebIDReference(Integer localID, Integer webID, Context context)
+    {
+        SQLiteDatabase db = LocalStorageAccess.getInstance(context).getWritableDatabase();
+
+        ContentValues webCV = new ContentValues();
+
+        webCV.put(WEB_SLEEP_ID, webID);
+
+        int num_rows = db.update(TABLE_NAME, webCV, LOCAL_SLEEP_ID + " = ?", new String[]{localID.toString()});
+
+        if (num_rows < 1)
+        {
+            Toast.makeText(context, "Could not create reference between web database and local database", Toast.LENGTH_LONG).show();
+        }
+
+        db.close();
+    }
 }

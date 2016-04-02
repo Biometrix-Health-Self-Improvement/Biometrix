@@ -23,10 +23,14 @@ import com.rocket.biometrix.Common.StringDateTimeConverter;
 import com.rocket.biometrix.Database.AsyncResponse;
 import com.rocket.biometrix.Database.DatabaseConnect;
 import com.rocket.biometrix.Database.DatabaseConnectionTypes;
+import com.rocket.biometrix.Database.JsonCVHelper;
 import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.Login.LocalAccount;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -271,7 +275,7 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
             rowToBeInserted.put(LocalStorageAccessExercise.LOCAL_EXERCISE_ID, id);
             rowToBeInserted.remove(LocalStorageAccessExercise.USER_NAME);
 
-            String jsonToInsert = DatabaseConnect.convertToJSON(rowToBeInserted);
+            String jsonToInsert = JsonCVHelper.convertToJSON(rowToBeInserted);
 
             //Trys to insert the user's data
             try
@@ -305,8 +309,35 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
         void onFragmentInteraction(Uri uri);
     }
 
+    /**
+     * Called asynchronously when the call to the webserver is done. This method updates the webID
+     * reference that is stored on the local database
+     * @param result The json encoded regular string that contains the WebID and localID of the
+     *               updated row
+     */
     public void processFinish(String result)
     {
-        Log.i("",result);
+        //Getting context for LSA constructor
+        Context context = onCreateView.getContext();
+
+        JSONObject jsonObject;
+        jsonObject = JsonCVHelper.processServerJsonString(result, context, "Could not create exercise entry on web database");
+
+        if (jsonObject != null)
+        {
+            int[] tableIDs = new int[2];
+            JsonCVHelper.getIDColumns(tableIDs, jsonObject, context);
+
+            if (tableIDs[0] != -1 && tableIDs[1] != -1)
+            {
+                LocalStorageAccessExercise.updateWebIDReference(tableIDs[0], tableIDs[1], context);
+            }
+            else
+            {
+                Toast.makeText(context, "There was an error processing information from the webserver", Toast.LENGTH_LONG).show();
+            }
+
+        }
+
     }
 }

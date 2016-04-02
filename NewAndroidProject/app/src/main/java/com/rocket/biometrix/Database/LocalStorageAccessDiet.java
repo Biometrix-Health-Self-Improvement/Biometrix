@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -111,12 +112,10 @@ public class LocalStorageAccessDiet {
      */
     public static List<String[]> getEntries(Context c)
     {
-        String query = "Select " + DATE + ", " + MEAL + ", " + CALORIES +
-                " FROM " + TABLE_NAME + " Order By " + DATE;
-
         SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
 
-        Cursor cursor = db.rawQuery(query, null);
+        //Select DATE, MEAL, CALORIES from TABLE_NAME Order By DATE DESC
+        Cursor cursor = db.query(TABLE_NAME, new String[]{DATE, MEAL, CALORIES}, null, null, null, null, DATE + " DESC");
 
         List<String[]> lst = new LinkedList<String[]>();
 
@@ -141,5 +140,28 @@ public class LocalStorageAccessDiet {
         cursor.close();
         db.close();
         return lst;
+    }
+
+    /**
+     * Updates the ID that is stored locally for reference to the entry on the webserver
+     * @param localID The ID number locally
+     * @param webID The ID number on the web
+     */
+    public static void updateWebIDReference(Integer localID, Integer webID, Context context)
+    {
+        SQLiteDatabase db = LocalStorageAccess.getInstance(context).getWritableDatabase();
+
+        ContentValues webCV = new ContentValues();
+
+        webCV.put(WEB_DIET_ID, webID);
+
+        int num_rows = db.update(TABLE_NAME, webCV, LOCAL_DIET_ID + " = ?", new String[]{localID.toString()});
+
+        if (num_rows < 1)
+        {
+            Toast.makeText(context, "Could not create reference between web database and local database", Toast.LENGTH_LONG).show();
+        }
+
+        db.close();
     }
 }

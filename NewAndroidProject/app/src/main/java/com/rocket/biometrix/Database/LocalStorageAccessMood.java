@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -75,15 +76,13 @@ public class LocalStorageAccessMood {
         return LocalStorageAccess.getInstance(c).GetLastID(c, LOCAL_MOOD_ID, TABLE_NAME);
     }
 
-    public static List<String[]> getEntries(Context c){
-        String query = "Select " + DATE + ", " + TIME + ", " +
-                DEP + ", " + ELEV + ", " + IRR + ", " + ANX + ", " + NOTE +
-                " FROM " + TABLE_NAME + " Order By " + DATE + " DESC";
-
+    public static List<String[]> getEntries(Context c)
+    {
 
         SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
 
-        Cursor cursor = db.rawQuery(query, null);
+        //Select DATE, TIME, DEP, ELEV, IRR, ANX, NOTE FROM TABLE_NAME ORDER BY DATE DESC
+        Cursor cursor = db.query(TABLE_NAME, new String[]{DATE, TIME, DEP, ELEV, IRR, ANX, NOTE}, null, null, null, null, DATE + " DESC, " + TIME + " DESC");
 
         List<String[]> lst = new LinkedList<String[]>();
 
@@ -119,14 +118,36 @@ public class LocalStorageAccessMood {
         if(month <10)
             date +="0";
         date += month + "-01";
-        String query = "Select " + DATE + ", " + TIME + ", " +
-                DEP + ", " + ELEV + ", " + IRR + ", " + ANX + ", " + NOTE +
-                " FROM " + TABLE_NAME + " WHERE " + DATE+ " BETWEEN (date('"+date+"')) AND (date('"+date+"', '+1 month','-1 day')) Order By " + DATE;
 
         SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
 
-        Cursor cursor = db.rawQuery(query, null);
+        Cursor cursor = db.query(TABLE_NAME, new String[]{DATE, TIME, DEP, ELEV, IRR, ANX, NOTE},
+                DATE + " BETWEEN (date(?)) AND (date(?, '+1 month','-1 day'))", new String[]{date, date}, null, null, DATE);
+
 
         return cursor;
+    }
+
+    /**
+     * Updates the ID that is stored locally for reference to the entry on the webserver
+     * @param localID The ID number locally
+     * @param webID The ID number on the web
+     */
+    public static void updateWebIDReference(Integer localID, Integer webID, Context context)
+    {
+        SQLiteDatabase db = LocalStorageAccess.getInstance(context).getWritableDatabase();
+
+        ContentValues webCV = new ContentValues();
+
+        webCV.put(WEB_MOOD_ID, webID);
+
+        int num_rows = db.update(TABLE_NAME, webCV, LOCAL_MOOD_ID + " = ?", new String[]{localID.toString()});
+
+        if (num_rows < 1)
+        {
+            Toast.makeText(context, "Could not create reference between web database and local database", Toast.LENGTH_LONG).show();
+        }
+
+        db.close();
     }
 }

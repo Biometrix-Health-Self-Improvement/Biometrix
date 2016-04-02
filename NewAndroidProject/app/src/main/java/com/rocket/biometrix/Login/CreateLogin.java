@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.rocket.biometrix.Database.AsyncResponse;
 import com.rocket.biometrix.Database.DatabaseConnect;
 import com.rocket.biometrix.Database.DatabaseConnectionTypes;
+import com.rocket.biometrix.Database.JsonCVHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -163,45 +164,12 @@ public class CreateLogin extends Fragment  implements AsyncResponse {
         returnResult = result;
 
         JSONObject jsonObject;
+        jsonObject = JsonCVHelper.processServerJsonString(result, v.getContext(), "Could not create login");
 
-        //Tries to parse the returned result as a json object.
-        try
+        if (jsonObject != null)
         {
-            jsonObject = new JSONObject(returnResult);
-        }
-        catch (JSONException jsonExcept)
-        {
-            jsonObject = null;
-        }
-
-        //If the return could not be parsed, then it was not a successful addition
-        if (jsonObject == null)
-        {
-            Toast.makeText(v.getContext(), returnResult, Toast.LENGTH_LONG).show();
-        }
-        else
-        {
-            try
-            {
-                if (jsonObject.has("Error"))
-                {
-                    Toast.makeText(v.getContext(), jsonObject.getString("Error"), Toast.LENGTH_LONG).show();
-                }
-                //If the operation succeeded
-                else if ((Boolean)jsonObject.get("Verified") )
-                {
-                    Toast.makeText(v.getContext(), "Please check your email (and spam folder)", Toast.LENGTH_LONG).show();
-                    getActivity().getFragmentManager().popBackStack();
-                }
-                else
-                {
-                    Toast.makeText(v.getContext(), "Login failed", Toast.LENGTH_LONG).show();
-                }
-            }
-            catch (JSONException jsonExcept)
-            {
-                Toast.makeText(v.getContext(), "Something went wrong with the server's return", Toast.LENGTH_LONG).show();
-            }
+            Toast.makeText(v.getContext(), "Please check your email (and spam folder)", Toast.LENGTH_LONG).show();
+            getActivity().getFragmentManager().popBackStack();
         }
 
     }
