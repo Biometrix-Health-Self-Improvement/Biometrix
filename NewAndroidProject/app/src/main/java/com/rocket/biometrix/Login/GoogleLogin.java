@@ -22,6 +22,7 @@ import com.google.android.gms.common.api.Status;
 import com.rocket.biometrix.Database.AsyncResponse;
 import com.rocket.biometrix.Database.DatabaseConnect;
 import com.rocket.biometrix.Database.DatabaseConnectionTypes;
+import com.rocket.biometrix.Database.JsonCVHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -259,50 +260,23 @@ public class GoogleLogin extends Fragment implements GoogleApiClient.OnConnectio
         hideProgressDialog();
 
         JSONObject jsonObject;
+        jsonObject = JsonCVHelper.processServerJsonString(result, v.getContext(), "Login Failed");
 
-        //Tries to parse the returned result as a json object.
-        try
-        {
-            jsonObject = new JSONObject(result);
-        }
-        catch (JSONException jsonExcept)
-        {
-            jsonObject = null;
-        }
-
-        //If the return could not be parsed, then it was not a successful addition
-        if (jsonObject == null)
-        {
-            Toast.makeText(v.getContext(), result, Toast.LENGTH_LONG).show();
-        }
-        else
+        if (jsonObject != null)
         {
             try
             {
-                if (jsonObject.has("Error"))
-                {
-                    Toast.makeText(v.getContext(), jsonObject.getString("Error"), Toast.LENGTH_LONG).show();
-                }
-                //If the operation succeeded
-                else if ((Boolean)jsonObject.get("Verified") )
-                {
-                    //Logins the google account user with their id as their "username"
-                    LocalAccount.Login(acct, jsonObject.getString("Token"));
+                //Logins the google account user with their id as their "username"
+                LocalAccount.Login(acct, jsonObject.getString("Token"));
 
-                    Toast.makeText(v.getContext(), "Google sign in succeeded!", Toast.LENGTH_LONG).show();
-                    getActivity().getFragmentManager().popBackStack();
-                }
-                else
-                {
-                    Toast.makeText(v.getContext(), "Login failed", Toast.LENGTH_LONG).show();
-                }
+                Toast.makeText(v.getContext(), "Google sign in succeeded!", Toast.LENGTH_LONG).show();
+                getActivity().getFragmentManager().popBackStack();
             }
             catch (JSONException jsonExcept)
             {
                 Toast.makeText(v.getContext(), "Something went wrong with the server's return", Toast.LENGTH_LONG).show();
             }
         }
-
     }
 
     /**

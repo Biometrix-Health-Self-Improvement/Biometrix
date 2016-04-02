@@ -91,12 +91,15 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
      */
     public int GetLastID(Context c, String idField, String tableName)
     {
-        String query = "Select " + idField +
-                " FROM " + tableName + " Order By " + idField + " DESC LIMIT 1";
+        //String query = "Select " + idField +
+        //       " FROM " + tableName + " Order By " + idField + " DESC LIMIT 1";
 
         SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
 
-        Cursor cursor = db.rawQuery(query, null);
+        //Select idField From tableName DESC LIMIT 1
+        Cursor cursor = db.query(tableName, new String[]{idField}, null, null, null, null, idField + " DESC LIMIT 1");
+
+        //Cursor cursor = db.rawQuery(query, null);
 
         int id = 0;
 
@@ -145,9 +148,13 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
     }
 
     //Get all rows that match date YYYY-MM-DD (pass in date to search, then table you are looking at...)
-    public static Cursor selectByDate(String dayte, String tbl, String date_col){
+    public static Cursor selectByDate(String date, String table, String date_col){
         SQLiteDatabase db= m_instance.getReadableDatabase();
-        Cursor cur=db.rawQuery("SELECT * FROM "+tbl+" WHERE "+date_col+ " == "+dayte, null);
+
+        //Cursor cur=db.rawQuery("SELECT * FROM "+table+" WHERE "+date_col+ " == "+date, null);
+
+        //SELECT * From table WHERE date_col = date
+        Cursor cur = db.query(table, null, date_col + " = ?", new String[]{date}, null, null, null);
 
         return cur;
     }
@@ -181,8 +188,12 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
     public static Cursor selectAllDatabyDateRange(String tablename, String date_col, String startDate, String endDate){
 
         SQLiteDatabase db=m_instance.getReadableDatabase();
-        Cursor cur=db.rawQuery("SELECT * FROM " + tablename + " WHERE " + date_col
-                + " >= " + startDate + " AND " + date_col + " <= " + endDate, null);
+        //Cursor cur=db.rawQuery("SELECT * FROM " + tablename + " WHERE " + date_col
+        //        + " >= " + startDate + " AND " + date_col + " <= " + endDate, null);
+
+        //Select * FROM tablename WHERE date_col >= startDate AND date_col <= endDate
+        Cursor cur = db.query(tablename, null, date_col + " >= ? AND " + date_col + " <= ?",
+                new String[]{startDate, endDate}, null, null, null);
 
         return cur;
     }
@@ -211,10 +222,11 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
 
 
         SQLiteDatabase db=m_instance.getReadableDatabase();
-        Cursor cur=db.rawQuery("SELECT * FROM " + tablename + " WHERE " + date_col
-                + " >= " + startDate + " AND " + date_col + " <= " + endDate, null);
+        //Cursor cur=db.rawQuery("SELECT * FROM " + tablename + " WHERE " + date_col
+        //        + " >= " + startDate + " AND " + date_col + " <= " + endDate, null);
 
-        return cur;
+        return db.query(tablename, null, date_col + " >= ? AND " + date_col + " <= ?",
+                new String[]{startDate, endDate}, null, null, null);
     }
 
 }

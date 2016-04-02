@@ -11,16 +11,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rocket.biometrix.Common.DateTimeSelectorPopulateTextView;
 import com.rocket.biometrix.Database.AsyncResponse;
 import com.rocket.biometrix.Database.DatabaseConnect;
 import com.rocket.biometrix.Database.DatabaseConnectionTypes;
+import com.rocket.biometrix.Database.JsonCVHelper;
 import com.rocket.biometrix.Database.LocalStorageAccess;
+import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.Database.LocalStorageAccessMood;
 import com.rocket.biometrix.Login.LocalAccount;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
+
+import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -247,7 +252,7 @@ public class MoodEntry extends Fragment implements AsyncResponse {
         row.put(LocalStorageAccessMood.LOCAL_MOOD_ID, id);
         row.remove(LocalStorageAccessMood.USER_NAME);
 
-        String jsonToInsert = DatabaseConnect.convertToJSON(row);
+        String jsonToInsert = JsonCVHelper.convertToJSON(row);
 
         //Trys to insert the user's data
         try
@@ -280,9 +285,34 @@ public class MoodEntry extends Fragment implements AsyncResponse {
         void onFragmentInteraction(Uri uri);
     }
 
+    /**
+     * Called asynchronously when the call to the webserver is done. This method updates the webID
+     * reference that is stored on the local database
+     * @param result The json encoded regular string that contains the WebID and localID of the
+     *               updated row
+     */
     public void processFinish(String result)
     {
-        Log.i("", result);
+        //Getting context for LSA constructor
+        Context context = view.getContext();
+
+        JSONObject jsonObject;
+        jsonObject = JsonCVHelper.processServerJsonString(result, context, "Could not create exercise entry on web database");
+
+        if (jsonObject != null)
+        {
+            int[] tableIDs = new int[2];
+            JsonCVHelper.getIDColumns(tableIDs, jsonObject, context);
+
+            if (tableIDs[0] != -1 && tableIDs[1] != -1)
+            {
+                LocalStorageAccessMood.updateWebIDReference(tableIDs[0], tableIDs[1], context);
+            }
+            else
+            {
+                Toast.makeText(context, "There was an error processing information from the webserver", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
 }

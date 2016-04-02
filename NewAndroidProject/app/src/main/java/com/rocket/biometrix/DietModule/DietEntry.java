@@ -11,17 +11,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rocket.biometrix.Common.DateTimeSelectorPopulateTextView;
 import com.rocket.biometrix.Common.StringDateTimeConverter;
 import com.rocket.biometrix.Database.AsyncResponse;
 import com.rocket.biometrix.Database.DatabaseConnect;
 import com.rocket.biometrix.Database.DatabaseConnectionTypes;
+import com.rocket.biometrix.Database.JsonCVHelper;
 import com.rocket.biometrix.Database.LocalStorageAccessDiet;
+import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.Login.LocalAccount;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
+
+import org.json.JSONObject;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -172,7 +177,7 @@ public class DietEntry extends Fragment implements AsyncResponse {
             rowToBeInserted.put(LocalStorageAccessDiet.LOCAL_DIET_ID, id);
             rowToBeInserted.remove(LocalStorageAccessDiet.USER_NAME);
 
-            String jsonToInsert = DatabaseConnect.convertToJSON(rowToBeInserted);
+            String jsonToInsert = JsonCVHelper.convertToJSON(rowToBeInserted);
 
             //Trys to insert the user's data
             try
@@ -192,8 +197,33 @@ public class DietEntry extends Fragment implements AsyncResponse {
 
     }
 
+    /**
+     * Called asynchronously when the call to the webserver is done. This method updates the webID
+     * reference that is stored on the local database
+     * @param result The json encoded regular string that contains the WebID and localID of the
+     *               updated row
+     */
     public void processFinish(String result)
     {
-        Log.i("", result);
+        //Getting context for LSA constructor
+        Context context = dietView.getContext();
+
+        JSONObject jsonObject;
+        jsonObject = JsonCVHelper.processServerJsonString(result, context, "Could not create exercise entry on web database");
+
+        if (jsonObject != null)
+        {
+            int[] tableIDs = new int[2];
+            JsonCVHelper.getIDColumns(tableIDs, jsonObject, context);
+
+            if (tableIDs[0] != -1 && tableIDs[1] != -1)
+            {
+                LocalStorageAccessDiet.updateWebIDReference(tableIDs[0], tableIDs[1], context);
+            }
+            else
+            {
+                Toast.makeText(context, "There was an error processing information from the webserver", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }
