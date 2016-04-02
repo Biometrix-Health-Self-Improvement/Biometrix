@@ -8,6 +8,11 @@
         android:id="@+id/createMoodEntryButton"
         android:onClick="CreateEntryOnClick" />
 
+    <Button style="@style/graph"
+        android:id="@+id/goToGraphMood"
+        android:onClick="MoodGraph" />
+
+
     <View
         style="@style/Divider"
         android:layout_below="@+id/createMoodEntryButton"

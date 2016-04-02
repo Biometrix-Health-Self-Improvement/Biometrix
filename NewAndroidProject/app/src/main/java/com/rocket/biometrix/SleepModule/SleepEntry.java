@@ -409,6 +409,11 @@ public class SleepEntry extends Fragment implements AsyncResponse{
             //Call insert method
             LocalStorageAccessSleep.insertFromContentValues(rowToBeInserted, v.getContext());
 
+            int id = LocalStorageAccessSleep.GetLastID(v.getContext());
+
+            rowToBeInserted.put(LocalStorageAccessSleep.LOCAL_SLEEP_ID, id);
+            rowToBeInserted.remove(LocalStorageAccessSleep.USER_NAME);
+
             String jsonToInsert = DatabaseConnect.convertToJSON(rowToBeInserted);
 
             //Trys to insert the user's data

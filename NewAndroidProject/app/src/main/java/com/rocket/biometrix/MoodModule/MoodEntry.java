@@ -16,10 +16,16 @@ import com.rocket.biometrix.Common.DateTimeSelectorPopulateTextView;
 import com.rocket.biometrix.Database.AsyncResponse;
 import com.rocket.biometrix.Database.DatabaseConnect;
 import com.rocket.biometrix.Database.DatabaseConnectionTypes;
+import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessMood;
 import com.rocket.biometrix.Login.LocalAccount;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,7 +44,7 @@ public class MoodEntry extends Fragment implements AsyncResponse {
     private String mParam2;
 
     View view;
-    String dep="None", elev="None", irr="None", anx="None";
+    String dep="0", elev="0", irr="0", anx="0";
 
 
     private OnFragmentInteractionListener mListener;
@@ -195,7 +201,7 @@ public class MoodEntry extends Fragment implements AsyncResponse {
                 break;
         }
         desc.setText(str);
-        return str;
+        return Integer.toString(prog);
     }
 
 
@@ -203,8 +209,13 @@ public class MoodEntry extends Fragment implements AsyncResponse {
     {
         //get date, time, and notes
         String notes= ((TextView)view.findViewById(R.id.moodDetailsEditText)).getText().toString();
-        String dateShort=((TextView)view.findViewById(R.id.moodCreateEntryDateSelect)).getText().toString().substring(11);
+        String datetmp=((TextView)view.findViewById(R.id.moodCreateEntryDateSelect)).getText().toString().substring(11);
 
+        DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+        Date date = null;
+        try{ date = format.parse(datetmp); } catch (Exception e) { }
+        format = new SimpleDateFormat("yyyy-MM-dd");
+        String dateShort = format.format(date);
         String time = ((TextView)view.findViewById(R.id.moodCreateEntryTimeSelect)).getText().toString().substring(6);
 
         String username = "default";
@@ -231,6 +242,10 @@ public class MoodEntry extends Fragment implements AsyncResponse {
         }
         LocalStorageAccessMood.AddEntry(row, v.getContext());
 
+        int id = LocalStorageAccessMood.GetLastID(v.getContext());
+
+        row.put(LocalStorageAccessMood.LOCAL_MOOD_ID, id);
+        row.remove(LocalStorageAccessMood.USER_NAME);
 
         String jsonToInsert = DatabaseConnect.convertToJSON(row);
 

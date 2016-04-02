@@ -91,6 +91,10 @@ public class EditPastActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_edit_past);
 
+        //TODO: MOVE FRAGMENTS HERE
+        //TODO: WRITE BUS CODE
+
+
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);

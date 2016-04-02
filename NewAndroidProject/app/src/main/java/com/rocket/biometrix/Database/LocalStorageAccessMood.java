@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class LocalStorageAccessMood {
     public static String createTable() {
         //Creates the SQL string to make the SLEEP table
         String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " ( " +
-                LOCAL_MOOD_ID + " int primary key, " +
+                LOCAL_MOOD_ID + " integer primary key, " +
                 USER_NAME + " varchar(50) Not Null, " +
                 WEB_MOOD_ID + " int Null, " +
                 DATE + " date Not Null, " +
@@ -63,11 +64,21 @@ public class LocalStorageAccessMood {
         return cols;
     }
 
+    /**
+     * Makes a call to the base class with the needed parameters to pull out the last primary key
+     * entered
+     * @param c
+     * @return The integer value of the last primary key entered.cc
+     */
+    public static int GetLastID(Context c)
+    {
+        return LocalStorageAccess.getInstance(c).GetLastID(c, LOCAL_MOOD_ID, TABLE_NAME);
+    }
 
     public static List<String[]> getEntries(Context c){
         String query = "Select " + DATE + ", " + TIME + ", " +
                 DEP + ", " + ELEV + ", " + IRR + ", " + ANX + ", " + NOTE +
-                " FROM " + TABLE_NAME + " Order By " + DATE;
+                " FROM " + TABLE_NAME + " Order By " + DATE + " DESC";
 
 
         SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
@@ -100,5 +111,22 @@ public class LocalStorageAccessMood {
         cursor.close();
         db.close();
         return lst;
+    }
+
+    public static Cursor getCurrentMonthEntries(Context c, int year, int month)
+    {
+        String date = year + "-";
+        if(month <10)
+            date +="0";
+        date += month + "-01";
+        String query = "Select " + DATE + ", " + TIME + ", " +
+                DEP + ", " + ELEV + ", " + IRR + ", " + ANX + ", " + NOTE +
+                " FROM " + TABLE_NAME + " WHERE " + DATE+ " BETWEEN (date('"+date+"')) AND (date('"+date+"', '+1 month','-1 day')) Order By " + DATE;
+
+        SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        return cursor;
     }
 }
