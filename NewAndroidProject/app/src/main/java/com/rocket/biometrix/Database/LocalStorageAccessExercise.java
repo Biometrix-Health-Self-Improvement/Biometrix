@@ -122,8 +122,8 @@ public class LocalStorageAccessExercise{
 
 
     //Get all rows that match date YYYY-MM-DD (pass in date to search, then table you are looking at...)
-    public static Cursor selectByDate(String date){
-        return LocalStorageAccess.selectByDate(date, TABLE_NAME, DATE);
+    public static Cursor selectByDate(String date, Context c){
+        return LocalStorageAccess.getInstance(c).selectByDate(date, TABLE_NAME, DATE);
     }
 
     public static Cursor selectAllDatabyDateRange(String startDate, String endDate){

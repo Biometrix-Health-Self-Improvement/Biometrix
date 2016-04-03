@@ -38,6 +38,7 @@ public class EditCalendar extends Fragment {
 
     public EditCalendar() {
         // Required empty public constructor
+        System.out.print("EditCalendar empty constructor hit");
     }
 
     /**
@@ -69,7 +70,7 @@ public class EditCalendar extends Fragment {
 
 
 
-
+    //automatically called after onCreate
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -93,14 +94,10 @@ public class EditCalendar extends Fragment {
                 String dateSelectedFormatted = StringDateTimeConverter.convertCalDateString(dateSelected);
 
                 //Pass selectByDate() cursor to fill ListView
-                Cursor exercise = LocalStorageAccessExercise.selectByDate(dateSelectedFormatted);
-
+                Cursor exercise = LocalStorageAccessExercise.selectByDate(dateSelectedFormatted,getActivity());
 
                 //getActivity() for the context.
                 Toast.makeText(getActivity(), dateSelectedFormatted, Toast.LENGTH_LONG).show();
-
-
-
             }
 
         });
@@ -126,11 +123,14 @@ public class EditCalendar extends Fragment {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
+            //TODO: CONNECT to DICTIONARY in EDITPASTACTIVITY somehow
+            //CursorDictionary.puts
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnFragmentInteractionListener (from EditCalendar)");
         }
     }
+
 
     @Override
     public void onDetach() {

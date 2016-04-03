@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.rocket.biometrix.EditPastEntries.CandyItems;
 import com.rocket.biometrix.R;
 
 /**
@@ -102,6 +103,6 @@ public class EntryCandiesFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        //void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(CandyItems item);
     }
 }

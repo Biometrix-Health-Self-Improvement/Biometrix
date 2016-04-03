@@ -1,34 +1,36 @@
 
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--FRAGMENTS MUST BE IN "CONTAINER" OR EVERYTHING IS INVISIBLE-->
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
               android:orientation="vertical"
-              tools:context=".LinearLayout" >
+              tools:context=".LinearLayout"
+              android:id="@+id/fragment_container"
+    >
+
+    <fragment
+        android:id="@+id/CalFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        class="com.rocket.biometrix.EditPastEntries.fragments.EditCalendar"
+        >
+    </fragment>
 
     <Button
         android:text="BUTTON"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        />
+        android:layout_gravity="right"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Text 1"
-        android:paddingTop="10px"/>
+    <!--<fragment-->
+        <!--android:id="@+id/EPEFragment"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_weight="2"-->
+        <!--android:layout_height="match_parent"-->
+        <!--class="com.rocket.biometrix.EditPastEntries.fragments.EntryCandiesFragment" >-->
+    <!--</fragment>-->
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Text 2"
-        android:paddingTop="10px"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Text 3"
-        android:paddingTop="10px"/>
 
-</LinearLayout>
+</GridLayout>

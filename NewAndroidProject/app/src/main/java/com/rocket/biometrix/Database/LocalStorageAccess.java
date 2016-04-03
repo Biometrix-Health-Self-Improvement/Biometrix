@@ -146,7 +146,7 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
 
     //Get all rows that match date YYYY-MM-DD (pass in date to search, then table you are looking at...)
     public static Cursor selectByDate(String dayte, String tbl, String date_col){
-        SQLiteDatabase db= m_instance.getReadableDatabase();
+        SQLiteDatabase db = m_instance.getWritableDatabase();
         Cursor cur=db.rawQuery("SELECT * FROM "+tbl+" WHERE "+date_col+ " == "+dayte, null);
 
         return cur;
