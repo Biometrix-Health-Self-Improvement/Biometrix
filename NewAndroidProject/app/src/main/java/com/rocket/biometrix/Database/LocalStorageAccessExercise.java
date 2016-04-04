@@ -18,27 +18,24 @@ public class LocalStorageAccessExercise{
 
     //Strings that represent table and column names in the database for Exercise X
     public static final String TABLE_NAME = "Exercise";
-    public static final String LOCAL_EXERCISE_ID = "LocalExerciseID"; //ID used for primary key
-    public static final String USER_NAME = "UserName"; //Username from shared preferences
+    public static final String LOCAL_EXERCISE_ID = "LocalExerciseID";//ID used for primary key
+    public static final String USER_NAME = "UserName";//Username from shared preferences
     public static final String WEB_EXERCISE_ID = "WebExerciseID";
-    //public static final String MODE = "Mode"; //String to for mode which is not implemented yet. Think: Belly fat reduction mode - probably needs laps, won't need weight. Yada yada YODA
-    //Columns
-    public static final String TITLE = "Title"; //Title will help co-determine the module mode e.g. Simple mode (yay I walked to the fridge), Gainz mode (weight and reps etc.)
-    public static final String TYPE = "Type"; //light, cardio, etc.
-    public static final String MINUTES = "Minutes"; //minutes exercised
-    public static final String REPS = "Reps"; //Reps or laps, data significance determined by module mode WHICH IS NOT IMPLEMENTED YET
+    public static final String TITLE = "Title";//Title will help co-determine the module mode e.g. Simple mode (yay I walked to the fridge), Gainz mode (weight and reps etc.)
+    public static final String TYPE = "Type";//light, cardio, etc.
+    public static final String MINUTES = "Minutes";//minutes exercised
+    public static final String REPS = "Reps";//Reps or laps, data significance determined by module mode WHICH IS NOT IMPLEMENTED YET
     public static final String LAPS = "Laps";
     public static final String WEIGHT = "Weight";
-    public static final String INTY = "Intensity";
+    public static final String INTY = "Inty";
     public static final String NOTES = "Notes";
     public static final String DATE = "DateEx";
     public static final String TIME = "TimeEx";
-
-    //Updated = Has the field changed from what the webserver has? This has to be an int, so 0 =false 1 =true
     public static final String UPDATED = "Updated";
 
     // All the columns above, see getColumns() below
-    private static final String[] columns = {LOCAL_EXERCISE_ID, USER_NAME, WEB_EXERCISE_ID, TITLE, TYPE, MINUTES, REPS, LAPS, WEIGHT, INTY, NOTES, DATE, TIME, UPDATED};
+    public static final String[] columns = {LOCAL_EXERCISE_ID, USER_NAME, WEB_EXERCISE_ID,
+            TITLE, TYPE, MINUTES, REPS, LAPS, WEIGHT, INTY, NOTES, DATE, TIME, UPDATED};
 
     //Later, we'll hopefully get to a shared preferences class that stores BMI and weight information.
 
@@ -46,24 +43,21 @@ public class LocalStorageAccessExercise{
 
     protected static String createTable() {
         //Some SQL
-        String createTableSQL = "CREATE TABLE " + TABLE_NAME +
-                " (" + LOCAL_EXERCISE_ID + " INTEGER PRIMARY KEY , " +
-                USER_NAME + " VARCHAR(50) not null, " +
-                WEB_EXERCISE_ID + " INT NULL, " +
-                TITLE + " VARCHAR(255), " +
-                TYPE + " VARCHAR(140), " +
-                MINUTES + " TINYINT, " +
-                REPS + " TINYINT, " +
-                LAPS + " TINYINT, " +
-                WEIGHT + " SMALLINT, " +
-                INTY + " TINYINT, " +
-                NOTES + " VARCHAR(255), " +
-                DATE + " DATE, " +
-                TIME + " VARCHAR(50), " +
-                UPDATED + " int default 0" +
-                ");";
-
-        return createTableSQL;
+        return "CREATE TABLE " + TABLE_NAME + " ( " +
+                LOCAL_EXERCISE_ID + " integer primary key, " +
+                USER_NAME + " varchar(50) Not Null, " +
+                WEB_EXERCISE_ID + " int Null, " +
+                TITLE + " varchar(255), " +
+                TYPE + " varchar(140), " +
+                MINUTES + " tinyint, " +
+                REPS + " tinyint, " +
+                LAPS + " tinyint, " +
+                WEIGHT + " smallint, " +
+                INTY + " tinyint, " +
+                NOTES + " varchar(255), " +
+                DATE + " date, " +
+                TIME + " varchar(50), " +
+                UPDATED + " int default 0" +");";
     }
 
 

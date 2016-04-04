@@ -15,43 +15,39 @@ import java.util.List;
  */
 public class LocalStorageAccessMood {
 
-    private static final String LOCAL_DB_NAME = "BiometrixLocal";
-    private static final int LOCAL_DB_VERSION = 1;
-
+    //Table name and all columns
     public static final String TABLE_NAME = "Mood";
     public static final String LOCAL_MOOD_ID = "LocalMoodID";
     public static final String USER_NAME = "UserName";
     public static final String WEB_MOOD_ID = "WebMoodID";
-    public static final String DATE= "Date";
-    public static final String TIME= "Time";
+    public static final String DATE = "Date";
+    public static final String TIME = "Time";
     public static final String DEP = "Depression";
-    public static final String ELEV= "Elevated";
+    public static final String ELEV = "Elevated";
     public static final String IRR = "Irritable";
     public static final String ANX = "Anxiety";
-    public static final String NOTE= "Notes";
-
-    //Updated = Has the field changed from what the webserver has? This has to be an int, so 0 =false 1 =true
+    public static final String NOTE = "Notes";
     public static final String UPDATED = "Updated";
 
-    private final static String[] cols = {LOCAL_MOOD_ID, USER_NAME, WEB_MOOD_ID, DATE, TIME, DEP, ELEV, IRR, ANX, NOTE, UPDATED};
+    public static final String[] cols = {LOCAL_MOOD_ID, USER_NAME, WEB_MOOD_ID, DATE,
+            TIME, DEP, ELEV, IRR, ANX, NOTE, UPDATED};
 
     private LocalStorageAccessMood(){}
 
     public static String createTable() {
         //Creates the SQL string to make the SLEEP table
-        String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " ( " +
+        return "CREATE TABLE " + TABLE_NAME + " ( " +
                 LOCAL_MOOD_ID + " integer primary key, " +
                 USER_NAME + " varchar(50) Not Null, " +
                 WEB_MOOD_ID + " int Null, " +
                 DATE + " date Not Null, " +
-                TIME + " time Not null, " +
-                DEP + " VARCHAR(50), " +
-                ELEV + " VARCHAR(50), " +
-                IRR + " VARCHAR(50), " +
-                ANX + " VARCHAR(50), " +
+                TIME + " time Not Null, " +
+                DEP + " int Null, " +
+                ELEV + " int Null, " +
+                IRR + " int Null, " +
+                ANX + " int Null, " +
                 NOTE + " varchar(255), " +
                 UPDATED + " int default 0" +");";
-        return CREATE_TABLE;
     }
 
     public static String getTableName() {return  TABLE_NAME;}
