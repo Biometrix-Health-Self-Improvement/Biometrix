@@ -213,7 +213,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 ((DietEntry) activeFragment).onDoneClick(v);
                 newFragment = new DietParent();
             } else if (activeFragment.getClass() == MedicationEntry.class){
-
+                ((MedicationEntry) activeFragment).onDoneClick(v);
                 newFragment = new MedicationParent();
             }
 

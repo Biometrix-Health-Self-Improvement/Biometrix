@@ -1,15 +1,30 @@
 package com.rocket.biometrix.MedicationModule;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rocket.biometrix.Common.DateTimeSelectorPopulateTextView;
+import com.rocket.biometrix.Common.StringDateTimeConverter;
+import com.rocket.biometrix.Database.AsyncResponse;
+import com.rocket.biometrix.Database.DatabaseConnect;
+import com.rocket.biometrix.Database.DatabaseConnectionTypes;
+import com.rocket.biometrix.Database.JsonCVHelper;
+import com.rocket.biometrix.Database.LocalStorageAccessMedication;
+import com.rocket.biometrix.Login.LocalAccount;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
+
+import org.json.JSONObject;
+
+import java.awt.font.TextAttribute;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,13 +34,15 @@ import com.rocket.biometrix.R;
  * Use the {@link MedicationEntry#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MedicationEntry extends Fragment {
+public class MedicationEntry extends Fragment implements AsyncResponse{
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
     private String mParam1;
     private String mParam2;
+
+    private View entryView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -75,8 +92,10 @@ public class MedicationEntry extends Fragment {
         View view = inflater.inflate(R.layout.fragment_medication_entry, container, false);
 
         DateTimeSelectorPopulateTextView popDateTime = new DateTimeSelectorPopulateTextView
-                (getActivity(), view, R.id.MedicationStartDateTextView, R.id.MedicationStarTimeTextView);
+                (getActivity(), view, R.id.MedicationStartDateTextView, R.id.MedicationStartTimeTextView);
         popDateTime.Populate();
+
+        entryView = view;
 
         return view;
     }
@@ -93,5 +112,105 @@ public class MedicationEntry extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
+    }
+
+    /*
+   * Stores the users data when the done button is clicked
+   *
+    */
+    public void onDoneClick(View v) {
+
+        String brandString = StringDateTimeConverter.GetStringFromEditText(entryView.findViewById(R.id.MedicationEditBrandName));
+        String prescriberString = StringDateTimeConverter.GetStringFromEditText(entryView.findViewById(R.id.MedicationPrescriberName));
+        String dosetring = StringDateTimeConverter.GetStringFromEditText(entryView.findViewById(R.id.MedicationDoseAmount));
+        String instructionsString = StringDateTimeConverter.GetStringFromEditText(entryView.findViewById(R.id.MedicationInstructionEditText));
+        String warningsString = StringDateTimeConverter.GetStringFromEditText(entryView.findViewById(R.id.MedicationWarningsEditText));
+        String notes = StringDateTimeConverter.GetStringFromEditText(entryView.findViewById(R.id.medicationDetailsEditText));
+
+        //Filling date and time strings for bundle's string array
+        String dateString = ((TextView)entryView.findViewById(R.id.MedicationStartDateTextView)).getText().toString();
+        String timeString = ((TextView)entryView.findViewById(R.id.MedicationStartTimeTextView)).getText().toString();
+
+        //Cleaning date and time strings with helper class
+        dateString = StringDateTimeConverter.fixDate(dateString);
+        timeString = StringDateTimeConverter.fixTime(timeString);
+
+        String username = "default";
+
+        if (LocalAccount.isLoggedIn()) {
+            username = LocalAccount.GetInstance().GetUsername();
+        }
+
+        //Make string array for all of the above data
+        String[] medEntryData = {null, username, null, dateString, timeString, brandString,
+                prescriberString, dosetring, instructionsString, warningsString, notes, "0"};
+
+        //Retrieves column names from the class
+        String[] columnNames = LocalStorageAccessMedication.getColumns();
+
+
+        if (columnNames.length == medEntryData.length) {
+            ContentValues rowToBeInserted = new ContentValues();
+            int dataIndex = 0;
+
+            for (String column : columnNames) {
+                //Insert column name ripped from LSA child class, and the user's entry data we gathered above
+                if (column != LocalStorageAccessMedication.LOCAL_MEDICATION_ID) {
+                    rowToBeInserted.put(column, medEntryData[dataIndex]);
+                }
+                dataIndex++;
+            }
+
+            //Call insert method
+            LocalStorageAccessMedication.insertFromContentValues(rowToBeInserted, v.getContext());
+
+            int id = LocalStorageAccessMedication.GetLastID(v.getContext());
+
+            rowToBeInserted.put(LocalStorageAccessMedication.LOCAL_MEDICATION_ID, id);
+            rowToBeInserted.remove(LocalStorageAccessMedication.USER_NAME);
+
+            String jsonToInsert = JsonCVHelper.convertToJSON(rowToBeInserted);
+
+            //Trys to insert the user's data
+            try {
+                new DatabaseConnect(this).execute(DatabaseConnectionTypes.INSERT_TABLE_VALUES, jsonToInsert,
+                        LocalAccount.GetInstance().GetToken(),
+                        //"asdf",
+                        DatabaseConnectionTypes.MEDICATION_TABLE);
+            } catch (NullPointerException except) {
+                //TODO display error if user is not logged in.
+            }
+
+        }
+
+    }
+
+    /**
+     * Called asynchronously when the call to the webserver is done. This method updates the webID
+     * reference that is stored on the local database
+     *
+     * @param result The json encoded regular string that contains the WebID and localID of the
+     *               updated row
+     */
+    public void processFinish(String result) {
+        //Getting context for LSA constructor
+        Context context = entryView.getContext();
+
+        JSONObject jsonObject;
+        jsonObject = JsonCVHelper.processServerJsonString(result, context, "Could not create exercise entry on web database");
+
+        if (jsonObject != null)
+        {
+            int[] tableIDs = new int[2];
+            JsonCVHelper.getIDColumns(tableIDs, jsonObject, context);
+
+            if (tableIDs[0] != -1 && tableIDs[1] != -1)
+            {
+                LocalStorageAccessMedication.updateWebIDReference(tableIDs[0], tableIDs[1], context);
+            } else
+            {
+                Toast.makeText(context, "There was an error processing information from the webserver", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }

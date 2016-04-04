@@ -439,7 +439,7 @@ public class SleepEntry extends Fragment implements AsyncResponse {
         Context context = entryView.getContext();
 
         JSONObject jsonObject;
-        jsonObject = JsonCVHelper.processServerJsonString(result, context, "Could not create exercise entry on web database");
+        jsonObject = JsonCVHelper.processServerJsonString(result, context, "Could not create sleep entry on web database");
 
         if (jsonObject != null)
         {
