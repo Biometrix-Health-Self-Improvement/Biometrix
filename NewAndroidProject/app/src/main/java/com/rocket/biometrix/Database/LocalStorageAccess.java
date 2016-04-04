@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.Date;
 import java.text.SimpleDateFormat;
@@ -21,7 +22,8 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
     //Incremented to 4. Implemented ID fields for sleep, exercise, and mood. Also implemented, needs update
     //Incremented to 5. Diet Table added
     //Incremented to 6. To autoincrement, the primary key must say integer, not int
-    protected static final int DATABASE_VERSION = 6;
+    //Incremented to 7. Standardizing format to match Excel file
+    protected static final int DATABASE_VERSION = 7;
     protected static LocalStorageAccess m_instance = null;
 
 
@@ -93,6 +95,7 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
     {
         //String query = "Select " + idField +
         //       " FROM " + tableName + " Order By " + idField + " DESC LIMIT 1";
+
 
         SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
 

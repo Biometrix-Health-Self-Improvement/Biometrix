@@ -12,26 +12,21 @@ public class LocalStorageAccessSleep {
 
     //Sleep table and columns
     public static final String TABLE_NAME = "Sleep";
+    public static final String LOCAL_SLEEP_ID = "LocalSleepID";//The local sleep ID is a unique identifier for each entry on the local database
     public static final String USER_NAME = "UserName";
-
-    //The local sleep ID is a unique identifier for each entry on the local datbase
-    //The web sleep ID is a unique identifier for each entry on the BIOMETRIX database
-    //These two references are needed to allow easier updating when a user changes values
-    public static final String LOCAL_SLEEP_ID = "LocalSleepID";
-    public static final String WEB_SLEEP_ID = "WebSleepID";
+    public static final String WEB_SLEEP_ID = "WebSleepID";//The web sleep ID is a unique identifier for each entry on the BIOMETRIX database
     public static final String DATE = "Date";
     public static final String TIME = "Time";
-    public static final String DURATION  = "Duration";
+    public static final String DURATION = "Duration";
     public static final String QUALITY = "Quality";
     public static final String NOTES = "Notes";
     public static final String HEALTH = "Health";
-
-    //Updated = Has the field changed from what the webserver has? This has to be an int, so 0 =false 1 =true
-    static final String UPDATED = "Updated";
+    public static final String UPDATED = "Updated";//Updated = Has the field changed from what the webserver has? This has to be an int, so 0 =false 1 =true
 
     //Exercise Add Entry Table strings
 
-    private static final String[] columns = {LOCAL_SLEEP_ID, USER_NAME, WEB_SLEEP_ID, DATE, TIME, DURATION, QUALITY, NOTES, HEALTH, UPDATED};
+    public static final String[] columns = {LOCAL_SLEEP_ID, USER_NAME, WEB_SLEEP_ID, DATE,
+            TIME, DURATION, QUALITY, NOTES, HEALTH, UPDATED};
 
     public LocalStorageAccessSleep(Context context){
     }
@@ -40,19 +35,17 @@ public class LocalStorageAccessSleep {
     public static String createTable()
     {
         //Creates the SQL string to make the SLEEP table
-        return "CREATE TABLE " + TABLE_NAME
-                //Integer primary key gives auto-increment for free, but it must be "integer" not int
-                + " ( " + LOCAL_SLEEP_ID + " integer primary key, "
-                + USER_NAME + " varchar(50) Not Null, "
-                + WEB_SLEEP_ID + " int NULL, "
-                + DATE + " date Not Null, "
-                + TIME + " time Not Null, "
-                + DURATION + " time Not Null, "
-                + QUALITY + " int Not Null, "
-                + NOTES + " varchar(300), "
-                + HEALTH + " varchar(20), "
-                + UPDATED + " int default 0" +
-                ");";
+        return "CREATE TABLE " + TABLE_NAME + " ( " +
+                LOCAL_SLEEP_ID + " integer primary key, " +
+                USER_NAME + " varchar(50) Not Null, " +
+                WEB_SLEEP_ID + " int Null, " +
+                DATE + " date, " +
+                TIME + " time Not Null, " +
+                DURATION + " time Not Null, " +
+                QUALITY + " int Not Null, " +
+                NOTES + " varchar(300), " +
+                HEALTH + " varchar(20), " +
+                UPDATED + " int default 0" +");";
     }
 
     public static String getTableName(){ return TABLE_NAME; }

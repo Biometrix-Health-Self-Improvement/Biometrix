@@ -20,7 +20,7 @@ public class LocalStorageAccessDiet {
     public static final String LOCAL_DIET_ID = "LocalDietID";
     public static final String USER_NAME = "UserName";
     public static final String WEB_DIET_ID = "WebDietID";
-    public static final String DATE= "Date";
+    public static final String DATE = "Date";
     public static final String TYPE = "FoodType";
     public static final String MEAL = "Meal";
     public static final String SERVING = "ServingSize";
@@ -38,44 +38,42 @@ public class LocalStorageAccessDiet {
     public static final String VITAMINB = "VitaminB";
     public static final String CALCIUM = "Calcium";
     public static final String IRON = "Iron";
-    public static final String NOTE= "Notes";
-
-    //Updated = Has the field changed from what the webserver has? This has to be an int, so 0 =false 1 =true
+    public static final String NOTE = "Notes";
     public static final String UPDATED = "Updated";
 
     //Every single column that is available in the table
-    private final static String[] cols = {LOCAL_DIET_ID, USER_NAME, WEB_DIET_ID, DATE, TYPE, MEAL,
-            SERVING, CALORIES, TOTALFAT, SATFAT, TRANSFAT, CHOLESTEROL, SODIUM, TOTALCARBS, FIBER,
-            SUGARS, PROTEIN, VITAMINA, VITAMINB, CALCIUM, IRON, NOTE, UPDATED};
-
-    //Group together all int columns to avoid a super long create table function
-    public static final String[] intCols = {CALORIES, TOTALFAT, SATFAT, TRANSFAT, CHOLESTEROL, SODIUM, TOTALCARBS, FIBER,
-    SUGARS, PROTEIN, VITAMINA, VITAMINB, CALCIUM, IRON};
+    public static final String[] cols = {LOCAL_DIET_ID, USER_NAME, WEB_DIET_ID, DATE,
+            TYPE, MEAL, SERVING, CALORIES, TOTALFAT, SATFAT, TRANSFAT, CHOLESTEROL, SODIUM, TOTALCARBS,
+            FIBER, SUGARS, PROTEIN, VITAMINA, VITAMINB, CALCIUM, IRON, NOTE, UPDATED};
 
     private LocalStorageAccessDiet(){}
 
     public static String createTable() {
 
-        StringBuilder tableSQL = new StringBuilder();
-
-        tableSQL.append("CREATE TABLE " + TABLE_NAME + " ( " +
+        return "CREATE TABLE " + TABLE_NAME + " ( " +
                 LOCAL_DIET_ID + " integer primary key, " +
                 USER_NAME + " varchar(50) Not Null, " +
                 WEB_DIET_ID + " int Null, " +
                 DATE + " date Not Null, " +
-                TYPE + " varchar(40) Not null, " +
+                TYPE + " varchar(40) Not Null, " +
                 MEAL + " varchar(20) Null, " +
-                SERVING + " VARCHAR(20) Null, ");
-
-        //Loops through each collumn and makes it an int Null column
-        for (String col : intCols)
-        {
-            tableSQL.append(col + " int Null, ");
-        }
-        tableSQL.append(NOTE + " varchar(255), " +
-                UPDATED + " int default 0" +");");
-
-        return tableSQL.toString();
+                SERVING + " varchar(20) Null, " +
+                CALORIES + " int Null, " +
+                TOTALFAT + " int Null, " +
+                SATFAT + " int Null, " +
+                TRANSFAT + " int Null, " +
+                CHOLESTEROL + " int Null, " +
+                SODIUM + " int Null, " +
+                TOTALCARBS + " int Null, " +
+                FIBER + " int Null, " +
+                SUGARS + " int Null, " +
+                PROTEIN + " int Null, " +
+                VITAMINA + " int Null, " +
+                VITAMINB + " int Null, " +
+                CALCIUM + " int Null, " +
+                IRON + " int Null, " +
+                NOTE + " varchar(255), " +
+                UPDATED + " int default 0" +");";
     }
 
     public static String getTableName() {return  TABLE_NAME;}
