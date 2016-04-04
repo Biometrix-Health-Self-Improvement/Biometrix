@@ -14,7 +14,7 @@
             android:layout_height="match_parent"
             android:stretchColumns="0">
 
-            <Switch
+<!--            <Switch
                 android:id="@+id/MedicationRefillReminderSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
 
             <Space
                 android:layout_width="10dp"
-                android:layout_height="10dp" />
+                android:layout_height="10dp" />-->
 
             <TextView
                 android:id="@+id/MedicationStartDateTextView"
@@ -87,6 +87,21 @@
                 android:layout_height="match_parent">
 
                 <EditText
+                    android:id="@+id/MedicationDoseAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/med_dose"
+                    android:textAlignment="center"
+                    android:maxLength="50"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
                     android:id="@+id/MedicationInstructionEditText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -97,7 +112,7 @@
                     android:singleLine="true" />
             </TableRow>
 
-            <LinearLayout android:layout_height="50dp">
+<!--            <LinearLayout android:layout_height="50dp">
 
                 <Spinner
                     android:layout_width="wrap_content"
@@ -114,7 +129,7 @@
                     android:spinnerMode="dropdown"
                     android:entries="@array/times_daily"
                     android:hint="@string/med_times_daily" />
-            </LinearLayout>
+            </LinearLayout>-->
 
             <TableRow
                 android:layout_width="match_parent"

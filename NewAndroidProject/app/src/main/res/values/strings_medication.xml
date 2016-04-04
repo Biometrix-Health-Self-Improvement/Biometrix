@@ -2,6 +2,7 @@
 <resources>
     <string name="med_notes">Enter notes...</string>
     <string name="med_brand">Brand Name</string>
+    <string name="med_dose">Dose Amount</string>
     <string name="med_prescriber">Prescriber\'s Name</string>
     <string name="med_refill_reminder_switch">Refill Reminder</string>
     <string name="med_take_reminder_switch">Medication Use Reminder</string>
