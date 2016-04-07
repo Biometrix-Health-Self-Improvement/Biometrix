@@ -93,7 +93,7 @@ public class EditCalendar extends Fragment {
                 String dateSelectedFormatted = StringDateTimeConverter.convertCalDateString(dateSelected);
 
                 //Pass selectByDate() cursor to fill ListView
-                Cursor exercise = LocalStorageAccessExercise.selectByDate(dateSelectedFormatted);
+                Cursor exercise = LocalStorageAccessExercise.selectByDate(dateSelectedFormatted, view.getContext());
 
 
                 //getActivity() for the context.
