@@ -2,7 +2,6 @@ package com.rocket.biometrix.EditPastEntries.fragments;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -30,7 +29,7 @@ public class EditCalendar extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
+    // TODO: Rename and change types of parameters (Will use them for tabbed calendars to switch UI events)
     private String mParam1;
     private String mParam2;
 
@@ -93,23 +92,21 @@ public class EditCalendar extends Fragment {
                 String[] dateSelected = { Integer.toString(year),Integer.toString(month),Integer.toString(dayOfMonth)};
                 String dateSelectedFormatted = StringDateTimeConverter.convertCalDateString(dateSelected);
 
+                //TODO: UPDATE to use dictionary to pass multiple cursors
                 //Pass selectByDate() cursor to fill ListView
-                Cursor exercise = LocalStorageAccessExercise.selectByDate(dateSelectedFormatted,getActivity());
+                Cursor datesExercise = LocalStorageAccessExercise.selectByDate(dateSelectedFormatted,getActivity());
 
                 //getActivity() for the context.
                 Toast.makeText(getActivity(), dateSelectedFormatted, Toast.LENGTH_LONG).show();
+
+                if (mListener != null) {
+                    mListener.onFragDateSelect(dateSelectedFormatted, datesExercise);
+                }
             }
 
         });
 
         return view;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     //When parent activity OnCreate is finished, can access UI elements
@@ -139,6 +136,9 @@ public class EditCalendar extends Fragment {
     }
 
     /**
+     * Implement this method to get the cursor the calendar generates
+     * Return 1 if it fails please.
+     *
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
@@ -149,7 +149,8 @@ public class EditCalendar extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        //Pass String and Cursor to an activity (fills up EPA dictionary)
+        //Return 1 if failed.
+        int onFragDateSelect(String table, Cursor datesQuery);
     }
 }

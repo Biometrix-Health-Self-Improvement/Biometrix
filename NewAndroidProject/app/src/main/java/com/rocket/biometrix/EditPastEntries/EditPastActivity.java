@@ -1,7 +1,6 @@
 package com.rocket.biometrix.EditPastEntries;
 
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -10,16 +9,14 @@ import com.rocket.biometrix.EditPastEntries.fragments.EditCalendar;
 import com.rocket.biometrix.EditPastEntries.fragments.EntryCandiesFragment;
 import com.rocket.biometrix.R;
 
-import java.util.Dictionary;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EditPastActivity extends AppCompatActivity
         implements EditCalendar.OnFragmentInteractionListener, EntryCandiesFragment.OnListFragmentInteractionListener {
 
-    //???Should this be matrix cursor? custom Map? List of custom class??? list of templated Pairs?
-    //Dictionary for storing database cursors that calendar injects and RV reads
-    Dictionary<String,Cursor> CursorDictionary;
-
-
+       List<CursorPair> mCursorList = new ArrayList<CursorPair>();
+        boolean mNewDateTouched; //if true, cal fragment's focused date was changed and RV needs to be updated.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +24,8 @@ public class EditPastActivity extends AppCompatActivity
         setContentView(R.layout.activity_edit_past2);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mNewDateTouched = false;
 
         //TODO: Get Calendar Fragment and RV fragment in here, implement their on frag interactions somehow
 
@@ -63,13 +62,21 @@ public class EditPastActivity extends AppCompatActivity
 
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
 
-    }
 
     @Override
     public void onListFragmentInteraction(CandyItems item) {
 
+    }
+
+    @Override
+    public int onFragDateSelect(String table, Cursor datesQuery) {
+        int errno = 0;
+
+        //TODO: Error Checking
+        mCursorList.add(new CursorPair(table,datesQuery));
+        mNewDateTouched = true;
+
+        return errno;
     }
 }
