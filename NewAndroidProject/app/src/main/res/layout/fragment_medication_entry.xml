@@ -44,7 +44,7 @@
                 android:layout_height="5dp" />
 
             <TextView
-                android:id="@+id/MedicationStarTimeTextView"
+                android:id="@+id/MedicationStartTimeTextView"
                 android:text="@string/time_prompt"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
 
@@ -161,7 +161,8 @@
 
             <Button
                 android:id="@+id/medicaiton_entry_done_button"
-                style="@style/done_button" />
+                style="@style/done_button"
+                android:onClick="EntryDoneOnClick" />
 
         </TableLayout>
     </ScrollView>

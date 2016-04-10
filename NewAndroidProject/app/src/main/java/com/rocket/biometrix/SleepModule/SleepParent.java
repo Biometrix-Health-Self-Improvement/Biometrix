@@ -97,7 +97,7 @@ public class SleepParent extends Fragment {
      */
     private void UpdatePreviousEntries(View v)
     {
-        Cursor sleepCursor = LocalStorageAccessSleep.selectAll(v.getContext());
+        Cursor sleepCursor = LocalStorageAccessSleep.selectAll(v.getContext(), true);
 
         displayEntriesLayout.removeAllViews();
 
@@ -108,7 +108,6 @@ public class SleepParent extends Fragment {
 
             //Creates the string that will be displayed.
             StringBuilder dispString = new StringBuilder();
-
 
             dispString.append(sleepCursor.getString(sleepCursor.getColumnIndex(LocalStorageAccessSleep.DATE)));
             dispString.append(" for ");

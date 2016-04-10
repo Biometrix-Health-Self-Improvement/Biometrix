@@ -108,7 +108,7 @@ public class LocalStorageAccessMood {
         return lst;
     }
 
-    public static Cursor getCurrentMonthEntries(Context c, int year, int month)
+    public static Cursor getMonthEntries(Context c, int year, int month)
     {
         String date = year + "-";
         if(month <10)
@@ -145,5 +145,18 @@ public class LocalStorageAccessMood {
         }
 
         db.close();
+    }
+
+    /**
+     * Returns all rows for the currently logged in user. If no user is logged in, returns the
+     * columns for the user "default"
+     * @param c The current context
+     * @param curUserOnly A boolean value representing whether all users should be displayed (false)
+     *                    or only the currently logged in user (true)
+     * @return A Cursor to all of the columns for the sleep table for the current user
+     */
+    public static Cursor selectAll(Context c, boolean curUserOnly)
+    {
+        return LocalStorageAccess.selectAllEntries(c, TABLE_NAME, DATE + " DESC, " + TIME + " DESC", curUserOnly);
     }
 }

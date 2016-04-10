@@ -56,9 +56,9 @@ public abstract class GraphBase extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        v= inflater.inflate(R.layout.fragment_mood_graph, container, false);
+        v = graphInflate(inflater, container);
 
-        graph = (GraphView) v.findViewById(R.id.graphMood);
+        graph = getGraph();//(GraphView) v.findViewById(R.id.graphMood);
 
         year = Calendar.getInstance().get(Calendar.YEAR);
         month = Calendar.getInstance().get(Calendar.MONTH)+1;
@@ -88,7 +88,9 @@ public abstract class GraphBase extends Fragment {
 
     abstract public void populateGraph();
 
-    abstract public ArrayList<DataPoint[]> getDataPointArrayMoods(int year, int month);
+    abstract public ArrayList<DataPoint[]> getDataPointArray(int year, int month);
+    abstract GraphView getGraph();
+    abstract View graphInflate(LayoutInflater inflater, ViewGroup container);
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

@@ -209,7 +209,7 @@ public class DietEntry extends Fragment implements AsyncResponse {
         Context context = dietView.getContext();
 
         JSONObject jsonObject;
-        jsonObject = JsonCVHelper.processServerJsonString(result, context, "Could not create exercise entry on web database");
+        jsonObject = JsonCVHelper.processServerJsonString(result, context, "Could not create diet entry on web database");
 
         if (jsonObject != null)
         {

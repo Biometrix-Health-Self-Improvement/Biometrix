@@ -86,21 +86,14 @@ public class LocalStorageAccessSleep {
     /**
      * Returns all rows for the currently logged in user. If no user is logged in, returns the
      * columns for the user "default"
-     * @param c
+     * @param c The current context
+     * @param curUserOnly A boolean value representing whether all users should be displayed (false)
+     *                    or only the currently logged in user (true)
      * @return A Cursor to all of the columns for the sleep table for the current user
      */
-    public static Cursor selectAll(Context c)
+    public static Cursor selectAll(Context c, boolean curUserOnly)
     {
-        SQLiteDatabase database = LocalStorageAccess.getInstance(c).getReadableDatabase();
-
-        String username = "default";
-
-        if (LocalAccount.isLoggedIn())
-        {
-            username = LocalAccount.GetInstance().GetUsername();
-        }
-
-        return database.query(TABLE_NAME, null, "Username = ?", new String[] {username}, null, null, DATE + " DESC, " + TIME + " DESC");
+        return LocalStorageAccess.selectAllEntries(c, TABLE_NAME, DATE + " DESC, " + TIME + " DESC", curUserOnly);
     }
 
     /**
@@ -125,4 +118,21 @@ public class LocalStorageAccessSleep {
 
         db.close();
     }
+
+    public static Cursor getMonthEntries(Context c, int year, int month)
+    {
+        String date = year + "-";
+        if(month <10)
+            date +="0";
+        date += month + "-01";
+
+        SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_NAME, new String[]{DATE, TIME, DURATION, QUALITY},
+                DATE + " BETWEEN (date(?)) AND (date(?, '+1 month','-1 day'))", new String[]{date, date}, null, null, DATE);
+
+
+        return cursor;
+    }
+
 }

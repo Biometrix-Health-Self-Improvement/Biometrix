@@ -297,7 +297,7 @@ public class MoodEntry extends Fragment implements AsyncResponse {
         Context context = view.getContext();
 
         JSONObject jsonObject;
-        jsonObject = JsonCVHelper.processServerJsonString(result, context, "Could not create exercise entry on web database");
+        jsonObject = JsonCVHelper.processServerJsonString(result, context, "Could not create mood entry on web database");
 
         if (jsonObject != null)
         {

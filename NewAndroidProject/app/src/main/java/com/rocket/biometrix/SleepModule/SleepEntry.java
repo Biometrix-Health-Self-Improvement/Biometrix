@@ -34,9 +34,12 @@ import com.rocket.biometrix.R;
 
 import org.json.JSONObject;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -367,6 +370,11 @@ public class SleepEntry extends Fragment implements AsyncResponse {
         dateText = dateText.substring(dateText.indexOf(",") + 1).trim();
         timeText = timeText.substring(timeText.indexOf(":") + 2).trim();
         duration = duration.substring(duration.indexOf(":") + 2).trim();
+        DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+        Date date = null;
+        try{ date = format.parse(dateText); } catch (Exception e) { }
+        format = new SimpleDateFormat("yyyy-MM-dd");
+        dateText = format.format(date);
 
         Integer quality = qualitySeekBar.getProgress();
 
@@ -439,7 +447,7 @@ public class SleepEntry extends Fragment implements AsyncResponse {
         Context context = entryView.getContext();
 
         JSONObject jsonObject;
-        jsonObject = JsonCVHelper.processServerJsonString(result, context, "Could not create exercise entry on web database");
+        jsonObject = JsonCVHelper.processServerJsonString(result, context, "Could not create sleep entry on web database");
 
         if (jsonObject != null)
         {

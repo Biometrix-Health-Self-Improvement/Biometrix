@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.rocket.biometrix.Login.LocalAccount;
+
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -22,7 +24,7 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
     //Incremented to 4. Implemented ID fields for sleep, exercise, and mood. Also implemented, needs update
     //Incremented to 5. Diet Table added
     //Incremented to 6. To autoincrement, the primary key must say integer, not int
-    //Incremented to 7. Standardizing format to match Excel file
+    //Incremented to 7. Standardizing format to match Excel file, also Medication module is now a thing
     protected static final int DATABASE_VERSION = 7;
     protected static LocalStorageAccess m_instance = null;
 
@@ -55,7 +57,7 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
         //Create all the tables
         db.execSQL(LocalStorageAccessExercise.createTable());
         db.execSQL(LocalStorageAccessDiet.createTable());
-        //db.execSQL(LocalStorageAccessMedication.createTable());
+        db.execSQL(LocalStorageAccessMedication.createTable());
         db.execSQL(LocalStorageAccessSleep.createTable());
         db.execSQL(LocalStorageAccessMood.createTable());
 
@@ -63,12 +65,8 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
 
     private void dropTables(SQLiteDatabase db){
         db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessExercise.getTableName());
-
-        //For whatever reason, the two statements below crash if the table doesn't exist..
-        //Which is basically the exact opposite of what they SHOULD do. I am clueless -TJ
-        //TODO: uncomment when written
         db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessDiet.getTableName());
-        //db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessMedication.getTableName());
+        db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessMedication.getTableName());
         db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessMood.getTableName());
         db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessSleep.getTableName());
     }
@@ -232,4 +230,29 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
                 new String[]{startDate, endDate}, null, null, null);
     }
 
+    /**
+     * Returns all rows for the currently logged in user. If no user is logged in, returns the
+     * columns for the user "default"
+     * @param c
+     * @return A Cursor to all of the columns for the sleep table for the current user
+     */
+    public static Cursor selectAllEntries(Context c, String tableName, String orderBy, boolean curUserOnly)
+    {
+        SQLiteDatabase database = getInstance(c).getReadableDatabase();
+
+        if (curUserOnly)
+        {
+            String username = "default";
+
+            if (LocalAccount.isLoggedIn()) {
+                username = LocalAccount.GetInstance().GetUsername();
+            }
+
+            return database.query(tableName, null, "Username = ?", new String[]{username}, null, null, orderBy);
+        }
+        else
+        {
+            return database.query(tableName, null, null, null, null, null, orderBy);
+        }
+    }
 }
