@@ -108,7 +108,7 @@ public class LocalStorageAccessMood {
         return lst;
     }
 
-    public static Cursor getCurrentMonthEntries(Context c, int year, int month)
+    public static Cursor getMonthEntries(Context c, int year, int month)
     {
         String date = year + "-";
         if(month <10)

@@ -9,6 +9,10 @@
         android:id="@+id/NewSleepEntryButton"
         android:onClick="CreateEntryOnClick" />
 
+    <Button style="@style/graph"
+        android:id="@+id/goToGraphSleep"
+        android:onClick="SleepGraph" />
+
     <View
         style="@style/Divider"
         android:layout_below="@+id/NewSleepEntryButton"

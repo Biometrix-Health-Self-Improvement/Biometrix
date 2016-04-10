@@ -14,8 +14,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+
 import com.rocket.biometrix.Analysis.BiometrixAnalysis;
+import com.rocket.biometrix.Analysis.GraphBase;
 import com.rocket.biometrix.Analysis.MoodGraph;
+import com.rocket.biometrix.Analysis.SleepGraph;
 import com.rocket.biometrix.DietModule.DietEntry;
 import com.rocket.biometrix.DietModule.DietParent;
 import com.rocket.biometrix.ExerciseModule.ExerciseEntry;
@@ -268,10 +271,15 @@ public class NavigationDrawerActivity extends AppCompatActivity
         activeFragment = new MoodGraph();
         replaceFragment(activeFragment);
     }
-    public void moodGraphNext(View v) {
-        ((MoodGraph)activeFragment).nextMonth();
+    public void graphNext(View v) {
+        ((GraphBase)activeFragment).nextMonth();
     }
-    public void moodGraphPrev(View v) {
-        ((MoodGraph)activeFragment).prevMonth();
+    public void graphPrev(View v) {
+        ((GraphBase)activeFragment).prevMonth();
+    }
+
+    public void SleepGraph(View v){
+        activeFragment = new SleepGraph();
+        replaceFragment(activeFragment);
     }
 }
