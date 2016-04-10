@@ -2,7 +2,6 @@ package com.rocket.biometrix;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.ContentValues;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,8 +16,6 @@ import android.widget.Toast;
 
 import com.rocket.biometrix.Analysis.BiometrixAnalysis;
 import com.rocket.biometrix.Analysis.MoodGraph;
-import com.rocket.biometrix.Database.LocalStorageAccess;
-import com.rocket.biometrix.Database.LocalStorageAccessMood;
 import com.rocket.biometrix.DietModule.DietEntry;
 import com.rocket.biometrix.DietModule.DietParent;
 import com.rocket.biometrix.ExerciseModule.ExerciseEntry;
@@ -31,10 +28,11 @@ import com.rocket.biometrix.MedicationModule.MedicationEntry;
 import com.rocket.biometrix.MedicationModule.MedicationParent;
 import com.rocket.biometrix.MoodModule.MoodEntry;
 import com.rocket.biometrix.MoodModule.MoodParent;
-import com.rocket.biometrix.Analysis.MoodGraph;
 import com.rocket.biometrix.SleepModule.SleepEntry;
 
 import com.rocket.biometrix.SleepModule.SleepParent;
+
+import org.json.JSONObject;
 
 public class NavigationDrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -118,8 +116,9 @@ public class NavigationDrawerActivity extends AppCompatActivity
         } else if (id == R.id.nav_medication_module) {
             frag = new MedicationParent();
         } else if (id == R.id.nav_analytics) { //TODO: menu open analytics fragment
-            ContentValues contentValues = BiometrixAnalysis.AnalyzeIntFieldsBasic(LocalStorageAccessMood.selectAll(getApplicationContext(), true));
-            String test = contentValues.toString();
+            //TODO: Actually do something with the statistical analysis. Also, might want to call this
+            //in whatever fragment we decide to open
+            JSONObject jsonObject = BiometrixAnalysis.AnalyzeAllModulesBasic(getApplicationContext());
         } else if (id == R.id.nav_settings) { //TODO: menu open settings fragment
 
         } else if (id == R.id.nav_login) {
