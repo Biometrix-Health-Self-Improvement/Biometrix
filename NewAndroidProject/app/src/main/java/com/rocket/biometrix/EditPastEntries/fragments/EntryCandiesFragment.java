@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.rocket.biometrix.EditPastEntries.CandyItems;
+import com.rocket.biometrix.EditPastEntries.CursorPair;
 import com.rocket.biometrix.EditPastEntries.adapters.MyEntryCandiesRecyclerViewAdapter;
 import com.rocket.biometrix.R;
 
@@ -78,7 +79,9 @@ public class EntryCandiesFragment extends Fragment {
                 mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 
+            //TODO: Feed this list with CursorHelper checking it against ping flags
             List<CandyItems> candyItemslist = new LinkedList<>();
+
             //TODO: HOOK in item deco {mRecyclerView.addItemDecoration()}
             mRecyclerView.setAdapter(new MyEntryCandiesRecyclerViewAdapter(context,candyItemslist));
         }
@@ -116,6 +119,8 @@ public class EntryCandiesFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(CandyItems item);
+
+        List<CursorPair> getCursorList();
     }
 
 

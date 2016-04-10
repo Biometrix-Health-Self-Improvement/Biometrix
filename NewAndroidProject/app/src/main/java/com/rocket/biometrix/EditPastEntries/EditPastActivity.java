@@ -77,6 +77,11 @@ public class EditPastActivity extends AppCompatActivity
     }
 
     @Override
+    public List<CursorPair> getCursorList() {
+        return mCursorList;
+    }
+
+    @Override
     public int onFragDateSelect(String table, Cursor datesQuery) {
         int errno = 0;
 

@@ -10,5 +10,6 @@ package com.rocket.biometrix.EditPastEntries;
  * to draw the UI 'Candies'/ Cards / 'Entries'
  */
 public class CursorHelper {
-    //TODO: Research best practices for managing fragments; and passing bundles of complex data structures through frag args
+    //TODO: Write statics that return primitives from the specified cursor pair 'signal';;; used to fill UI elements
+    //public static
 }
