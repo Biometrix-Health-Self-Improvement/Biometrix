@@ -118,17 +118,17 @@ public class LocalStorageAccessExercise{
 
 
     //Get all rows that match date YYYY-MM-DD (pass in date to search, then table you are looking at...)
-    public static Cursor selectByDate(String date){
-        return LocalStorageAccess.selectByDate(date, TABLE_NAME, DATE);
+    public static Cursor selectByDate(String date, Context context){
+        return LocalStorageAccess.getInstance(context).selectByDate(date, TABLE_NAME, DATE);
     }
 
-    public static Cursor selectAllDatabyDateRange(String startDate, String endDate){
+    public static Cursor selectAllDatabyDateRange(String startDate, String endDate, Context context){
 
-        return LocalStorageAccess.selectAllDatabyDateRange(TABLE_NAME, DATE, startDate, endDate);
+        return LocalStorageAccess.getInstance(context).selectAllDatabyDateRange(TABLE_NAME, DATE, startDate, endDate);
     }
 
-    public static String selectAllasStrings(){
-        return LocalStorageAccess.selectALLasStrings(TABLE_NAME, getColumns(), LOCAL_EXERCISE_ID);
+    public static String selectAllasStrings(Context context){
+        return LocalStorageAccess.getInstance(context).selectALLasStrings(TABLE_NAME, getColumns(), LOCAL_EXERCISE_ID);
     }
 
     public static List<String[]> getEntries(Context c)
@@ -184,5 +184,18 @@ public class LocalStorageAccessExercise{
         }
 
         db.close();
+    }
+
+    /**
+     * Returns all rows for the currently logged in user. If no user is logged in, returns the
+     * columns for the user "default"
+     * @param c The current context
+     * @param curUserOnly A boolean value representing whether all users should be displayed (false)
+     *                    or only the currently logged in user (true)
+     * @return A Cursor to all of the columns for the sleep table for the current user
+     */
+    public static Cursor selectAll(Context c, boolean curUserOnly)
+    {
+        return LocalStorageAccess.selectAllEntries(c, TABLE_NAME, DATE + " DESC, " + TIME + " DESC", curUserOnly);
     }
 }
