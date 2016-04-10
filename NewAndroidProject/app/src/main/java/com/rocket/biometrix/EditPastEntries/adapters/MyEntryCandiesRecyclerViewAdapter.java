@@ -64,9 +64,6 @@ public class MyEntryCandiesRecyclerViewAdapter extends RecyclerView.Adapter<Entr
 
         //TODO: FILL UI ELEMENTS HERE from cursor genned by calendar
         //TODO: WRITE CURSOR PARSING CLASS
-        //TODO: GET CALENDAR FRAG "Broadcasting" ITS ARGS (CURSOR)
-
-
 
     }
 

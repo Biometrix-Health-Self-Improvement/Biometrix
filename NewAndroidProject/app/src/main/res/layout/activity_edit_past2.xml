@@ -9,14 +9,6 @@
               android:id="@+id/fragment_container"
     >
 
-    <fragment
-        android:id="@+id/CalFragment"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        class="com.rocket.biometrix.EditPastEntries.fragments.EditCalendar"
-        >
-    </fragment>
-
     <Button
         android:text="BUTTON"
         android:layout_width="wrap_content"

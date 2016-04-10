@@ -93,14 +93,14 @@ public class EditCalendar extends Fragment {
                 String dateSelectedFormatted = StringDateTimeConverter.convertCalDateString(dateSelected);
 
                 //TODO: UPDATE to use dictionary to pass multiple cursors
-                //Pass selectByDate() cursor to fill ListView
+                //Retrieve cursor(s)
                 Cursor datesExercise = LocalStorageAccessExercise.selectByDate(dateSelectedFormatted,getActivity());
 
                 //getActivity() for the context.
                 Toast.makeText(getActivity(), dateSelectedFormatted, Toast.LENGTH_LONG).show();
 
                 if (mListener != null) {
-                    mListener.onFragDateSelect(dateSelectedFormatted, datesExercise);
+                    mListener.onFragDateSelect("exercise", datesExercise);
                 }
             }
 

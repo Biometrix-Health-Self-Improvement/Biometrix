@@ -11,7 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.rocket.biometrix.EditPastEntries.CandyItems;
+import com.rocket.biometrix.EditPastEntries.adapters.MyEntryCandiesRecyclerViewAdapter;
 import com.rocket.biometrix.R;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -26,6 +30,9 @@ public class EntryCandiesFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+
+    private RecyclerView mRecyclerView;
+    private MyEntryCandiesRecyclerViewAdapter adapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -56,21 +63,26 @@ public class EntryCandiesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_entrycandies_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_entrycandies_list, container, false);
+
+        //Initialize recycler view
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.RVlist);
 
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+        if (mRecyclerView instanceof RecyclerView) {
+            Context context = mRecyclerView.getContext();
+
             if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+                mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            //TODO: HOOK in item deco
-            //recyclerView.setAdapter(new MyEntryCandiesRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+
+            List<CandyItems> candyItemslist = new LinkedList<>();
+            //TODO: HOOK in item deco {mRecyclerView.addItemDecoration()}
+            mRecyclerView.setAdapter(new MyEntryCandiesRecyclerViewAdapter(context,candyItemslist));
         }
-        return view;
+        return rootView;
     }
 
 
@@ -105,4 +117,7 @@ public class EntryCandiesFragment extends Fragment {
         // TODO: Update argument type and name
         void onListFragmentInteraction(CandyItems item);
     }
+
+
+
 }
