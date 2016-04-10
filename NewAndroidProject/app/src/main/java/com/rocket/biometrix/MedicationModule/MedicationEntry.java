@@ -17,6 +17,7 @@ import com.rocket.biometrix.Database.AsyncResponse;
 import com.rocket.biometrix.Database.DatabaseConnect;
 import com.rocket.biometrix.Database.DatabaseConnectionTypes;
 import com.rocket.biometrix.Database.JsonCVHelper;
+import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessMedication;
 import com.rocket.biometrix.Login.LocalAccount;
 import com.rocket.biometrix.NavigationDrawerActivity;
@@ -135,7 +136,7 @@ public class MedicationEntry extends Fragment implements AsyncResponse{
         dateString = StringDateTimeConverter.fixDate(dateString);
         timeString = StringDateTimeConverter.fixTime(timeString);
 
-        String username = "default";
+        String username = LocalAccount.DEFAULT_NAME;
 
         if (LocalAccount.isLoggedIn()) {
             username = LocalAccount.GetInstance().GetUsername();
@@ -143,7 +144,7 @@ public class MedicationEntry extends Fragment implements AsyncResponse{
 
         //Make string array for all of the above data
         String[] medEntryData = {null, username, null, dateString, timeString, brandString,
-                prescriberString, dosetring, instructionsString, warningsString, notes, "0"};
+                prescriberString, dosetring, instructionsString, warningsString, notes};
 
         //Retrieves column names from the class
         String[] columnNames = LocalStorageAccessMedication.getColumns();
@@ -164,21 +165,24 @@ public class MedicationEntry extends Fragment implements AsyncResponse{
             //Call insert method
             LocalStorageAccessMedication.insertFromContentValues(rowToBeInserted, v.getContext());
 
-            int id = LocalStorageAccessMedication.GetLastID(v.getContext());
+            if (LocalAccount.isLoggedIn() )
+            {
+                int id = LocalStorageAccessMedication.GetLastID(v.getContext());
 
-            rowToBeInserted.put(LocalStorageAccessMedication.LOCAL_MEDICATION_ID, id);
-            rowToBeInserted.remove(LocalStorageAccessMedication.USER_NAME);
+                //Adds the primary key of the field to the sync table along with the value marking it
+                //needs to be added to the webdatabase
+                LocalStorageAccess.getInstance(v.getContext()).insertOrUpdateSyncTable(v.getContext(),
+                        LocalStorageAccessMedication.TABLE_NAME, id, LocalStorageAccess.SYNC_NEEDS_ADDED);
 
-            String jsonToInsert = JsonCVHelper.convertToJSON(rowToBeInserted);
+                rowToBeInserted.put(LocalStorageAccessMedication.LOCAL_MEDICATION_ID, id);
+                rowToBeInserted.remove(LocalStorageAccessMedication.USER_NAME);
 
-            //Trys to insert the user's data
-            try {
+                String jsonToInsert = JsonCVHelper.convertToJSON(rowToBeInserted);
+
+                //Trys to insert the user's data
                 new DatabaseConnect(this).execute(DatabaseConnectionTypes.INSERT_TABLE_VALUES, jsonToInsert,
                         LocalAccount.GetInstance().GetToken(),
-                        //"asdf",
                         DatabaseConnectionTypes.MEDICATION_TABLE);
-            } catch (NullPointerException except) {
-                //TODO display error if user is not logged in.
             }
 
         }

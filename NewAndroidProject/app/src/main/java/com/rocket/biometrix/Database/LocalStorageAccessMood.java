@@ -27,10 +27,9 @@ public class LocalStorageAccessMood {
     public static final String IRR = "Irritable";
     public static final String ANX = "Anxiety";
     public static final String NOTE = "Notes";
-    public static final String UPDATED = "Updated";
 
     public static final String[] cols = {LOCAL_MOOD_ID, USER_NAME, WEB_MOOD_ID, DATE,
-            TIME, DEP, ELEV, IRR, ANX, NOTE, UPDATED};
+            TIME, DEP, ELEV, IRR, ANX, NOTE};
 
     private LocalStorageAccessMood(){}
 
@@ -46,8 +45,7 @@ public class LocalStorageAccessMood {
                 ELEV + " int Null, " +
                 IRR + " int Null, " +
                 ANX + " int Null, " +
-                NOTE + " varchar(255), " +
-                UPDATED + " int default 0" +");";
+                NOTE + " varchar(255)" +");";
     }
 
     public static String getTableName() {return  TABLE_NAME;}
@@ -138,13 +136,20 @@ public class LocalStorageAccessMood {
         webCV.put(WEB_MOOD_ID, webID);
 
         int num_rows = db.update(TABLE_NAME, webCV, LOCAL_MOOD_ID + " = ?", new String[]{localID.toString()});
+        db.close();
 
         if (num_rows < 1)
         {
             Toast.makeText(context, "Could not create reference between web database and local database", Toast.LENGTH_LONG).show();
         }
+        else
+        {
+            if (!LocalStorageAccess.getInstance(context).deleteEntryFromSyncTable(context, TABLE_NAME, localID) )
+            {
+                Toast.makeText(context, "Could not update synchronization table", Toast.LENGTH_LONG).show();
+            }
+        }
 
-        db.close();
     }
 
     /**

@@ -30,8 +30,7 @@ public class BiometrixAnalysis
             LocalStorageAccessMood.WEB_MOOD_ID, LocalStorageAccessMood.LOCAL_MOOD_ID,
             LocalStorageAccessExercise.WEB_EXERCISE_ID, LocalStorageAccessExercise.LOCAL_EXERCISE_ID,
             LocalStorageAccessSleep.WEB_SLEEP_ID, LocalStorageAccessSleep.LOCAL_SLEEP_ID,
-            LocalStorageAccessMedication.WEB_MEDICATION_ID, LocalStorageAccessMedication.LOCAL_MEDICATION_ID,
-            LocalStorageAccessSleep.UPDATED}; //Since the updated field is named the same everywhere, I am only listing it once
+            LocalStorageAccessMedication.WEB_MEDICATION_ID, LocalStorageAccessMedication.LOCAL_MEDICATION_ID};
 
     //A list of strings that are added onto the end of the column names to be able to retrieve
     //the values from the contentvalues

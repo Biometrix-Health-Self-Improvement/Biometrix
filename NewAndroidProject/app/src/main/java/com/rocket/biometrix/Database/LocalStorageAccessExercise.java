@@ -31,18 +31,16 @@ public class LocalStorageAccessExercise{
     public static final String NOTES = "Notes";
     public static final String DATE = "DateEx";
     public static final String TIME = "TimeEx";
-    public static final String UPDATED = "Updated";
 
     // All the columns above, see getColumns() below
     public static final String[] columns = {LOCAL_EXERCISE_ID, USER_NAME, WEB_EXERCISE_ID,
-            TITLE, TYPE, MINUTES, REPS, LAPS, WEIGHT, INTY, NOTES, DATE, TIME, UPDATED};
-
+            TITLE, TYPE, MINUTES, REPS, LAPS, WEIGHT, INTY, NOTES, DATE, TIME};
     //Later, we'll hopefully get to a shared preferences class that stores BMI and weight information.
 
     public LocalStorageAccessExercise(Context context) {    }
 
     protected static String createTable() {
-        //Some SQL
+        //The SQL to create the table goes here
         return "CREATE TABLE " + TABLE_NAME + " ( " +
                 LOCAL_EXERCISE_ID + " integer primary key, " +
                 USER_NAME + " varchar(50) Not Null, " +
@@ -56,8 +54,7 @@ public class LocalStorageAccessExercise{
                 INTY + " tinyint, " +
                 NOTES + " varchar(255), " +
                 DATE + " date, " +
-                TIME + " varchar(50), " +
-                UPDATED + " int default 0" +");";
+                TIME + " varchar(50)" +");";
     }
 
 
@@ -177,13 +174,20 @@ public class LocalStorageAccessExercise{
         webCV.put(WEB_EXERCISE_ID, webID);
 
         int num_rows = db.update(TABLE_NAME, webCV, LOCAL_EXERCISE_ID + " = ?", new String[]{localID.toString()});
+        db.close();
 
         if (num_rows < 1)
         {
             Toast.makeText(context, "Could not create reference between web database and local database", Toast.LENGTH_LONG).show();
         }
+        else
+        {
+            if (!LocalStorageAccess.getInstance(context).deleteEntryFromSyncTable(context, TABLE_NAME, localID) )
+            {
+                Toast.makeText(context, "Could not update synchronization table", Toast.LENGTH_LONG).show();
+            }
+        }
 
-        db.close();
     }
 
     /**

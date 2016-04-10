@@ -21,12 +21,10 @@ public class LocalStorageAccessSleep {
     public static final String QUALITY = "Quality";
     public static final String NOTES = "Notes";
     public static final String HEALTH = "Health";
-    public static final String UPDATED = "Updated";//Updated = Has the field changed from what the webserver has? This has to be an int, so 0 =false 1 =true
 
     //Exercise Add Entry Table strings
-
     public static final String[] columns = {LOCAL_SLEEP_ID, USER_NAME, WEB_SLEEP_ID, DATE,
-            TIME, DURATION, QUALITY, NOTES, HEALTH, UPDATED};
+            TIME, DURATION, QUALITY, NOTES, HEALTH};
 
     public LocalStorageAccessSleep(Context context){
     }
@@ -44,8 +42,7 @@ public class LocalStorageAccessSleep {
                 DURATION + " time Not Null, " +
                 QUALITY + " int Not Null, " +
                 NOTES + " varchar(300), " +
-                HEALTH + " varchar(20), " +
-                UPDATED + " int default 0" +");";
+                HEALTH + " varchar(20)" +");";
     }
 
     public static String getTableName(){ return TABLE_NAME; }
@@ -110,13 +107,20 @@ public class LocalStorageAccessSleep {
         webCV.put(WEB_SLEEP_ID, webID);
 
         int num_rows = db.update(TABLE_NAME, webCV, LOCAL_SLEEP_ID + " = ?", new String[]{localID.toString()});
+        db.close();
 
         if (num_rows < 1)
         {
             Toast.makeText(context, "Could not create reference between web database and local database", Toast.LENGTH_LONG).show();
         }
+        else
+        {
+            if (!LocalStorageAccess.getInstance(context).deleteEntryFromSyncTable(context, TABLE_NAME, localID) )
+            {
+                Toast.makeText(context, "Could not update synchronization table", Toast.LENGTH_LONG).show();
+            }
+        }
 
-        db.close();
     }
 
     public static Cursor getMonthEntries(Context c, int year, int month)

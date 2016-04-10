@@ -39,12 +39,11 @@ public class LocalStorageAccessDiet {
     public static final String CALCIUM = "Calcium";
     public static final String IRON = "Iron";
     public static final String NOTE = "Notes";
-    public static final String UPDATED = "Updated";
 
     //Every single column that is available in the table
     public static final String[] cols = {LOCAL_DIET_ID, USER_NAME, WEB_DIET_ID, DATE,
             TYPE, MEAL, SERVING, CALORIES, TOTALFAT, SATFAT, TRANSFAT, CHOLESTEROL, SODIUM, TOTALCARBS,
-            FIBER, SUGARS, PROTEIN, VITAMINA, VITAMINB, CALCIUM, IRON, NOTE, UPDATED};
+            FIBER, SUGARS, PROTEIN, VITAMINA, VITAMINB, CALCIUM, IRON, NOTE};
 
     private LocalStorageAccessDiet(){}
 
@@ -72,8 +71,7 @@ public class LocalStorageAccessDiet {
                 VITAMINB + " int Null, " +
                 CALCIUM + " int Null, " +
                 IRON + " int Null, " +
-                NOTE + " varchar(255), " +
-                UPDATED + " int default 0" +");";
+                NOTE + " varchar(255)" +");";
     }
 
     public static String getTableName() {return  TABLE_NAME;}
@@ -155,12 +153,20 @@ public class LocalStorageAccessDiet {
 
         int num_rows = db.update(TABLE_NAME, webCV, LOCAL_DIET_ID + " = ?", new String[]{localID.toString()});
 
+        db.close();
+
         if (num_rows < 1)
         {
             Toast.makeText(context, "Could not create reference between web database and local database", Toast.LENGTH_LONG).show();
         }
+        else
+        {
+            if (!LocalStorageAccess.getInstance(context).deleteEntryFromSyncTable(context, TABLE_NAME, localID) )
+            {
+                Toast.makeText(context, "Could not update synchronization table", Toast.LENGTH_LONG).show();
+            }
+        }
 
-        db.close();
     }
 
     /**

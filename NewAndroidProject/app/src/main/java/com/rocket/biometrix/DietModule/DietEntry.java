@@ -19,6 +19,7 @@ import com.rocket.biometrix.Database.AsyncResponse;
 import com.rocket.biometrix.Database.DatabaseConnect;
 import com.rocket.biometrix.Database.DatabaseConnectionTypes;
 import com.rocket.biometrix.Database.JsonCVHelper;
+import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessDiet;
 import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.Database.LocalStorageAccessSleep;
@@ -138,7 +139,7 @@ public class DietEntry extends Fragment implements AsyncResponse {
         String iron = ((TextView)dietView.findViewById(R.id.Iron_Amt)).getText().toString();
         String notes = ((TextView)dietView.findViewById(R.id.dietDetailsEditText)).getText().toString();
 
-        String username = "default";
+        String username = LocalAccount.DEFAULT_NAME;
 
         if (LocalAccount.isLoggedIn() )
         {
@@ -148,7 +149,7 @@ public class DietEntry extends Fragment implements AsyncResponse {
         //Make string array for all of the above data
         String[] dietEntryData = {null, username, null, dateText, foodName, meal, servingSize,
                 calories, totalFat, satFat, transFat, chol, sodium, totalCarbs, fiber, sugars,
-                protein, vitaminA, vitaminB, calcium, iron, notes, "0"};
+                protein, vitaminA, vitaminB, calcium, iron, notes};
 
 
         //Create the object that will update the sleep table
@@ -172,26 +173,27 @@ public class DietEntry extends Fragment implements AsyncResponse {
             //Call insert method
             LocalStorageAccessDiet.insertFromContentValues(rowToBeInserted, dietView.getContext());
 
-            int id = LocalStorageAccessDiet.GetLastID(v.getContext());
-
-            rowToBeInserted.put(LocalStorageAccessDiet.LOCAL_DIET_ID, id);
-            rowToBeInserted.remove(LocalStorageAccessDiet.USER_NAME);
-
-            String jsonToInsert = JsonCVHelper.convertToJSON(rowToBeInserted);
-
-            //Trys to insert the user's data
-            try
+            //Assumes that any user who is logged in wants their data backed up.
+            //TODO: Local Account setting for turning off always backup?
+            if (LocalAccount.isLoggedIn() )
             {
+                int id = LocalStorageAccessDiet.GetLastID(v.getContext());
+
+                //Adds the primary key of the field to the sync table along with the value marking it
+                //needs to be added to the webdatabase
+                LocalStorageAccess.getInstance(v.getContext()).insertOrUpdateSyncTable(v.getContext(),
+                        LocalStorageAccessDiet.TABLE_NAME, id, LocalStorageAccess.SYNC_NEEDS_ADDED);
+
+                //Makes the change to the web database (which updates the sync table on success)
+                rowToBeInserted.put(LocalStorageAccessDiet.LOCAL_DIET_ID, id);
+                rowToBeInserted.remove(LocalStorageAccessDiet.USER_NAME);
+
+                String jsonToInsert = JsonCVHelper.convertToJSON(rowToBeInserted);
+
                 new DatabaseConnect(this).execute(DatabaseConnectionTypes.INSERT_TABLE_VALUES, jsonToInsert,
                         LocalAccount.GetInstance().GetToken(),
-                        //"asdf",
                         DatabaseConnectionTypes.DIET_TABLE);
             }
-            catch (NullPointerException except)
-            {
-                //TODO display error if user is not logged in.
-            }
-
 
         }
 
