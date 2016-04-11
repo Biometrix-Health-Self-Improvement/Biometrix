@@ -12,4 +12,10 @@ package com.rocket.biometrix.EditPastEntries;
 public class CursorHelper {
     //TODO: Write statics that return primitives from the specified cursor pair 'signal';;; used to fill UI elements
     //public static
+
+    public static String getType(CursorPair cp) {
+        String typeString = "FAILURE";
+
+        return typeString;
+    }
 }
