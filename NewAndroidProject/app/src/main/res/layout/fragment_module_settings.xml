@@ -1,0 +1,122 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rocket.biometrix.Settings.ModuleSettings">
+
+    <ScrollView
+        android:id="@+id/ModuleSettingsScrollView"
+        style="@style/scrollview_parent_list"
+        android:layout_below="@+id/dividerUpper">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:stretchColumns="0">
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/ModuleSettingsTextView"
+                    android:text="Module Settings"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
+
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableMoodTextView"
+                    android:text="Disable Mood Module"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchMoodModule"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableSleepTextView"
+                    android:text="Disable Sleep Module"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchSleepModule"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableExerciseTextView"
+                    android:text="Disable Exercise Module"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchExerciseModule"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableDietTextView"
+                    android:text="Disable Diet Module"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchDietModule"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableMedicationTextView"
+                    android:text="Disable Medication Module"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchMedicationModule"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+        <Button
+            android:id="@+id/ModuleSettingsAcceptButton"
+            style="@style/accept_button"
+            android:onClick="EntryAcceptOnClick" />
+
+        </TableLayout>
+    </ScrollView>
+
+</FrameLayout>
