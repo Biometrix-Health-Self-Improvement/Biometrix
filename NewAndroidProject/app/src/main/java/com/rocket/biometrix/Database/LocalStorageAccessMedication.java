@@ -26,11 +26,10 @@ public class LocalStorageAccessMedication {
     public static final String INSTRUCTIONS = "Instructions";
     public static final String WARNINGS = "Warnings";
     public static final String NOTES = "Notes";
-    public static final String UPDATED = "Updated";
 
 
     public static final String[] columns = {LOCAL_MEDICATION_ID, USER_NAME, WEB_MEDICATION_ID,
-            DATE, TIME, BRAND_NAME, PRESCRIBER, DOSE, INSTRUCTIONS, WARNINGS, NOTES, UPDATED};
+            DATE, TIME, BRAND_NAME, PRESCRIBER, DOSE, INSTRUCTIONS, WARNINGS, NOTES};
 
     public LocalStorageAccessMedication(Context context){
     }
@@ -40,7 +39,7 @@ public class LocalStorageAccessMedication {
     {
         //Creates the SQL string to make the Medication table
         return "CREATE TABLE " + TABLE_NAME + " ( " +
-                LOCAL_MEDICATION_ID + " integer primary key, " +
+                LOCAL_MEDICATION_ID + " integer primary key autoincrement, " +
                 USER_NAME + " varchar(50) Not Null, " +
                 WEB_MEDICATION_ID + " int Null, " +
                 DATE + " date, " +
@@ -50,8 +49,7 @@ public class LocalStorageAccessMedication {
                 DOSE + " varchar(255) null, " +
                 INSTRUCTIONS + " varchar(255) null, " +
                 WARNINGS + " varchar(255) null, " +
-                NOTES + " varchar(300), " +
-                UPDATED + " int default 0" +");";
+                NOTES + " varchar(300)" +");";
     }
 
     public static String getTableName(){ return TABLE_NAME; }
@@ -117,12 +115,20 @@ public class LocalStorageAccessMedication {
 
         int num_rows = db.update(TABLE_NAME, webCV, LOCAL_MEDICATION_ID + " = ?", new String[]{localID.toString()});
 
+        db.close();
+
         if (num_rows < 1)
         {
             Toast.makeText(context, "Could not create reference between web database and local database", Toast.LENGTH_LONG).show();
         }
+        else
+        {
+            if (!LocalStorageAccess.getInstance(context).deleteEntryFromSyncTable(context, TABLE_NAME, localID) )
+            {
+                Toast.makeText(context, "Could not update synchronization table", Toast.LENGTH_LONG).show();
+            }
+        }
 
-        db.close();
     }
 
 }

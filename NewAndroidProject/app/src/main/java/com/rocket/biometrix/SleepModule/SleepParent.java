@@ -76,7 +76,10 @@ public class SleepParent extends Fragment {
 
             //set activities active fragment to this one
             nav.activeFragment = this;
-        } catch (Exception e){}
+        } catch (Exception e)
+        {
+            e.getMessage();
+        }
 
     }
 
@@ -94,6 +97,7 @@ public class SleepParent extends Fragment {
 
     /**
      * Updates the scroll view with the information contained in the database for sleep.
+     * @param v The view to uses for getting the database entries
      */
     private void UpdatePreviousEntries(View v)
     {

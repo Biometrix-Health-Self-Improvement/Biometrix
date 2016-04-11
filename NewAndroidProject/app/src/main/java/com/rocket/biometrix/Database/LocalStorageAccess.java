@@ -25,8 +25,21 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
     //Incremented to 5. Diet Table added
     //Incremented to 6. To autoincrement, the primary key must say integer, not int
     //Incremented to 7. Standardizing format to match Excel file, also Medication module is now a thing
-    protected static final int DATABASE_VERSION = 7;
+    //Incremented to 8. Sync Table now exists, updated columns removed
+    protected static final int DATABASE_VERSION = 8;
     protected static LocalStorageAccess m_instance = null;
+
+    //Strings for the sync table creation
+    public static final String SYNC_TABLE_NAME = "Sync";
+    public static final String SYNC_TABLE_NAME_COLUMN = "TableName";
+    public static final String SYNC_KEY_COLUMN = "Key";
+    public static final String SYNC_STATUS_COLUMN = "Status";
+    public static final String SYNC_USERNAME_COLUMN = "Username";
+
+    //Status codes for the sync table
+    public static final int SYNC_NEEDS_ADDED = 1;
+    public static final int SYNC_NEEDS_UPDATED = 2;
+    public static final int SYNC_NEEDS_DELETED = 3;
 
 
     public static LocalStorageAccess getInstance(Context c){
@@ -53,6 +66,10 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
 
     }
 
+    /**
+     * Calls the create table statements for each of the tables on the passed in database
+     * @param db The SQLite database to operate on
+     */
     private void createTables(SQLiteDatabase db){
         //Create all the tables
         db.execSQL(LocalStorageAccessExercise.createTable());
@@ -60,15 +77,20 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
         db.execSQL(LocalStorageAccessMedication.createTable());
         db.execSQL(LocalStorageAccessSleep.createTable());
         db.execSQL(LocalStorageAccessMood.createTable());
-
+        db.execSQL(getSyncTableCreateSQL());
     }
 
+    /**
+     * Calls the drop table statements for each of the tables on the passed in database
+     * @param db The SQLite database to operate on
+     */
     private void dropTables(SQLiteDatabase db){
         db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessExercise.getTableName());
         db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessDiet.getTableName());
         db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessMedication.getTableName());
         db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessMood.getTableName());
         db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessSleep.getTableName());
+        db.execSQL("DROP TABLE IF EXISTS " + SYNC_TABLE_NAME);
     }
 
 
@@ -82,25 +104,150 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
         }
     }
 
+
+    // BEGIN SYNC TABLE METHODS
+    /**
+     * Return the SQLite create table function for the Sync table
+     * @return Returns a string that is the SQLite string for creating the table
+     */
+    protected String getSyncTableCreateSQL()
+    {
+        return "CREATE TABLE " + SYNC_TABLE_NAME + " ( " +
+                SYNC_USERNAME_COLUMN + " varchar(50) Not Null, " +
+                SYNC_TABLE_NAME_COLUMN + " varchar(50) Not Null, " +
+                SYNC_KEY_COLUMN + " int Not Null, " +
+                //SYNC_STATUS_COLUMN + " int default 0 " +
+                SYNC_STATUS_COLUMN + " int default 0, " +
+                " unique (" + SYNC_TABLE_NAME_COLUMN + ", " + SYNC_KEY_COLUMN + ") ON CONFLICT FAIL " +
+                ");";
+    }
+
+    /**
+     * Does either an insert or an update on the sync table depending on whether the key and table
+     * information is already there or not
+     * @param c The current context which is used to grab the database
+     * @param tableName The name of the table that the entry is for
+     * @param keyValue The value of the primary key for the table the entry is for
+     * @param status One of the status codes for the sync table that determines what operation needs
+     *               to be performed on the web database
+     * @return An integer value for the status. -1 means an error occurred. 0 means that no change
+     * was made (which is usually fine) and greater than 0 means that the column was updated or
+     * inserted successfully
+     */
+    public int insertOrUpdateSyncTable(Context c, String tableName, int keyValue, int status)
+    {
+        int returnStatus = -1;
+        SQLiteDatabase db = getInstance(c).getWritableDatabase();
+
+        try
+        {
+            //Select Status From Sync Where TableName = *tableName* AND Key = *keyValue*
+            Cursor cursor = db.query(SYNC_TABLE_NAME, new String[]{SYNC_STATUS_COLUMN},
+                    SYNC_TABLE_NAME_COLUMN + " = ? AND " + SYNC_KEY_COLUMN + " = ?",
+                    new String[]{tableName, Integer.toString(keyValue)}, null, null, null);
+
+            int curStatus = 0;
+
+            //Contains the new status values for insert or update
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(SYNC_STATUS_COLUMN, status);
+
+            //If a value was found then an update is needed, not an insert
+            if (cursor.moveToFirst()) {
+                curStatus = cursor.getInt(0);
+                cursor.close();
+
+                //If the status is the same, no operation needed. If the current status is that the row
+                //needs to be added, and the new status is the row needs to be updated this also means
+                //that no operation is needed because there is nothing to update yet
+                if (curStatus != status && (curStatus != SYNC_NEEDS_ADDED || status != SYNC_NEEDS_UPDATED)) {
+                    returnStatus = db.update(SYNC_TABLE_NAME, contentValues,
+                            SYNC_TABLE_NAME_COLUMN + " = ? AND " + SYNC_KEY_COLUMN + " = ?",
+                            new String[]{tableName, Integer.toString(keyValue)});
+                } else {
+                    returnStatus = 0;
+                }
+            } else {
+
+                cursor.close();
+
+                try {
+                    contentValues.put(SYNC_KEY_COLUMN, keyValue);
+
+                    if (LocalAccount.isLoggedIn())
+                    {
+                        contentValues.put(SYNC_USERNAME_COLUMN, LocalAccount.GetInstance().GetUsername());
+                    }
+                    else
+                    {
+                        contentValues.put(SYNC_USERNAME_COLUMN, LocalAccount.DEFAULT_NAME);
+                    }
+
+                    contentValues.put(SYNC_TABLE_NAME_COLUMN, tableName);
+
+                    db.insertOrThrow(SYNC_TABLE_NAME, null, contentValues);
+                    returnStatus = 1;
+                } catch (SQLException except) {
+                    except.getMessage();
+                    returnStatus = -1;
+                }
+            }
+        }
+        catch (Exception except)
+        {
+            except.getMessage();
+            throw except;
+        }
+
+        db.close();
+        return returnStatus;
+    }
+
+    /**
+     * Removes the passed in keyValue and tablename pair from the sync table
+     * @param c The current context which is used to grab the database
+     * @param tableName The name of the table that the entry is for
+     * @param keyValue The value of the primary key for the entry that needs to be removed
+     * @return A boolean for whether the operation succeeded or failed
+     */
+    public boolean deleteEntryFromSyncTable(Context c, String tableName, int keyValue)
+    {
+        boolean returnStatus = false;
+        SQLiteDatabase db = getInstance(c).getWritableDatabase();
+
+        //Select Status From Sync Where TableName = *tableName* AND Key = *keyValue*
+        int deletedRows =  db.delete(SYNC_TABLE_NAME,
+                SYNC_TABLE_NAME_COLUMN + " = ? AND " + SYNC_KEY_COLUMN + " = ?",
+                new String[] {tableName, Integer.toString(keyValue)});
+
+
+        if (deletedRows == 1)
+        {
+            returnStatus = true;
+        }
+        else
+        {
+            String log = Integer.toString(deletedRows) + " rows deleted from sync table for column " + tableName + ", instead of just 1";
+            Log.i("", log);
+        }
+
+        return returnStatus;
+    }
+    //END SYNC TABLE METHODS
+
     /**
      * Retrieves the largest of the primary key fields and returns it as an int
-     * @param c
-     * @param idField
-     * @param tableName
-     * @return
+     * @param c The current context so that the database can be obtained
+     * @param idField The name of the id column to search through
+     * @param tableName The name of the SQLite table to search
+     * @return The ID in the most recent entry
      */
     public int GetLastID(Context c, String idField, String tableName)
     {
-        //String query = "Select " + idField +
-        //       " FROM " + tableName + " Order By " + idField + " DESC LIMIT 1";
-
-
-        SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
+        SQLiteDatabase db = getInstance(c).getReadableDatabase();
 
         //Select idField From tableName DESC LIMIT 1
         Cursor cursor = db.query(tableName, new String[]{idField}, null, null, null, null, idField + " DESC LIMIT 1");
-
-        //Cursor cursor = db.rawQuery(query, null);
 
         int id = 0;
 
@@ -109,9 +256,20 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
             id = cursor.getInt(0);
         }
 
+        cursor.close();
+        db.close();
         return id;
     }
 
+    /**
+     * Performs an insert operation on the requested tablename
+     * @param tablename The name of the table to insert into
+     * @param nullColumn Any column on the table that can be null. Preferably the one chosen
+     *                   by the magic 8 ball.
+     *                   http://stackoverflow.com/questions/2662927/android-sqlite-nullcolumnhack-parameter-in-insert-replace-methods
+     * @param columnsAndValues The names of the columns to insert into and the values to insert
+     * @return A long containing the row number that was inserted
+     */
     protected long safeInsert(String tablename, String nullColumn, ContentValues columnsAndValues){
 
         SQLiteDatabase db = null;
@@ -148,20 +306,24 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
         return rowNumberInserted;
     }
 
-    //Get all rows that match date YYYY-MM-DD (pass in date to search, then table you are looking at...)
+    /**
+     * Get all rows that match date YYYY-MM-DD (pass in date to search, then table you are looking at...
+     * @param date The date that you want all values for
+     * @param table The name of the table to grab the values from
+     * @param date_col The name of the data column to pull from
+     * @return A cursor over the data for that day.
+     */
     public static Cursor selectByDate(String date, String table, String date_col){
         SQLiteDatabase db= m_instance.getReadableDatabase();
 
-        //Cursor cur=db.rawQuery("SELECT * FROM "+table+" WHERE "+date_col+ " == "+date, null);
-
-        //SELECT * From table WHERE date_col = date
         Cursor cur = db.query(table, null, date_col + " = ?", new String[]{date}, null, null, null);
 
         return cur;
     }
 
     //About the only Query I can think of that all modules will have in common.
-    public static String selectALLasStrings(String tableName, String[] gotColumns, String UIDcol){
+    public static String selectALLasStrings(String tableName, String[] gotColumns, String UIDcol)
+    {
         SQLiteDatabase db = m_instance.getWritableDatabase();
         String[] columns = gotColumns;
         Cursor cursor = db.query(tableName, columns, null, null, null, null, null);
@@ -178,7 +340,8 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
                 indexesIndex++;
             }
 
-            int cid = cursor.getInt(indexArray[0]); //cursor id, references rows by their primary key
+            // TODO: The below line appears unused, I commented it out.
+            //int cid = cursor.getInt(indexArray[0]); //cursor id, references rows by their primary key
         }
 
         return buf.toString();
@@ -189,14 +352,10 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
     public static Cursor selectAllDatabyDateRange(String tablename, String date_col, String startDate, String endDate){
 
         SQLiteDatabase db=m_instance.getReadableDatabase();
-        //Cursor cur=db.rawQuery("SELECT * FROM " + tablename + " WHERE " + date_col
-        //        + " >= " + startDate + " AND " + date_col + " <= " + endDate, null);
 
         //Select * FROM tablename WHERE date_col >= startDate AND date_col <= endDate
-        Cursor cur = db.query(tablename, null, date_col + " >= ? AND " + date_col + " <= ?",
+        return db.query(tablename, null, date_col + " >= ? AND " + date_col + " <= ?",
                 new String[]{startDate, endDate}, null, null, null);
-
-        return cur;
     }
 
     //Query out all data related to a range of dates, default version
@@ -222,9 +381,7 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
         endDate = new SimpleDateFormat("YYYY-MM-DD").format(nextWeek);
 
 
-        SQLiteDatabase db=m_instance.getReadableDatabase();
-        //Cursor cur=db.rawQuery("SELECT * FROM " + tablename + " WHERE " + date_col
-        //        + " >= " + startDate + " AND " + date_col + " <= " + endDate, null);
+        SQLiteDatabase db=m_instance.getReadableDatabase();;
 
         return db.query(tablename, null, date_col + " >= ? AND " + date_col + " <= ?",
                 new String[]{startDate, endDate}, null, null, null);
@@ -233,7 +390,11 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
     /**
      * Returns all rows for the currently logged in user. If no user is logged in, returns the
      * columns for the user "default"
-     * @param c
+     * @param c The current context which is used by the database queries
+     * @param tableName The name of the table to select entries on
+     * @param orderBy A string to determine how the data is ordered by SQLite statement
+     * @param curUserOnly True means return only data for the currently logged in user, false means
+     *                    return all data for local users
      * @return A Cursor to all of the columns for the sleep table for the current user
      */
     public static Cursor selectAllEntries(Context c, String tableName, String orderBy, boolean curUserOnly)
@@ -242,7 +403,7 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
 
         if (curUserOnly)
         {
-            String username = "default";
+            String username = LocalAccount.DEFAULT_NAME;
 
             if (LocalAccount.isLoggedIn()) {
                 username = LocalAccount.GetInstance().GetUsername();

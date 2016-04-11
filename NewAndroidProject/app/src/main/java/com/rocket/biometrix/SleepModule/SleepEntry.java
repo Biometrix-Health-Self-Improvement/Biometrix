@@ -381,14 +381,14 @@ public class SleepEntry extends Fragment implements AsyncResponse {
         String notes = noteTextView.getText().toString();
         String status = generalHealthSpinner.getSelectedItem().toString();
 
-        String username = "default";
+        String username = LocalAccount.DEFAULT_NAME;
 
         if (LocalAccount.isLoggedIn()) {
             username = LocalAccount.GetInstance().GetUsername();
         }
 
         //Make string array for all of the above data
-        String[] sleepEntryData = {null, username, null, dateText, timeText, duration, quality.toString(), notes, status, "0"};
+        String[] sleepEntryData = {null, username, null, dateText, timeText, duration, quality.toString(), notes, status};
 
         //Retrieves column names from the class
         String[] columnNames = LocalStorageAccessSleep.getColumns();
@@ -409,21 +409,27 @@ public class SleepEntry extends Fragment implements AsyncResponse {
             //Call insert method
             LocalStorageAccessSleep.insertFromContentValues(rowToBeInserted, v.getContext());
 
-            int id = LocalStorageAccessSleep.GetLastID(v.getContext());
+            //Assumes that any user who is logged in wants their data backed up.
+            //TODO: Local Account setting for turning off always backup?
+            if (LocalAccount.isLoggedIn() )
+            {
+                int id = LocalStorageAccessSleep.GetLastID(v.getContext());
 
-            rowToBeInserted.put(LocalStorageAccessSleep.LOCAL_SLEEP_ID, id);
-            rowToBeInserted.remove(LocalStorageAccessSleep.USER_NAME);
+                //Adds the primary key of the field to the sync table along with the value marking it
+                //needs to be added to the webdatabase
+                LocalStorageAccess.getInstance(v.getContext()).insertOrUpdateSyncTable(v.getContext(),
+                        LocalStorageAccessSleep.TABLE_NAME, id, LocalStorageAccess.SYNC_NEEDS_ADDED);
 
-            String jsonToInsert = JsonCVHelper.convertToJSON(rowToBeInserted);
+                //Makes the change to the web database (which updates the sync table on success)
+                rowToBeInserted.put(LocalStorageAccessSleep.LOCAL_SLEEP_ID, id);
+                rowToBeInserted.remove(LocalStorageAccessSleep.USER_NAME);
 
-            //Trys to insert the user's data
-            try {
+                String jsonToInsert = JsonCVHelper.convertToJSON(rowToBeInserted);
+
+                //Trys to insert the user's data
                 new DatabaseConnect(this).execute(DatabaseConnectionTypes.INSERT_TABLE_VALUES, jsonToInsert,
                         LocalAccount.GetInstance().GetToken(),
-                        //"asdf",
                         DatabaseConnectionTypes.SLEEP_TABLE);
-            } catch (NullPointerException except) {
-                //TODO display error if user is not logged in.
             }
 
 

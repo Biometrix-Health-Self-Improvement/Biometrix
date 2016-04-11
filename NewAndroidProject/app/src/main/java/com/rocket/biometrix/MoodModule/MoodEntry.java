@@ -210,28 +210,29 @@ public class MoodEntry extends Fragment implements AsyncResponse {
     }
 
 
-    public void onDoneClick(View v)
-    {
+    public void onDoneClick(View v) {
         //get date, time, and notes
-        String notes= ((TextView)view.findViewById(R.id.moodDetailsEditText)).getText().toString();
-        String datetmp=((TextView)view.findViewById(R.id.moodCreateEntryDateSelect)).getText().toString().substring(11);
+        String notes = ((TextView) view.findViewById(R.id.moodDetailsEditText)).getText().toString();
+        String datetmp = ((TextView) view.findViewById(R.id.moodCreateEntryDateSelect)).getText().toString().substring(11);
 
         DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
         Date date = null;
-        try{ date = format.parse(datetmp); } catch (Exception e) { }
+        try {
+            date = format.parse(datetmp);
+        } catch (Exception e) {
+        }
         format = new SimpleDateFormat("yyyy-MM-dd");
         String dateShort = format.format(date);
-        String time = ((TextView)view.findViewById(R.id.moodCreateEntryTimeSelect)).getText().toString().substring(6);
+        String time = ((TextView) view.findViewById(R.id.moodCreateEntryTimeSelect)).getText().toString().substring(6);
 
-        String username = "default";
+        String username = LocalAccount.DEFAULT_NAME;
 
-        if (LocalAccount.isLoggedIn())
-        {
+        if (LocalAccount.isLoggedIn()) {
             username = LocalAccount.GetInstance().GetUsername();
         }
 
         //Strings in order are LOCAL_MOOD_ID, USER_NAME, WEB_MOOD_ID, DATE, TIME, DEP, ELEV, IRR, ANX, NOTE, UPDATED
-        String[] data = new String[]{null, username, null, dateShort, time, dep, elev, irr, anx, notes, "0"};
+        String[] data = new String[]{null, username, null, dateShort, time, dep, elev, irr, anx, notes};
 
         Bundle moodBundle = new Bundle();
         moodBundle.putStringArray("moodBundleKey", data);
@@ -240,31 +241,31 @@ public class MoodEntry extends Fragment implements AsyncResponse {
 
         String[] cols = LocalStorageAccessMood.getColumns();
 
-        ContentValues row= new ContentValues();
-        int dataIndex=0;
-        for(String col: cols){
+        ContentValues row = new ContentValues();
+        int dataIndex = 0;
+        for (String col : cols) {
             row.put(col, data[dataIndex++]);
         }
         LocalStorageAccessMood.AddEntry(row, v.getContext());
 
-        int id = LocalStorageAccessMood.GetLastID(v.getContext());
-
-        row.put(LocalStorageAccessMood.LOCAL_MOOD_ID, id);
-        row.remove(LocalStorageAccessMood.USER_NAME);
-
-        String jsonToInsert = JsonCVHelper.convertToJSON(row);
-
-        //Trys to insert the user's data
-        try
+        if (LocalAccount.isLoggedIn())
         {
+            int id = LocalStorageAccessMood.GetLastID(v.getContext());
+
+            //Adds the primary key of the field to the sync table along with the value marking it
+            //needs to be added to the webdatabase
+            LocalStorageAccess.getInstance(v.getContext()).insertOrUpdateSyncTable(v.getContext(),
+                    LocalStorageAccessMood.TABLE_NAME, id, LocalStorageAccess.SYNC_NEEDS_ADDED);
+
+            row.put(LocalStorageAccessMood.LOCAL_MOOD_ID, id);
+            row.remove(LocalStorageAccessMood.USER_NAME);
+
+            String jsonToInsert = JsonCVHelper.convertToJSON(row);
+
+            //Trys to insert the user's data
             new DatabaseConnect(this).execute(DatabaseConnectionTypes.INSERT_TABLE_VALUES, jsonToInsert,
                     LocalAccount.GetInstance().GetToken(),
-                    //"asdf",
                     DatabaseConnectionTypes.MOOD_TABLE);
-        }
-        catch (NullPointerException except)
-        {
-            //TODO display error if user is not logged in.
         }
 
     }

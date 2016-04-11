@@ -24,6 +24,7 @@ import com.rocket.biometrix.Database.AsyncResponse;
 import com.rocket.biometrix.Database.DatabaseConnect;
 import com.rocket.biometrix.Database.DatabaseConnectionTypes;
 import com.rocket.biometrix.Database.JsonCVHelper;
+import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.Login.LocalAccount;
 import com.rocket.biometrix.NavigationDrawerActivity;
@@ -231,7 +232,7 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
         //Filling notes string
         String notesString = StringDateTimeConverter.GetStringFromEditText(onCreateView.findViewById(R.id.ex_notes));
 
-        String username = "default";
+        String username = LocalAccount.DEFAULT_NAME;
 
         if (LocalAccount.isLoggedIn() )
         {
@@ -240,7 +241,7 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
 
         //Make string array to hold all the strings extracted from the user's input on this entry activity
         //{LOCALEXERCISEID, USERNAME, WEBEXERCISEID, TITLE, TYPE, MINUTES, REPS, LAPS, WEIGHT, INTY, NOTES, DATE, TIME, UPDATED}; //No distinction between reps and laps, weight and intensity.
-        exerciseEntryData = new String[]{null, username, null, titleString, typeSelected, minSelected, repsString, repsString, weightString, weightString, notesString, dateString, timeString, "0"};
+        exerciseEntryData = new String[]{null, username, null, titleString, typeSelected, minSelected, repsString, repsString, weightString, weightString, notesString, dateString, timeString};
 
         //https://developer.android.com/reference/android/os/Bundle.html
         //Put string array that has all the entries data points in it into a Bundle. This bundle is for future extensibility it is NOT for the parent class.
@@ -270,25 +271,26 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
             //Call insert method
             dbEx.insertFromContentValues(rowToBeInserted, v.getContext());
 
-            int id = LocalStorageAccessExercise.GetLastID(v.getContext());
-
-            rowToBeInserted.put(LocalStorageAccessExercise.LOCAL_EXERCISE_ID, id);
-            rowToBeInserted.remove(LocalStorageAccessExercise.USER_NAME);
-
-            String jsonToInsert = JsonCVHelper.convertToJSON(rowToBeInserted);
-
-            //Trys to insert the user's data
-            try
+            if (LocalAccount.isLoggedIn())
             {
+                int id = LocalStorageAccessExercise.GetLastID(v.getContext());
+
+                //Adds the primary key of the field to the sync table along with the value marking it
+                //needs to be added to the webdatabase
+                LocalStorageAccess.getInstance(v.getContext()).insertOrUpdateSyncTable(v.getContext(),
+                        LocalStorageAccessExercise.TABLE_NAME, id, LocalStorageAccess.SYNC_NEEDS_ADDED);
+
+                rowToBeInserted.put(LocalStorageAccessExercise.LOCAL_EXERCISE_ID, id);
+                rowToBeInserted.remove(LocalStorageAccessExercise.USER_NAME);
+
+                String jsonToInsert = JsonCVHelper.convertToJSON(rowToBeInserted);
+
+                //Trys to insert the user's data
                 new DatabaseConnect(this).execute(DatabaseConnectionTypes.INSERT_TABLE_VALUES, jsonToInsert,
                         LocalAccount.GetInstance().GetToken(),
-                        //"asdf",
                         DatabaseConnectionTypes.EXERCISE_TABLE);
             }
-            catch (NullPointerException except)
-            {
-                //TODO display error if user is not logged in.
-            }
+
 
 
         }
