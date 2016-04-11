@@ -42,7 +42,7 @@ public class LocalStorageAccessExercise{
     protected static String createTable() {
         //The SQL to create the table goes here
         return "CREATE TABLE " + TABLE_NAME + " ( " +
-                LOCAL_EXERCISE_ID + " integer primary key, " +
+                LOCAL_EXERCISE_ID + " integer primary key autoincrement, " +
                 USER_NAME + " varchar(50) Not Null, " +
                 WEB_EXERCISE_ID + " int Null, " +
                 TITLE + " varchar(255), " +

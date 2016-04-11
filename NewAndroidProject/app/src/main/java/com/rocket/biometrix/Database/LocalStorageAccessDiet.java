@@ -50,7 +50,7 @@ public class LocalStorageAccessDiet {
     public static String createTable() {
 
         return "CREATE TABLE " + TABLE_NAME + " ( " +
-                LOCAL_DIET_ID + " integer primary key, " +
+                LOCAL_DIET_ID + " integer primary key autoincrement, " +
                 USER_NAME + " varchar(50) Not Null, " +
                 WEB_DIET_ID + " int Null, " +
                 DATE + " date Not Null, " +

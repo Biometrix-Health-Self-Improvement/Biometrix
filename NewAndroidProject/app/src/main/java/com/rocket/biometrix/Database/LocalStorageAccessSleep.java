@@ -34,7 +34,7 @@ public class LocalStorageAccessSleep {
     {
         //Creates the SQL string to make the SLEEP table
         return "CREATE TABLE " + TABLE_NAME + " ( " +
-                LOCAL_SLEEP_ID + " integer primary key, " +
+                LOCAL_SLEEP_ID + " integer primary key autoincrement, " +
                 USER_NAME + " varchar(50) Not Null, " +
                 WEB_SLEEP_ID + " int Null, " +
                 DATE + " date, " +

@@ -1,8 +1,8 @@
 package com.rocket.biometrix.Database;
 
-import android.content.ContentValues;
 import android.os.AsyncTask;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -103,14 +103,26 @@ public class DatabaseConnect extends AsyncTask<String, Void, Void>
                 //And the table to insert into. This determines which stored procedure is called.
                 case DatabaseConnectionTypes.INSERT_TABLE_VALUES:
                 case DatabaseConnectionTypes.UPDATE_TABLE_VALUES:
+                case DatabaseConnectionTypes.DELETE_TABLE_VALUES:
+                    //These are == not .equals by design. This means that the strings must be
+                    //obtained from DatabaseConnectionTypes or no operation will take place
                     if(params[0] == DatabaseConnectionTypes.INSERT_TABLE_VALUES)
                     {
                         db_operation = "Insert";
                     }
-                    else
+                    else if (params[0] == DatabaseConnectionTypes.UPDATE_TABLE_VALUES)
                     {
                         db_operation = "Update";
                     }
+                    else if(params[0] == DatabaseConnectionTypes.DELETE_TABLE_VALUES)
+                    {
+                        db_operation = "Delete";
+                    }
+                    else
+                    {
+                        db_operation = "none";
+                    }
+
                     jsonParam.put("Params", params[1]);
                     jsonParam.put("Token", params[2]);
                     jsonParam.put("Table", params[3]);
@@ -122,7 +134,7 @@ public class DatabaseConnect extends AsyncTask<String, Void, Void>
 
             jsonParam.put("Operation", db_operation);
         }
-        catch (org.json.JSONException jsonExcept)
+        catch (JSONException jsonExcept)
         {
             returnResult = "Problems parsing output to server";
         }

@@ -36,7 +36,7 @@ public class LocalStorageAccessMood {
     public static String createTable() {
         //Creates the SQL string to make the SLEEP table
         return "CREATE TABLE " + TABLE_NAME + " ( " +
-                LOCAL_MOOD_ID + " integer primary key, " +
+                LOCAL_MOOD_ID + " integer primary key autoincrement, " +
                 USER_NAME + " varchar(50) Not Null, " +
                 WEB_MOOD_ID + " int Null, " +
                 DATE + " date Not Null, " +

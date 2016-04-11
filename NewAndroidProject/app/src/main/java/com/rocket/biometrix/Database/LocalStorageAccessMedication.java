@@ -39,7 +39,7 @@ public class LocalStorageAccessMedication {
     {
         //Creates the SQL string to make the Medication table
         return "CREATE TABLE " + TABLE_NAME + " ( " +
-                LOCAL_MEDICATION_ID + " integer primary key, " +
+                LOCAL_MEDICATION_ID + " integer primary key autoincrement, " +
                 USER_NAME + " varchar(50) Not Null, " +
                 WEB_MEDICATION_ID + " int Null, " +
                 DATE + " date, " +
