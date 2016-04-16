@@ -1,0 +1,139 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rocket.biometrix.Settings.ExerciseSettings">
+
+    <ScrollView
+        android:id="@+id/ExerciseSettingsScrollView"
+        style="@style/scrollview_parent_list"
+        android:layout_below="@+id/dividerUpper">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:stretchColumns="0">
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/ExerciseSettingsTextView"
+                    android:text="Exercise Module Settings"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
+
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableExerciseNameTextView"
+                    android:text="Disable Exercise Name"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchExerciseName"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableExerciseDurationTextView"
+                    android:text="Disable Exercise Duration"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchExerciseDuration"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableExerciseTypeTextView"
+                    android:text="Disable Exercise Type"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchExerciseType"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableExerciseRepsLapsTextView"
+                    android:text="Disable Exercise Reps/Laps"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchExerciseRepsLaps"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableExerciseWeightIntensityTextView"
+                    android:text="Disable Exercise Weight/Intensity"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchExerciseWeightIntensity"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableExerciseNotesInputTextView"
+                    android:text="Disable Notes Input"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchExerciseNotesInput"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <Button
+                android:id="@+id/ExerciseSettingsAcceptButton"
+                style="@style/accept_button"
+                android:onClick="EntryAcceptOnClick" />
+
+        </TableLayout>
+    </ScrollView>
+
+</FrameLayout>

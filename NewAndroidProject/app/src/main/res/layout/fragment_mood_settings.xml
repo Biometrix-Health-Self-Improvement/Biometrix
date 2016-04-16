@@ -1,0 +1,122 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rocket.biometrix.Settings.MoodSettings">
+
+    <ScrollView
+        android:id="@+id/MoodSettingsScrollView"
+        style="@style/scrollview_parent_list"
+        android:layout_below="@+id/dividerUpper">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:stretchColumns="0">
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/MoodSettingsTextView"
+                    android:text="Mood Module Settings"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
+
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableDepressedTextView"
+                    android:text="Disable Depressed Slider"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchDepressedSlider"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableElevatedTextView"
+                    android:text="Disable Elevated Slider"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchElevatedSlider"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableIrritabilityTextView"
+                    android:text="Disable Irritability Slider"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchIrritabilitySlider"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableAnxietyTextView"
+                    android:text="Disable Anxiety Slider"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchAnxietySlider"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableMoodNotesTextView"
+                    android:text="Disable Notes Input"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchMoodNotesInput"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <Button
+                android:id="@+id/MoodSettingsAcceptButton"
+                style="@style/accept_button"
+                android:onClick="EntryAcceptOnClick" />
+
+        </TableLayout>
+    </ScrollView>
+
+</FrameLayout>

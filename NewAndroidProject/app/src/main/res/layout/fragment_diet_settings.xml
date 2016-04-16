@@ -1,0 +1,343 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rocket.biometrix.Settings.DietSettings">
+
+    <ScrollView
+        android:id="@+id/DietSettingsScrollView"
+        style="@style/scrollview_parent_list"
+        android:layout_below="@+id/dividerUpper">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:stretchColumns="0">
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DietSettingsTextView"
+                    android:text="Diet Module Settings"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
+
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableFoodTypeTextView"
+                    android:text="Disable Food Type"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchFoodType"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableMealSelectionTextView"
+                    android:text="Disable Meal Selection"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchMealSelection"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableServingSizeSelectionTextView"
+                    android:text="Disable Serving Size Selection"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchServingSizeSelection"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableCaloriesInputTextView"
+                    android:text="Disable Calories Input"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchCaloriesInput"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableTotalFatInputTextView"
+                    android:text="Disable Total Fat Input"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchTotalFatInput"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableSaturatedFatInputTextView"
+                    android:text="Disable Saturated Fat Input"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchSaturatedFatInput"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableTransFatInputTextView"
+                    android:text="Disable Trans Fat Input"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchTransFatInput"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableCholesterolInputTextView"
+                    android:text="Disable Cholesterol Input"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchCholesterolInput"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableSodiumInputTextView"
+                    android:text="Disable Sodium Input"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchSodiumInput"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableTotalCarbohydratesInputTextView"
+                    android:text="Disable Total Carbohydrates Input"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchTotalCarbohydratesInput"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableDietaryFiberInputTextView"
+                    android:text="Disable Dietary Fiber Input"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchDietaryFiberInput"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableSugarsInputTextView"
+                    android:text="Disable Sugars Input"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchSugarsInput"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableProteinInputTextView"
+                    android:text="Disable Protein Input"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchProteinInput"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableVitaminAInputTextView"
+                    android:text="Disable Vitamin A Input"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchVitaminAInput"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableVitaminBInputTextView"
+                    android:text="Disable Vitamin B Input"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchVitaminBInput"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableCalciumInputTextView"
+                    android:text="Disable Calcium Input"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchCalciumInput"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableIronInputTextView"
+                    android:text="Disable Iron Input"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchIronInput"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableDietNotesInputTextView"
+                    android:text="Disable Notes Input"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchDietNotesInput"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <Button
+                android:id="@+id/DietSettingsAcceptButton"
+                style="@style/accept_button"
+                android:onClick="EntryAcceptOnClick" />
+
+        </TableLayout>
+    </ScrollView>
+
+</FrameLayout>

@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -31,6 +32,12 @@ import com.rocket.biometrix.MedicationModule.MedicationEntry;
 import com.rocket.biometrix.MedicationModule.MedicationParent;
 import com.rocket.biometrix.MoodModule.MoodEntry;
 import com.rocket.biometrix.MoodModule.MoodParent;
+import com.rocket.biometrix.Settings.DietSettings;
+import com.rocket.biometrix.Settings.ExerciseSettings;
+import com.rocket.biometrix.Settings.MedicationSettings;
+import com.rocket.biometrix.Settings.ModuleSettings;
+import com.rocket.biometrix.Settings.MoodSettings;
+import com.rocket.biometrix.Settings.SleepSettings;
 import com.rocket.biometrix.SleepModule.SleepEntry;
 
 import com.rocket.biometrix.SleepModule.SleepParent;
@@ -50,7 +57,6 @@ public class NavigationDrawerActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -66,7 +72,6 @@ public class NavigationDrawerActivity extends AppCompatActivity
         transaction.replace(R.id.navigation_drawer_fragment_content, frag, "home");
         transaction.addToBackStack(null);
         transaction.commit();
-
 
     }
 
@@ -89,17 +94,17 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        Fragment frag = new HomeScreen();
+        switch(item.getItemId()) {
+            case R.id.action_help:
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+                return true;
+            case R.id.action_settings:
+                frag = new ModuleSettings();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -122,8 +127,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
             //TODO: Actually do something with the statistical analysis. Also, might want to call this
             //in whatever fragment we decide to open
             JSONObject jsonObject = BiometrixAnalysis.AnalyzeAllModulesBasic(getApplicationContext());
-        } else if (id == R.id.nav_settings) { //TODO: menu open settings fragment
-
+        } else if (id == R.id.nav_settings) {
+            frag = new ModuleSettings();
         } else if (id == R.id.nav_login) {
             frag = new GetLogin();
         } else if (id == R.id.nav_create_account){
@@ -222,6 +227,35 @@ public class NavigationDrawerActivity extends AppCompatActivity
             } else if (activeFragment.getClass() == MedicationEntry.class){
                 ((MedicationEntry) activeFragment).onDoneClick(v);
                 newFragment = new MedicationParent();
+            }
+
+            //replaces the current fragment with the parent fragment
+            replaceFragment(newFragment);
+        }
+    }
+
+    public void EntryAcceptOnClick(View v) {
+        //Initialize to home screen in case the fragment active is not found in the following, it will not crash and just go back to home
+        Fragment newFragment = new HomeScreen();
+
+        //if fragment exists
+        if (activeFragment != null && activeFragment.isVisible()) {
+            //Determines which module entry activity is active and then replaces it with its parent fragment
+            if(activeFragment.getClass() == MoodSettings.class) {
+                ((MoodSettings) activeFragment).onAcceptClick(v);
+                newFragment = new MoodEntry();
+            } else if (activeFragment.getClass() == SleepSettings.class){
+                ((SleepSettings) activeFragment).onAcceptClick(v);
+                newFragment = new SleepEntry();
+            } else if (activeFragment.getClass() == ExerciseSettings.class){
+                ((ExerciseSettings) activeFragment).onAcceptClick(v);
+                newFragment = new ExerciseEntry();
+            } else if (activeFragment.getClass() == DietSettings.class){
+                ((DietSettings) activeFragment).onAcceptClick(v);
+                newFragment = new DietEntry();
+            } else if (activeFragment.getClass() == MedicationSettings.class){
+                ((MedicationSettings) activeFragment).onAcceptClick(v);
+                newFragment = new MedicationEntry();
             }
 
             //replaces the current fragment with the parent fragment
