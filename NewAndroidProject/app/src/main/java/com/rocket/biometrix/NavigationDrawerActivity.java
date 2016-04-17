@@ -20,6 +20,7 @@ import com.rocket.biometrix.Analysis.BiometrixAnalysis;
 import com.rocket.biometrix.Analysis.GraphBase;
 import com.rocket.biometrix.Analysis.MoodGraph;
 import com.rocket.biometrix.Analysis.SleepGraph;
+import com.rocket.biometrix.Database.Sync;
 import com.rocket.biometrix.DietModule.DietEntry;
 import com.rocket.biometrix.DietModule.DietParent;
 import com.rocket.biometrix.ExerciseModule.ExerciseEntry;
@@ -138,6 +139,10 @@ public class NavigationDrawerActivity extends AppCompatActivity
         } else if (id == R.id.nav_logout)
         {
            LogoutUser();
+        } else if(id == R.id.nav_sync)
+        {
+            Sync sync = new Sync(getApplicationContext());
+            sync.SyncDatabases();
         }
         replaceFragment(frag);
 
