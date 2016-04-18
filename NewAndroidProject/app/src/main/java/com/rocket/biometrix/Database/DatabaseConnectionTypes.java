@@ -17,6 +17,7 @@ public final class DatabaseConnectionTypes
     public static final String INSERT_TABLE_VALUES = "Insert Table Values";
     public static final String UPDATE_TABLE_VALUES = "Update Table Values";
     public static final String DELETE_TABLE_VALUES = "Delete Table Values";
+    public static final String SYNC_DATABASES = "Sync Databases";
     public static final String CONNECTION_FAIL = "Unable to connect to database";
 
     public static final String EXERCISE_TABLE = "Exercise";

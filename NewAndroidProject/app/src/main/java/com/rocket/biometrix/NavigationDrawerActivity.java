@@ -10,7 +10,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -142,7 +141,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
         } else if(id == R.id.nav_sync)
         {
             Sync sync = new Sync(getApplicationContext());
-            sync.SyncDatabases();
+            sync.syncDatabases();
         }
         replaceFragment(frag);
 

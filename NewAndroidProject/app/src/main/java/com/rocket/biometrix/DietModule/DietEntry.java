@@ -216,11 +216,11 @@ public class DietEntry extends Fragment implements AsyncResponse {
         if (jsonObject != null)
         {
             int[] tableIDs = new int[2];
-            JsonCVHelper.getIDColumns(tableIDs, jsonObject, context);
+            JsonCVHelper.getIDColumns(tableIDs, jsonObject);
 
             if (tableIDs[0] != -1 && tableIDs[1] != -1)
             {
-                LocalStorageAccessDiet.updateWebIDReference(tableIDs[0], tableIDs[1], context);
+                LocalStorageAccessDiet.updateWebIDReference(tableIDs[0], tableIDs[1], context, true);
             }
             else
             {

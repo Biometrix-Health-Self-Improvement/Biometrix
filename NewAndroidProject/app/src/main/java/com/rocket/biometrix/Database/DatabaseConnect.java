@@ -83,7 +83,7 @@ public class DatabaseConnect extends AsyncTask<String, Void, Void>
                     break;
                 //Deleting login requires username, password, and email
                 case DatabaseConnectionTypes.LOGIN_DELETE:
-                    db_operation = "Delete";
+                    db_operation = "DeleteUser";
                     jsonParam.put("Username", params[1]);
                     jsonParam.put("Password", params[2]);
                     jsonParam.put("Email", params[3]);
@@ -126,6 +126,11 @@ public class DatabaseConnect extends AsyncTask<String, Void, Void>
                     jsonParam.put("Params", params[1]);
                     jsonParam.put("Token", params[2]);
                     jsonParam.put("Table", params[3]);
+                    break;
+                case DatabaseConnectionTypes.SYNC_DATABASES:
+                    db_operation = "Sync";
+                    jsonParam.put("Params", params[1]);
+                    jsonParam.put("Token", params[2]);
                     break;
                 default:
                     db_operation = "";

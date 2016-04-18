@@ -394,7 +394,7 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
 
     /**
      * Returns all rows for the currently logged in user. If no user is logged in, returns the
-     * columns for the user "default"
+     * columns for the user "default". Returns all columns.
      * @param c The current context which is used by the database queries
      * @param tableName The name of the table to select entries on
      * @param orderBy A string to determine how the data is ordered by SQLite statement
@@ -419,6 +419,38 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
         else
         {
             return database.query(tableName, null, null, null, null, null, orderBy);
+        }
+    }
+
+    /**
+     * Returns all rows for the currently logged in user. If no user is logged in, returns the
+     * columns for the user "default"
+     * @param c The current context which is used by the database queries
+     * @param tableName The name of the table to select entries on
+     * @param orderBy A string to determine how the data is ordered by SQLite statement
+     * @param columns An array of strings corresponding to the column names to return
+     * @param curUserOnly True means return only data for the currently logged in user, false means
+     *                    return all data for local users
+     * @return A Cursor to all of the columns on the table for the current user
+     */
+    public static Cursor selectAllEntries(Context c, String tableName, String orderBy, String columns[],
+                                          boolean curUserOnly)
+    {
+        SQLiteDatabase database = getInstance(c).getReadableDatabase();
+
+        if (curUserOnly)
+        {
+            String username = LocalAccount.DEFAULT_NAME;
+
+            if (LocalAccount.isLoggedIn()) {
+                username = LocalAccount.GetInstance().GetUsername();
+            }
+
+            return database.query(tableName, columns, "Username = ?", new String[]{username}, null, null, orderBy);
+        }
+        else
+        {
+            return database.query(tableName, columns, null, null, null, null, orderBy);
         }
     }
 

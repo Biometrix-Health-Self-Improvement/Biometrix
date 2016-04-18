@@ -458,11 +458,11 @@ public class SleepEntry extends Fragment implements AsyncResponse {
         if (jsonObject != null)
         {
             int[] tableIDs = new int[2];
-            JsonCVHelper.getIDColumns(tableIDs, jsonObject, context);
+            JsonCVHelper.getIDColumns(tableIDs, jsonObject);
 
             if (tableIDs[0] != -1 && tableIDs[1] != -1)
             {
-                LocalStorageAccessSleep.updateWebIDReference(tableIDs[0], tableIDs[1], context);
+                LocalStorageAccessSleep.updateWebIDReference(tableIDs[0], tableIDs[1], context, true);
             } else
             {
                 Toast.makeText(context, "There was an error processing information from the webserver", Toast.LENGTH_LONG).show();

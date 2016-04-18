@@ -328,11 +328,11 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
         if (jsonObject != null)
         {
             int[] tableIDs = new int[2];
-            JsonCVHelper.getIDColumns(tableIDs, jsonObject, context);
+            JsonCVHelper.getIDColumns(tableIDs, jsonObject);
 
             if (tableIDs[0] != -1 && tableIDs[1] != -1)
             {
-                LocalStorageAccessExercise.updateWebIDReference(tableIDs[0], tableIDs[1], context);
+                LocalStorageAccessExercise.updateWebIDReference(tableIDs[0], tableIDs[1], context, true);
             }
             else
             {

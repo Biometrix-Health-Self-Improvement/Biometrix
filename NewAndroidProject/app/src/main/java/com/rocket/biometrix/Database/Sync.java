@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.widget.Toast;
 
+import com.rocket.biometrix.Login.LocalAccount;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,65 +30,81 @@ public class Sync implements AsyncResponse
     /**
      * Performs a sync between the local database and the webdatabase
      */
-    public void SyncDatabases()
+    public void syncDatabases()
     {
         //TestChanges();
+
+        //The Json object to hold all other json objects
+        //Alternate names include the One JSON to rule them all...
         JSONObject masterJson = new JSONObject();
 
         //All tables and their primary keys
-        String tableNamesAndID[][] =
-                { new String[] {LocalStorageAccessMood.TABLE_NAME, LocalStorageAccessMood.LOCAL_MOOD_ID},
-                new String[] {LocalStorageAccessDiet.TABLE_NAME, LocalStorageAccessDiet.LOCAL_DIET_ID},
-                new String[] {LocalStorageAccessExercise.TABLE_NAME, LocalStorageAccessExercise.LOCAL_EXERCISE_ID},
-                new String[] {LocalStorageAccessMedication.TABLE_NAME, LocalStorageAccessMedication.LOCAL_MEDICATION_ID},
-                new String[] {LocalStorageAccessSleep.TABLE_NAME, LocalStorageAccessSleep.LOCAL_SLEEP_ID}};
+        String tableNames[] =
+                {LocalStorageAccessMood.TABLE_NAME,
+                LocalStorageAccessDiet.TABLE_NAME,
+                LocalStorageAccessExercise.TABLE_NAME,
+               LocalStorageAccessMedication.TABLE_NAME,
+               LocalStorageAccessSleep.TABLE_NAME};
 
+        //Each type of status in the sync table
         Integer syncTypes[] = {LocalStorageAccess.SYNC_NEEDS_ADDED, LocalStorageAccess.SYNC_NEEDS_UPDATED,
                 LocalStorageAccess.SYNC_NEEDS_DELETED};
 
+        //JSONObjects for each table
         JSONObject jsonArray[] = {new JSONObject(), new JSONObject(), new JSONObject(), new JSONObject(),
                 new JSONObject()};
 
+        //Lists of columns for each table
         String columnLists[][] = {LocalStorageAccessMood.getColumns(),
                 LocalStorageAccessDiet.getColumns(),
                 LocalStorageAccessExercise.getColumns(),
                 LocalStorageAccessMedication.getColumns(),
                 LocalStorageAccessSleep.getColumns()};
 
-        String deleteColumnLists[][] =
+        //Lists of primary keys for each table
+        String primaryKeyColumnLists[][] =
                 {new String[] {LocalStorageAccessMood.LOCAL_MOOD_ID, LocalStorageAccessMood.WEB_MOOD_ID},
                         new String[] {LocalStorageAccessDiet.LOCAL_DIET_ID, LocalStorageAccessDiet.WEB_DIET_ID},
                         new String[] {LocalStorageAccessExercise.LOCAL_EXERCISE_ID, LocalStorageAccessExercise.WEB_EXERCISE_ID},
                         new String[] {LocalStorageAccessMedication.LOCAL_MEDICATION_ID, LocalStorageAccessMedication.WEB_MEDICATION_ID},
                         new String[] {LocalStorageAccessSleep.LOCAL_SLEEP_ID, LocalStorageAccessSleep.WEB_SLEEP_ID}};
 
-        for(int i = 0; i < tableNamesAndID.length; ++i)
+        for(int i = 0; i < tableNames.length; ++i)
         {
             for(int j = 0; j < syncTypes.length; ++j)
             {
                 if (syncTypes[j] == LocalStorageAccess.SYNC_NEEDS_DELETED)
                 {
-                    GetAllPendingInfoOfType(tableNamesAndID[i][0], tableNamesAndID[i][1],
-                            deleteColumnLists[i], jsonArray[i], syncTypes[j]);
+                    getAllPendingInfoOfType(tableNames[i], primaryKeyColumnLists[i][0],
+                            primaryKeyColumnLists[i], jsonArray[i], syncTypes[j]);
                 }
                 else
                 {
-                    GetAllPendingInfoOfType(tableNamesAndID[i][0], tableNamesAndID[i][1],
+                    getAllPendingInfoOfType(tableNames[i], primaryKeyColumnLists[i][0],
                             columnLists[i], jsonArray[i], syncTypes[j]);
                 }
+            }
 
-                try
-                {
-                    masterJson.put(tableNamesAndID[i][0], jsonArray[i]);
-                }
-                catch(JSONException except)
-                {
-                    except.getMessage();
-                }
+            getAllIDInfo(tableNames[i], primaryKeyColumnLists[i], jsonArray[i]);
+
+            try
+            {
+                masterJson.put(tableNames[i], jsonArray[i]);
+            }
+            catch(JSONException except)
+            {
+                except.getMessage();
             }
         }
 
-        //String test = masterJson.toString();
+        String test = masterJson.toString();
+
+        if (LocalAccount.isLoggedIn())
+        {
+            //Trys to insert the user's data
+            new DatabaseConnect(this).execute(DatabaseConnectionTypes.SYNC_DATABASES, masterJson.toString(),
+                    LocalAccount.GetInstance().GetToken());
+        }
     }
 
     /*
@@ -107,8 +125,8 @@ public class Sync implements AsyncResponse
      * @param jsonObject The JSONObject to update with the returned values
      * @param syncType The type of operation to check the sync table for
      */
-    private void GetAllPendingInfoOfType(String tableName, String keyName, String columns[],
-                                      JSONObject jsonObject, int syncType)
+    private void getAllPendingInfoOfType(String tableName, String keyName, String columns[],
+                                         JSONObject jsonObject, int syncType)
     {
         LocalStorageAccess localDB = LocalStorageAccess.getInstance(context);
         Cursor cursor = localDB.selectPendingEntries(context, tableName,
@@ -149,19 +167,16 @@ public class Sync implements AsyncResponse
 
         try
         {
-            //Adds a row count value to the opJson object so that the indices can be determined
-            opJson.put("NumRows", curRow);
-
             switch (syncType)
             {
                 case LocalStorageAccess.SYNC_NEEDS_ADDED:
-                    jsonObject.put("Add", opJson);
+                    jsonObject.put("Insert", opJson);
                     break;
                 case LocalStorageAccess.SYNC_NEEDS_UPDATED:
-                    jsonObject.put("Updated", opJson);
+                    jsonObject.put("Update", opJson);
                     break;
                 case LocalStorageAccess.SYNC_NEEDS_DELETED:
-                    jsonObject.put("Deleted", opJson);
+                    jsonObject.put("Delete", opJson);
                     break;
                 default:
                     jsonObject.put("Error", "Invalid sync type chosen");
@@ -187,12 +202,77 @@ public class Sync implements AsyncResponse
     }
 
     /**
+     * Retrieves all of the primary key info (local and web) and stores it in the jsonObject that
+     * is passed in.
+     * @param tableName The name of the table to pull from
+     * @param columns The columns to pull (should be only called with the names of the primary keys)
+     * @param jsonObject The json object to store all of the return data in
+     */
+    private void getAllIDInfo(String tableName, String columns[], JSONObject jsonObject)
+    {
+        LocalStorageAccess localDB = LocalStorageAccess.getInstance(context);
+        Cursor cursor = LocalStorageAccess.selectAllEntries(context, tableName, null, columns, true);
+
+        JSONObject tableJson = new JSONObject();
+        Integer curRow = 0;
+
+        if(cursor.moveToFirst() )
+        {
+            int numColumns = cursor.getColumnCount();
+
+            //Creates a json object for each row in the returned results, and adds it to
+            //the entryJson object
+            while(!cursor.isAfterLast())
+            {
+                JSONObject entryJSON = new JSONObject();
+
+                try
+                {
+                    //Adds each column into the entry JSON object
+                    for (int i = 0; i < numColumns; ++i)
+                    {
+                        //e.g. LocalMoodID=2
+                        entryJSON.put(cursor.getColumnName(i), cursor.getString(i));
+                    }
+
+                    tableJson.put(curRow.toString(), entryJSON);
+                }
+                catch (JSONException except)
+                {
+                    except.getMessage();
+                }
+                cursor.moveToNext();
+                ++curRow;
+            }
+        }
+
+        try
+        {
+            jsonObject.put("PullData", tableJson);
+        }
+        catch(JSONException except)
+        {
+            except.getMessage();
+        }
+
+        cursor.close();
+        localDB.close();
+    }
+
+    /**
      * The asynchronous method that is called when the database connection is closed.
      * @param result The return string from the webserver. Should usually be JSON encoded
      */
     @Override
     public void processFinish(String result)
     {
-        Toast.makeText(context, "Done", Toast.LENGTH_SHORT).show();
+        JSONObject masterJson;
+        masterJson = JsonCVHelper.processServerJsonString(result, context, "Could not sync databases");
+
+        if (masterJson != null)
+        {
+            JsonCVHelper.processSyncJsonReturn(masterJson, context);
+            Toast.makeText(context, "Database sync complete", Toast.LENGTH_LONG).show();
+        }
     }
 }
