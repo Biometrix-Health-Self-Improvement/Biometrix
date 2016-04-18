@@ -2,8 +2,10 @@ package com.rocket.biometrix.EditPastEntries.fragments;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -117,7 +119,9 @@ public class EditCalendar extends Fragment {
 
                 //Retrieve cursor(s)
                 Cursor datesExercise = LocalStorageAccessExercise.selectByDate(dateSelectedFormatted,getActivity());
-
+                int cunt = datesExercise.getCount();
+               String FUCKTHISHIT = DatabaseUtils.dumpCursorToString(datesExercise);
+                Log.v("EX_CURS", DatabaseUtils.dumpCursorToString(datesExercise));
                 //getActivity() for the context.
                 Toast.makeText(getActivity(), dateSelectedFormatted, Toast.LENGTH_LONG).show();
 

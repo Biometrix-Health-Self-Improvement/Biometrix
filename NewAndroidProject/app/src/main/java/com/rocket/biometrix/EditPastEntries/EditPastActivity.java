@@ -17,7 +17,7 @@ public class EditPastActivity extends AppCompatActivity
 
        List<CursorPair> mCursorList = new ArrayList<CursorPair>();
         boolean mNewDateTouched; //if true, cal fragment's focused date was changed and RV needs to be updated.
-        EntryCandiesFragment ECF = new EntryCandiesFragment();
+        EntryCandiesFragment ECF;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +42,7 @@ public class EditPastActivity extends AppCompatActivity
             // Create a new Fragment to be placed in the activity layout
             EditCalendar CalendarFragmenti = new EditCalendar();
             //Made below global mutable
-            //EntryCandiesFragment ECF = new EntryCandiesFragment();
+            ECF = new EntryCandiesFragment();
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
@@ -58,9 +58,6 @@ public class EditPastActivity extends AppCompatActivity
 
         }
 
-
-        //TODO: USE this Activity as 'bridge'
-        //TODO: try http://developer.android.com/training/basics/fragments/communicating.html
         //TODO: Get tests (can be hardcoded not true tests) running to demo current RV code
         //https://developer.android.com/training/material/lists-cards.html
         //TODO: FInally finish RV code and start adding tab code etc. in actually extensible way
@@ -94,7 +91,7 @@ public class EditPastActivity extends AppCompatActivity
         mCursorList.add(new CursorPair(table,datesQuery));
         mNewDateTouched = true;
 
-        //TODO: DOES this acutually work???
+        //TODO: DOES this actually work???
         ECF.updateCandies();
 
         return errno;
