@@ -278,7 +278,7 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
                 //Adds the primary key of the field to the sync table along with the value marking it
                 //needs to be added to the webdatabase
                 LocalStorageAccess.getInstance(v.getContext()).insertOrUpdateSyncTable(v.getContext(),
-                        LocalStorageAccessExercise.TABLE_NAME, id, LocalStorageAccess.SYNC_NEEDS_ADDED);
+                        LocalStorageAccessExercise.TABLE_NAME, id, -1, LocalStorageAccess.SYNC_NEEDS_ADDED);
 
                 rowToBeInserted.put(LocalStorageAccessExercise.LOCAL_EXERCISE_ID, id);
                 rowToBeInserted.remove(LocalStorageAccessExercise.USER_NAME);
@@ -328,11 +328,11 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
         if (jsonObject != null)
         {
             int[] tableIDs = new int[2];
-            JsonCVHelper.getIDColumns(tableIDs, jsonObject, context);
+            JsonCVHelper.getIDColumns(tableIDs, jsonObject);
 
             if (tableIDs[0] != -1 && tableIDs[1] != -1)
             {
-                LocalStorageAccessExercise.updateWebIDReference(tableIDs[0], tableIDs[1], context);
+                LocalStorageAccessExercise.updateWebIDReference(tableIDs[0], tableIDs[1], context, true);
             }
             else
             {

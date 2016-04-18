@@ -97,9 +97,13 @@ public class LocalStorageAccessSleep {
      * Updates the ID that is stored locally for reference to the entry on the webserver
      * @param localID The ID number locally
      * @param webID The ID number on the web
+     * @param context The context for database updates
+     * @param makeToasts Whether to make toasts on failure or not
+     * @return True if succeeded, false otherwise
      */
-    public static void updateWebIDReference(Integer localID, Integer webID, Context context)
+    public static boolean updateWebIDReference(Integer localID, Integer webID, Context context, boolean makeToasts)
     {
+        boolean success = true;
         SQLiteDatabase db = LocalStorageAccess.getInstance(context).getWritableDatabase();
 
         ContentValues webCV = new ContentValues();
@@ -115,12 +119,13 @@ public class LocalStorageAccessSleep {
         }
         else
         {
-            if (!LocalStorageAccess.getInstance(context).deleteEntryFromSyncTable(context, TABLE_NAME, localID) )
+            if (!LocalStorageAccess.getInstance(context).deleteEntryFromSyncTable(context, TABLE_NAME, localID, true) )
             {
-                Toast.makeText(context, "Could not update synchronization table", Toast.LENGTH_LONG).show();
+                success = false;
+                if(makeToasts) Toast.makeText(context, "Could not update synchronization table", Toast.LENGTH_LONG).show();
             }
         }
-
+        return success;
     }
 
     public static Cursor getMonthEntries(Context c, int year, int month)
