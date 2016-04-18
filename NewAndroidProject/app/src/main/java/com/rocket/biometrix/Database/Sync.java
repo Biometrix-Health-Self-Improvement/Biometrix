@@ -87,7 +87,7 @@ public class Sync implements AsyncResponse
                     }
                 }
 
-                getAllIDInfo(tableNames[i], primaryKeyColumnLists[i], jsonArray[i]);
+                getAllIDInfo(tableNames[i], primaryKeyColumnLists[i][0], primaryKeyColumnLists[i][1], jsonArray[i]);
 
                 try
                 {
@@ -146,8 +146,7 @@ public class Sync implements AsyncResponse
     private void getAllPendingInfoOfType(String tableName, String keyName, String columns[],
                                          JSONObject jsonObject, int syncType)
     {
-        LocalStorageAccess localDB = LocalStorageAccess.getInstance(context);
-        Cursor cursor = localDB.selectPendingEntries(context, tableName,
+        Cursor cursor = LocalStorageAccess.selectPendingEntries(context, tableName,
                 keyName, columns, true, syncType);
 
         JSONObject opJson = new JSONObject();
@@ -215,26 +214,27 @@ public class Sync implements AsyncResponse
             }
         }
 
-        localDB.close();
         cursor.close();
     }
 
     /**
-     * Retrieves all of the primary key info (local and web) and stores it in the jsonObject that
-     * is passed in.
+     * Retrieves all of the primary key info (local and web) for entries that are not in the sync table
+     * and stores it in the jsonObject that is passed in.
      * @param tableName The name of the table to pull from
-     * @param columns The columns to pull (should be only called with the names of the primary keys)
+     * @param keyName The name of the localID/primary key
+     * @param webKeyColumn The name of the web primary key
      * @param jsonObject The json object to store all of the return data in
+     *
      */
-    private void getAllIDInfo(String tableName, String columns[], JSONObject jsonObject)
+    private void getAllIDInfo(String tableName, String keyName, String webKeyColumn, JSONObject jsonObject)
     {
-        LocalStorageAccess localDB = LocalStorageAccess.getInstance(context);
-        Cursor cursor = LocalStorageAccess.selectAllEntries(context, tableName, null, columns, true);
+        Cursor cursor = LocalStorageAccess.selectNonPendingEntries(context, tableName, keyName,
+                new String[]{webKeyColumn}, true);
 
         JSONObject tableJson = new JSONObject();
         Integer curRow = 0;
 
-        if(cursor.moveToFirst() )
+        if(cursor != null && cursor.moveToFirst() )
         {
             int numColumns = cursor.getColumnCount();
 
@@ -274,7 +274,6 @@ public class Sync implements AsyncResponse
         }
 
         cursor.close();
-        localDB.close();
     }
 
     /**

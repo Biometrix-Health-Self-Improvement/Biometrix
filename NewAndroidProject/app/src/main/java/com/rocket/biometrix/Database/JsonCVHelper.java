@@ -5,6 +5,8 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.rocket.biometrix.Login.LocalAccount;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -191,7 +193,7 @@ public class JsonCVHelper
                         HandleDeleteSyncData(resultJson, tableName, context);
                         break;
                     case "PullData":
-
+                        HandlePulledData(resultJson, tableName, context);
                         break;
                     default:
                         break;
@@ -306,4 +308,90 @@ public class JsonCVHelper
         }
     }
 
+    /**
+     * Calls the needed update methods to remove the inserts from the sync table as well as to
+     * update the web ID references that they have on the local database
+     * @param pulledData The JSON object that contains all of the data that now needs to be inserted
+     * @param tableName The name of the table that the insert was performed on
+     * @param context The current context, needed due to database operations.
+     */
+    private static void HandlePulledData(JSONObject pulledData, String tableName, Context context)
+    {
+        if (pulledData.has("Error"))
+        {
+            try
+            {
+                //Log.i("UpdateSyncError", updateStatus.getString("Error"));
+                pulledData.getString("Error");
+            }
+            catch(JSONException except)
+            {
+                except.getMessage();
+            }
+        }
+        else
+        {
+            try
+            {
+                String unneededColumn  = "";
+
+                String username = LocalAccount.DEFAULT_NAME;
+
+                if (LocalAccount.isLoggedIn())
+                {
+                    username = LocalAccount.GetInstance().GetUsername();
+                }
+
+                switch (tableName)
+                {
+                    case LocalStorageAccessDiet.TABLE_NAME:
+                        unneededColumn = LocalStorageAccessDiet.LOCAL_DIET_ID;
+                        break;
+                    case LocalStorageAccessExercise.TABLE_NAME:
+                        unneededColumn = LocalStorageAccessExercise.LOCAL_EXERCISE_ID;
+                        break;
+                    case LocalStorageAccessMedication.TABLE_NAME:
+                        unneededColumn = LocalStorageAccessMedication.LOCAL_MEDICATION_ID;
+                        break;
+                    case LocalStorageAccessMood.TABLE_NAME:
+                        unneededColumn = LocalStorageAccessMood.LOCAL_MOOD_ID;
+                        break;
+                    case LocalStorageAccessSleep.TABLE_NAME:
+                        unneededColumn = LocalStorageAccessSleep.LOCAL_SLEEP_ID;
+                        break;
+                }
+
+                int numRows = pulledData.getInt("NumRows");
+                int numCols = pulledData.getInt("NumColumns");
+
+                for(int i = 0; i < numRows; ++i)
+                {
+                    ContentValues rowToBeInserted = new ContentValues();
+
+                    JSONObject rowJson = pulledData.getJSONObject(Integer.toString(i));
+
+                    for(int j = 0; j < numCols; ++j)
+                    {
+                        JSONObject colJson = rowJson.getJSONObject(Integer.toString(j));
+                        String columnName = colJson.getString("ColumnName");
+
+                        if (!columnName.equals(unneededColumn) && !columnName.equals("UserID"))
+                        {
+                            String value = colJson.getString("Value");
+                            rowToBeInserted.put(columnName, value);
+                        }
+                    }
+
+                    rowToBeInserted.put(LocalStorageAccessMood.USER_NAME, username);
+                    LocalStorageAccess.getInstance(context).safeInsert(tableName, null, rowToBeInserted);
+
+                }
+
+            }
+            catch (JSONException except) {
+                except.getMessage();
+            }
+        }
+
+    }
 }

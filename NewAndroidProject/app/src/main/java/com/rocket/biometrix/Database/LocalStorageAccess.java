@@ -489,7 +489,7 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
      *                    return all data for local users
      * @return A Cursor to all of the columns that need to be updated
      */
-    public Cursor selectPendingEntries(Context c, String tableName, String localKey, String columns[]
+    public static Cursor selectPendingEntries(Context c, String tableName, String localKey, String columns[]
             , boolean curUserOnly, int syncType)
     {
         SQLiteDatabase database = getInstance(c).getReadableDatabase();
@@ -533,7 +533,7 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
             }
             else
             {
-                return database.query(joinedTable, columns, tableName + statusCheck,
+                return database.query(joinedTable, columns, statusCheck,
                         null, null, null, null);
             }
         }
@@ -544,4 +544,54 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Selects all of the entries for the passed in table that match the type passed
+     * @param c The current context which is used by the database queries
+     * @param tableName The name of the table to select entries on
+     * @param localKey The name of the primary key for the local table
+     * @param columns The names of the columns that are to be returned, should be the local key
+     *                and the web key
+     * @param curUserOnly True means return only data for the currently logged in user, false means
+     *                    return all data for local users
+     * @return A Cursor to all of the columns that need to be updated
+     */
+    public static Cursor selectNonPendingEntries(Context c, String tableName, String localKey, String columns[]
+            , boolean curUserOnly)
+    {
+        SQLiteDatabase database = getInstance(c).getReadableDatabase();
+
+        //e.g. Mood LEFT INNER JOIN SYNC ON MOOD.LocalMoodID = Sync.Key AND Sync.TableName = Mood
+        String joinedTable = tableName + " LEFT OUTER JOIN " + SYNC_TABLE_NAME + " ON " + tableName +
+                "." + localKey + " = " + SYNC_TABLE_NAME + "." + SYNC_KEY_COLUMN + " AND " +
+                SYNC_TABLE_NAME + "." + SYNC_TABLE_NAME_COLUMN + " = '" + tableName + "'";
+
+        String statusCheck = SYNC_KEY_COLUMN + " is null";
+
+        try
+        {
+            if (curUserOnly)
+            {
+                String username = LocalAccount.DEFAULT_NAME;
+
+                if (LocalAccount.isLoggedIn())
+                {
+                    username = LocalAccount.GetInstance().GetUsername();
+                }
+
+                //e.g. select all mood columns for the username where the status is needs added
+                return database.query(joinedTable, columns, "Username = ? AND " + statusCheck,
+                        new String[]{username}, null, null, null);
+            }
+            else
+            {
+                return database.query(joinedTable, columns, statusCheck,
+                        null, null, null, null);
+            }
+        }
+        catch (Exception except)
+        {
+            except.getMessage();
+            return null;
+        }
+    }
 }
