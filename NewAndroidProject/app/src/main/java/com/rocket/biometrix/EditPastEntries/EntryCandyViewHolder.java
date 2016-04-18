@@ -14,10 +14,10 @@ import com.rocket.biometrix.R;
  * Child ViewHolder needed by recycle view Linear layout manager
  */
 public class EntryCandyViewHolder extends RecyclerView.ViewHolder {
-    protected TextView type;
-    protected TextView title;
-    protected TextView time;
-    protected TextView misc;
+    public TextView type; //should be protected
+    public TextView title;
+    public TextView time;
+    public TextView misc;
 
     public LinearLayout recLayout;
 

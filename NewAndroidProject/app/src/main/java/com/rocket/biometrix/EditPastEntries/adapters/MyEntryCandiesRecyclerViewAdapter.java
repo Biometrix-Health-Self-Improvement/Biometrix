@@ -45,6 +45,7 @@ public class MyEntryCandiesRecyclerViewAdapter extends RecyclerView.Adapter<Entr
                     Log.d("List Size", Integer.toString(getItemCount()));
 
                     //TODO:Open up edit entry with proper info for candy touched
+                    //mContext.startActivity(intent);
 
                     Toast.makeText(mContext, "EDITING ENTRY", Toast.LENGTH_LONG).show();
                 }
@@ -56,15 +57,16 @@ public class MyEntryCandiesRecyclerViewAdapter extends RecyclerView.Adapter<Entr
 
     @Override
     public void onBindViewHolder(EntryCandyViewHolder ECVholder, int position) {
-        CandyItems listItems = listItemsList.get(position); //get an entry in the list of 'candies'
+
+        CandyItems listItem = listItemsList.get(position); //get an entry in the list of 'candies'
         ECVholder.itemView.setSelected(focusedItem == position);
 
         ECVholder.getLayoutPosition();
-        //Fill all entry candies with appropriate data
 
-        //TODO: FILL UI ELEMENTS HERE from cursor genned by calendar
-
-        //TODO: WRITE CURSOR PARSING CLASS == CursorHelper
+        //Fill entry candy UI with appropriate data
+        ECVholder.type.setText(listItem.type);
+        ECVholder.time.setText(listItem.time);
+        ECVholder.title.setText(listItem.title);
 
     }
 
@@ -76,6 +78,7 @@ public class MyEntryCandiesRecyclerViewAdapter extends RecyclerView.Adapter<Entr
 
     public void clearAdapter(){
         listItemsList.clear();
-        notifyDataSetChanged();
+        notifyDataSetChanged(); //calls onBindViewHolder
     }
+
 }

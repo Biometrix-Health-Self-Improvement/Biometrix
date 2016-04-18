@@ -17,6 +17,7 @@ public class EditPastActivity extends AppCompatActivity
 
        List<CursorPair> mCursorList = new ArrayList<CursorPair>();
         boolean mNewDateTouched; //if true, cal fragment's focused date was changed and RV needs to be updated.
+        EntryCandiesFragment ECF = new EntryCandiesFragment();
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,8 +27,6 @@ public class EditPastActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         mNewDateTouched = false;
-
-        //TODO: Get Calendar Fragment and RV fragment in here, implement their on frag interactions somehow
 
 //         Check that the activity is using the layout version with
 //         the fragment_container FrameLayout
@@ -42,7 +41,8 @@ public class EditPastActivity extends AppCompatActivity
 
             // Create a new Fragment to be placed in the activity layout
             EditCalendar CalendarFragmenti = new EditCalendar();
-            EntryCandiesFragment ECF = new EntryCandiesFragment();
+            //Made below global mutable
+            //EntryCandiesFragment ECF = new EntryCandiesFragment();
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
@@ -55,7 +55,6 @@ public class EditPastActivity extends AppCompatActivity
 
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, ECF).commit();
-
 
         }
 
@@ -71,16 +70,22 @@ public class EditPastActivity extends AppCompatActivity
 
 
 
-    @Override
-    public void onListFragmentInteraction(CandyItems item) {
 
+    //RV Fragment
+    @Override
+    public boolean isListCurrent() {
+        return mNewDateTouched;
     }
 
+    //RV Fragment
     @Override
     public List<CursorPair> getCursorList() {
+
+        mNewDateTouched = false;
         return mCursorList;
     }
 
+    //Cal Fragment
     @Override
     public int onFragDateSelect(String table, Cursor datesQuery) {
         int errno = 0;
@@ -88,6 +93,9 @@ public class EditPastActivity extends AppCompatActivity
         //TODO: Error Checking
         mCursorList.add(new CursorPair(table,datesQuery));
         mNewDateTouched = true;
+
+        //TODO: DOES this acutually work???
+        ECF.updateCandies();
 
         return errno;
     }

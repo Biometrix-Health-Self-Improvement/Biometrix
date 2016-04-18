@@ -14,4 +14,8 @@ public class CursorPair {
         this.tableName = tbl;
         this.query = curse;
     }
+
+    public String getTableName (){
+        return tableName;
+    }
 }

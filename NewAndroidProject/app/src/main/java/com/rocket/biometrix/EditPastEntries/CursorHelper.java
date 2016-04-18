@@ -10,12 +10,26 @@ package com.rocket.biometrix.EditPastEntries;
  * to draw the UI 'Candies'/ Cards / 'Entries'
  */
 public class CursorHelper {
-    //TODO: Write statics that return primitives from the specified cursor pair 'signal';;; used to fill UI elements
     //public static
+    public CursorPair mCursorPair;
+    public int mRows = 0; //index
+    public String mTitleStrings[];
+    public  String mTimeStrings[];
 
-    public static String getType(CursorPair cp) {
-        String typeString = "FAILURE";
+    //
+    public CursorHelper(CursorPair cp, String titleCol, String timeCol) {
+        mCursorPair = cp;
 
-        return typeString;
+        if (mCursorPair.query.moveToFirst()) {
+            while (!mCursorPair.query.isAfterLast()) {
+               mTitleStrings[mRows] = mCursorPair.query.getString( mCursorPair.query.getColumnIndex(titleCol) );
+                mTimeStrings[mRows] = mCursorPair.query.getString( mCursorPair.query.getColumnIndex(timeCol) );
+                    mRows++; //count the rows (Same thing as cursor's count method)
+                mCursorPair.query.moveToNext();
+            }
+        }
+        mCursorPair.query.close();
     }
+
+    //use cursor public abstract String[] getColumnNames () to error check
 }

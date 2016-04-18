@@ -37,7 +37,6 @@ public class EditCalendar extends Fragment {
 
     public EditCalendar() {
         // Required empty public constructor
-        System.out.print("EditCalendar empty constructor hit");
     }
 
     /**
@@ -56,6 +55,30 @@ public class EditCalendar extends Fragment {
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    //When parent activity OnCreate is finished, can access UI elements
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener (from EditCalendar)");
+        }
+    }
+
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 
     @Override
@@ -92,7 +115,6 @@ public class EditCalendar extends Fragment {
                 String[] dateSelected = { Integer.toString(year),Integer.toString(month),Integer.toString(dayOfMonth)};
                 String dateSelectedFormatted = StringDateTimeConverter.convertCalDateString(dateSelected);
 
-                //TODO: UPDATE to use dictionary to pass multiple cursors
                 //Retrieve cursor(s)
                 Cursor datesExercise = LocalStorageAccessExercise.selectByDate(dateSelectedFormatted,getActivity());
 
@@ -101,6 +123,7 @@ public class EditCalendar extends Fragment {
 
                 if (mListener != null) {
                     mListener.onFragDateSelect("exercise", datesExercise);
+                    //other tables go here
                 }
             }
 
@@ -109,31 +132,7 @@ public class EditCalendar extends Fragment {
         return view;
     }
 
-    //When parent activity OnCreate is finished, can access UI elements
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-            //TODO: CONNECT to DICTIONARY in EDITPASTACTIVITY somehow
-            //CursorDictionary.puts
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener (from EditCalendar)");
-        }
-    }
-
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
 
     /**
      * Implement this method to get the cursor the calendar generates

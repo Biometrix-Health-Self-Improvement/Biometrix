@@ -10,12 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.EditPastEntries.CandyItems;
+import com.rocket.biometrix.EditPastEntries.CursorHelper;
 import com.rocket.biometrix.EditPastEntries.CursorPair;
 import com.rocket.biometrix.EditPastEntries.adapters.MyEntryCandiesRecyclerViewAdapter;
 import com.rocket.biometrix.R;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +32,7 @@ public class EntryCandiesFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
+    private List<CandyItems> candyItemslist = new ArrayList<>();
     private OnListFragmentInteractionListener mListener;
 
     private RecyclerView mRecyclerView;
@@ -79,16 +82,17 @@ public class EntryCandiesFragment extends Fragment {
                 mRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 
-            //TODO: Feed this list with CursorHelper checking it against ping flags
-            List<CandyItems> candyItemslist = new LinkedList<>();
+            updateCandies();
 
-            //TODO: HOOK in item deco {mRecyclerView.addItemDecoration()}
+            //TODO: Lp HOOK in item deco {mRecyclerView.addItemDecoration()}
+
             mRecyclerView.setAdapter(new MyEntryCandiesRecyclerViewAdapter(context,candyItemslist));
         }
         return rootView;
     }
 
 
+    //onAttach enables referencing the Listener interface below
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -106,6 +110,44 @@ public class EntryCandiesFragment extends Fragment {
         mListener = null;
     }
 
+    public void updateCandies(){
+
+        //declare the adapter and attach it to the recyclerview
+        adapter = new MyEntryCandiesRecyclerViewAdapter(getActivity(),candyItemslist);
+        mRecyclerView.setAdapter(adapter);
+
+        //Clear the adapter because new Cal data
+        adapter.clearAdapter();
+
+        //get cursor list
+        List<CursorPair> Queries = mListener.getCursorList();
+
+        List<CursorHelper> allCH = new ArrayList<>();
+
+        //Populate all Cursor Helper list
+        for (CursorPair taybell : Queries) {
+            //System.out.println();
+            if (taybell.getTableName() == "exercise") {
+                CursorHelper exerciseCH = new CursorHelper(taybell, LocalStorageAccessExercise.TITLE, LocalStorageAccessExercise.TIME);
+                allCH.add(exerciseCH);
+            }
+
+        }
+
+        for(CursorHelper CurseHel : allCH){
+            for (int j=0; j < CurseHel.mRows; j++) {
+                CandyItems item = new CandyItems();
+
+                item.title = CurseHel.mTitleStrings[j];
+                item.time = CurseHel.mTimeStrings[j];
+
+                candyItemslist.add(item);
+            }
+        }
+
+        adapter.notifyDataSetChanged();
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -117,8 +159,8 @@ public class EntryCandiesFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(CandyItems item);
+
+        boolean isListCurrent();
 
         List<CursorPair> getCursorList();
     }
