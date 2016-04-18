@@ -40,7 +40,7 @@ public class MoodGraph extends GraphBase {
 
         StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
         staticLabelsFormatter.setVerticalLabels(new String[]{"None", "Mild", "Moderate", "Severe", "Very Severe"});
-        staticLabelsFormatter.setHorizontalLabels(new String[]{"1", "10", "20", "31"});
+        //staticLabelsFormatter.setHorizontalLabels(new String[]{"1", "10", "20", "31"});
 
         graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
 
