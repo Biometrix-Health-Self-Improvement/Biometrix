@@ -255,7 +255,7 @@ public class MoodEntry extends Fragment implements AsyncResponse {
             //Adds the primary key of the field to the sync table along with the value marking it
             //needs to be added to the webdatabase
             LocalStorageAccess.getInstance(v.getContext()).insertOrUpdateSyncTable(v.getContext(),
-                    LocalStorageAccessMood.TABLE_NAME, id, LocalStorageAccess.SYNC_NEEDS_ADDED);
+                    LocalStorageAccessMood.TABLE_NAME, id, -1, LocalStorageAccess.SYNC_NEEDS_ADDED);
 
             row.put(LocalStorageAccessMood.LOCAL_MOOD_ID, id);
             row.remove(LocalStorageAccessMood.USER_NAME);

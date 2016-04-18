@@ -32,89 +32,107 @@ public class Sync implements AsyncResponse
      */
     public void syncDatabases()
     {
-        //TestChanges();
-
-        //The Json object to hold all other json objects
-        //Alternate names include the One JSON to rule them all...
-        JSONObject masterJson = new JSONObject();
-
-        //All tables and their primary keys
-        String tableNames[] =
-                {LocalStorageAccessMood.TABLE_NAME,
-                LocalStorageAccessDiet.TABLE_NAME,
-                LocalStorageAccessExercise.TABLE_NAME,
-               LocalStorageAccessMedication.TABLE_NAME,
-               LocalStorageAccessSleep.TABLE_NAME};
-
-        //Each type of status in the sync table
-        Integer syncTypes[] = {LocalStorageAccess.SYNC_NEEDS_ADDED, LocalStorageAccess.SYNC_NEEDS_UPDATED,
-                LocalStorageAccess.SYNC_NEEDS_DELETED};
-
-        //JSONObjects for each table
-        JSONObject jsonArray[] = {new JSONObject(), new JSONObject(), new JSONObject(), new JSONObject(),
-                new JSONObject()};
-
-        //Lists of columns for each table
-        String columnLists[][] = {LocalStorageAccessMood.getColumns(),
-                LocalStorageAccessDiet.getColumns(),
-                LocalStorageAccessExercise.getColumns(),
-                LocalStorageAccessMedication.getColumns(),
-                LocalStorageAccessSleep.getColumns()};
-
-        //Lists of primary keys for each table
-        String primaryKeyColumnLists[][] =
-                {new String[] {LocalStorageAccessMood.LOCAL_MOOD_ID, LocalStorageAccessMood.WEB_MOOD_ID},
-                        new String[] {LocalStorageAccessDiet.LOCAL_DIET_ID, LocalStorageAccessDiet.WEB_DIET_ID},
-                        new String[] {LocalStorageAccessExercise.LOCAL_EXERCISE_ID, LocalStorageAccessExercise.WEB_EXERCISE_ID},
-                        new String[] {LocalStorageAccessMedication.LOCAL_MEDICATION_ID, LocalStorageAccessMedication.WEB_MEDICATION_ID},
-                        new String[] {LocalStorageAccessSleep.LOCAL_SLEEP_ID, LocalStorageAccessSleep.WEB_SLEEP_ID}};
-
-        for(int i = 0; i < tableNames.length; ++i)
-        {
-            for(int j = 0; j < syncTypes.length; ++j)
-            {
-                if (syncTypes[j] == LocalStorageAccess.SYNC_NEEDS_DELETED)
-                {
-                    getAllPendingInfoOfType(tableNames[i], primaryKeyColumnLists[i][0],
-                            primaryKeyColumnLists[i], jsonArray[i], syncTypes[j]);
-                }
-                else
-                {
-                    getAllPendingInfoOfType(tableNames[i], primaryKeyColumnLists[i][0],
-                            columnLists[i], jsonArray[i], syncTypes[j]);
-                }
-            }
-
-            getAllIDInfo(tableNames[i], primaryKeyColumnLists[i], jsonArray[i]);
-
-            try
-            {
-                masterJson.put(tableNames[i], jsonArray[i]);
-            }
-            catch(JSONException except)
-            {
-                except.getMessage();
-            }
-        }
-
-        String test = masterJson.toString();
-
         if (LocalAccount.isLoggedIn())
         {
-            //Trys to insert the user's data
+            TestChanges();
+
+            //The Json object to hold all other json objects
+            //Alternate names include the One JSON to rule them all...
+            JSONObject masterJson = new JSONObject();
+
+            //All tables and their primary keys
+            String tableNames[] =
+                    {LocalStorageAccessMood.TABLE_NAME,
+                    LocalStorageAccessDiet.TABLE_NAME,
+                    LocalStorageAccessExercise.TABLE_NAME,
+                   LocalStorageAccessMedication.TABLE_NAME,
+                   LocalStorageAccessSleep.TABLE_NAME};
+
+            //Each type of status in the sync table
+            Integer syncTypes[] = {LocalStorageAccess.SYNC_NEEDS_ADDED, LocalStorageAccess.SYNC_NEEDS_UPDATED,
+                    LocalStorageAccess.SYNC_NEEDS_DELETED};
+
+            //JSONObjects for each table
+            JSONObject jsonArray[] = {new JSONObject(), new JSONObject(), new JSONObject(), new JSONObject(),
+                    new JSONObject()};
+
+            //Lists of columns for each table
+            String columnLists[][] = {LocalStorageAccessMood.getColumns(),
+                    LocalStorageAccessDiet.getColumns(),
+                    LocalStorageAccessExercise.getColumns(),
+                    LocalStorageAccessMedication.getColumns(),
+                    LocalStorageAccessSleep.getColumns()};
+
+            //Lists of primary keys for each table
+            String primaryKeyColumnLists[][] =
+                    {new String[] {LocalStorageAccessMood.LOCAL_MOOD_ID, LocalStorageAccessMood.WEB_MOOD_ID},
+                            new String[] {LocalStorageAccessDiet.LOCAL_DIET_ID, LocalStorageAccessDiet.WEB_DIET_ID},
+                            new String[] {LocalStorageAccessExercise.LOCAL_EXERCISE_ID, LocalStorageAccessExercise.WEB_EXERCISE_ID},
+                            new String[] {LocalStorageAccessMedication.LOCAL_MEDICATION_ID, LocalStorageAccessMedication.WEB_MEDICATION_ID},
+                            new String[] {LocalStorageAccessSleep.LOCAL_SLEEP_ID, LocalStorageAccessSleep.WEB_SLEEP_ID}};
+
+            for(int i = 0; i < tableNames.length; ++i)
+            {
+                for(int j = 0; j < syncTypes.length; ++j)
+                {
+                    if (syncTypes[j] == LocalStorageAccess.SYNC_NEEDS_DELETED)
+                    {
+                        getAllPendingInfoOfType(tableNames[i], primaryKeyColumnLists[i][0],
+                                primaryKeyColumnLists[i], jsonArray[i], syncTypes[j]);
+                    }
+                    else
+                    {
+                        getAllPendingInfoOfType(tableNames[i], primaryKeyColumnLists[i][0],
+                                columnLists[i], jsonArray[i], syncTypes[j]);
+                    }
+                }
+
+                getAllIDInfo(tableNames[i], primaryKeyColumnLists[i], jsonArray[i]);
+
+                try
+                {
+                    masterJson.put(tableNames[i], jsonArray[i]);
+                }
+                catch(JSONException except)
+                {
+                    except.getMessage();
+                }
+            }
+
+            String test = masterJson.toString();
+
             new DatabaseConnect(this).execute(DatabaseConnectionTypes.SYNC_DATABASES, masterJson.toString(),
                     LocalAccount.GetInstance().GetToken());
         }
     }
 
-    /*
+
     public void TestChanges()
     {
-        LocalStorageAccess.getInstance(context).insertOrUpdateSyncTable(context, LocalStorageAccessMood.TABLE_NAME,
-                4, LocalStorageAccess.SYNC_NEEDS_UPDATED);
-        LocalStorageAccess.getInstance(context).insertOrUpdateSyncTable(context, LocalStorageAccessMood.TABLE_NAME,
-                5, LocalStorageAccess.SYNC_NEEDS_DELETED);
-    }*/
+        boolean testChanges = false;
+
+        if(testChanges) {
+            LocalStorageAccess.getInstance(context).insertOrUpdateSyncTable(context, LocalStorageAccessMood.TABLE_NAME,
+                    1, 1, LocalStorageAccess.SYNC_NEEDS_UPDATED);
+            LocalStorageAccess.getInstance(context).insertOrUpdateSyncTable(context, LocalStorageAccessMood.TABLE_NAME,
+                    2, 2, LocalStorageAccess.SYNC_NEEDS_DELETED);
+
+            LocalStorageAccess.getInstance(context).insertOrUpdateSyncTable(context, LocalStorageAccessDiet.TABLE_NAME,
+                    1, 1, LocalStorageAccess.SYNC_NEEDS_UPDATED);
+            LocalStorageAccess.getInstance(context).insertOrUpdateSyncTable(context, LocalStorageAccessDiet.TABLE_NAME,
+                    2, 2, LocalStorageAccess.SYNC_NEEDS_DELETED);
+
+            LocalStorageAccess.getInstance(context).insertOrUpdateSyncTable(context, LocalStorageAccessExercise.TABLE_NAME,
+                    1, 1, LocalStorageAccess.SYNC_NEEDS_UPDATED);
+            LocalStorageAccess.getInstance(context).insertOrUpdateSyncTable(context, LocalStorageAccessExercise.TABLE_NAME,
+                    2, 2, LocalStorageAccess.SYNC_NEEDS_DELETED);
+
+            LocalStorageAccess.getInstance(context).insertOrUpdateSyncTable(context, LocalStorageAccessMedication.TABLE_NAME,
+                    1, 1, LocalStorageAccess.SYNC_NEEDS_UPDATED);
+            LocalStorageAccess.getInstance(context).insertOrUpdateSyncTable(context, LocalStorageAccessMedication.TABLE_NAME,
+                    2, 2, LocalStorageAccess.SYNC_NEEDS_DELETED);
+        }
+    }
 
     /**
      * Updates the passed in jsonObject with all of the data corresponding to an add in the

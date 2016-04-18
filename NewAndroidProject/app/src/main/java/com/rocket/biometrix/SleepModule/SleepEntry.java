@@ -418,7 +418,7 @@ public class SleepEntry extends Fragment implements AsyncResponse {
                 //Adds the primary key of the field to the sync table along with the value marking it
                 //needs to be added to the webdatabase
                 LocalStorageAccess.getInstance(v.getContext()).insertOrUpdateSyncTable(v.getContext(),
-                        LocalStorageAccessSleep.TABLE_NAME, id, LocalStorageAccess.SYNC_NEEDS_ADDED);
+                        LocalStorageAccessSleep.TABLE_NAME, id, -1, LocalStorageAccess.SYNC_NEEDS_ADDED);
 
                 //Makes the change to the web database (which updates the sync table on success)
                 rowToBeInserted.put(LocalStorageAccessSleep.LOCAL_SLEEP_ID, id);

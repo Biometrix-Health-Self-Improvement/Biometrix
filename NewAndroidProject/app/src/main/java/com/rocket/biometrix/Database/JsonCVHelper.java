@@ -2,6 +2,7 @@ package com.rocket.biometrix.Database;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -184,10 +185,10 @@ public class JsonCVHelper
                         HandleInsertSyncData(resultJson, tableName, context);
                         break;
                     case "Update":
-
+                        HandleUpdateSyncData(resultJson, tableName, context);
                         break;
                     case "Delete":
-
+                        HandleDeleteSyncData(resultJson, tableName, context);
                         break;
                     case "PullData":
 
@@ -245,24 +246,64 @@ public class JsonCVHelper
      */
     private static void HandleUpdateSyncData(JSONObject updateStatus, String tableName, Context context)
     {
-        switch(tableName)
+        if (updateStatus.has("Error"))
         {
-            case LocalStorageAccessMood.TABLE_NAME:
-
-                break;
-            case LocalStorageAccessExercise.TABLE_NAME:
-
-                break;
-            case LocalStorageAccessDiet.TABLE_NAME:
-
-                break;
-            case LocalStorageAccessMedication.TABLE_NAME:
-
-                break;
-            case LocalStorageAccessSleep.TABLE_NAME:
-                break;
-            default:
-                break;
+            try
+            {
+                //Log.i("UpdateSyncError", updateStatus.getString("Error"));
+                updateStatus.getString("Error");
+            }
+            catch(JSONException except)
+            {
+                except.getMessage();
+            }
+        }
+        else
+        {
+            try
+            {
+                LocalStorageAccess.getInstance(context).deleteEntryFromSyncTable(context, tableName,
+                        updateStatus.getInt("WebKey"), false);
+            }
+            catch(JSONException except)
+            {
+                except.getMessage();
+            }
         }
     }
+
+    /**
+     * Calls the needed update methods to remove the deletes from the sync table if they succeeded
+     * @param deleteStatus The JSON object that contains information about the update
+     * @param tableName The name of the table that the insert was performed on
+     * @param context The current context, needed due to database operations.
+     */
+    private static void HandleDeleteSyncData(JSONObject deleteStatus, String tableName, Context context)
+    {
+        if (deleteStatus.has("Error"))
+        {
+            try
+            {
+                //Log.i("UpdateSyncError", updateStatus.getString("Error"));
+                deleteStatus.getString("Error");
+            }
+            catch(JSONException except)
+            {
+                except.getMessage();
+            }
+        }
+        else
+        {
+            try
+            {
+                LocalStorageAccess.getInstance(context).deleteEntryFromSyncTable(context, tableName,
+                        deleteStatus.getInt("WebKey"), false);
+            }
+            catch(JSONException except)
+            {
+                except.getMessage();
+            }
+        }
+    }
+
 }
