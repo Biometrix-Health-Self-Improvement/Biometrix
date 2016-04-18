@@ -1,5 +1,8 @@
 package com.rocket.biometrix.Database;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 
 import org.json.JSONException;
@@ -33,9 +36,33 @@ public class DatabaseConnect extends AsyncTask<String, Void, Void>
         delegate = receiver;
     }
 
+    /**
+     * A check for network availability? Taken from here
+     * http://stackoverflow.com/questions/5474089/how-to-check-currently-internet-connection-is-available-or-not-in-android
+     * TODO: Make use of this if it works. Currently untested...
+     * @param context Current context
+     * @return True if available, false otherwise
+     */
+    public static boolean isNetworkAvailable(Context context)
+    {
+        boolean connected = false;
+        ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            //we are connected to a network
+            connected = true;
+        }
+        else
+        {
+            connected = false;
+        }
+
+        return connected;
+    }
+
     //The string object that will be passed to the return result
     private String returnResult;
-
 
     @Override
     /**
@@ -83,7 +110,7 @@ public class DatabaseConnect extends AsyncTask<String, Void, Void>
                     break;
                 //Deleting login requires username, password, and email
                 case DatabaseConnectionTypes.LOGIN_DELETE:
-                    db_operation = "Delete";
+                    db_operation = "DeleteUser";
                     jsonParam.put("Username", params[1]);
                     jsonParam.put("Password", params[2]);
                     jsonParam.put("Email", params[3]);
@@ -126,6 +153,11 @@ public class DatabaseConnect extends AsyncTask<String, Void, Void>
                     jsonParam.put("Params", params[1]);
                     jsonParam.put("Token", params[2]);
                     jsonParam.put("Table", params[3]);
+                    break;
+                case DatabaseConnectionTypes.SYNC_DATABASES:
+                    db_operation = "Sync";
+                    jsonParam.put("Params", params[1]);
+                    jsonParam.put("Token", params[2]);
                     break;
                 default:
                     db_operation = "";

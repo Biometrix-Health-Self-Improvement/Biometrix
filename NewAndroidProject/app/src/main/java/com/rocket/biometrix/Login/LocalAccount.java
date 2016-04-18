@@ -134,7 +134,7 @@ public class LocalAccount
 
         googleAccount = null;
 
-        username = null;
+        username = DEFAULT_NAME;
     }
 
     /**

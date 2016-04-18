@@ -182,7 +182,7 @@ public class DietEntry extends Fragment implements AsyncResponse {
                 //Adds the primary key of the field to the sync table along with the value marking it
                 //needs to be added to the webdatabase
                 LocalStorageAccess.getInstance(v.getContext()).insertOrUpdateSyncTable(v.getContext(),
-                        LocalStorageAccessDiet.TABLE_NAME, id, LocalStorageAccess.SYNC_NEEDS_ADDED);
+                        LocalStorageAccessDiet.TABLE_NAME, id, -1, LocalStorageAccess.SYNC_NEEDS_ADDED);
 
                 //Makes the change to the web database (which updates the sync table on success)
                 rowToBeInserted.put(LocalStorageAccessDiet.LOCAL_DIET_ID, id);
@@ -216,11 +216,11 @@ public class DietEntry extends Fragment implements AsyncResponse {
         if (jsonObject != null)
         {
             int[] tableIDs = new int[2];
-            JsonCVHelper.getIDColumns(tableIDs, jsonObject, context);
+            JsonCVHelper.getIDColumns(tableIDs, jsonObject);
 
             if (tableIDs[0] != -1 && tableIDs[1] != -1)
             {
-                LocalStorageAccessDiet.updateWebIDReference(tableIDs[0], tableIDs[1], context);
+                LocalStorageAccessDiet.updateWebIDReference(tableIDs[0], tableIDs[1], context, true);
             }
             else
             {

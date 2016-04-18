@@ -10,7 +10,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -20,6 +19,7 @@ import com.rocket.biometrix.Analysis.BiometrixAnalysis;
 import com.rocket.biometrix.Analysis.GraphBase;
 import com.rocket.biometrix.Analysis.MoodGraph;
 import com.rocket.biometrix.Analysis.SleepGraph;
+import com.rocket.biometrix.Database.Sync;
 import com.rocket.biometrix.DietModule.DietEntry;
 import com.rocket.biometrix.DietModule.DietParent;
 import com.rocket.biometrix.ExerciseModule.ExerciseEntry;
@@ -138,6 +138,10 @@ public class NavigationDrawerActivity extends AppCompatActivity
         } else if (id == R.id.nav_logout)
         {
            LogoutUser();
+        } else if(id == R.id.nav_sync)
+        {
+            Sync sync = new Sync(getApplicationContext());
+            sync.syncDatabases();
         }
         replaceFragment(frag);
 
