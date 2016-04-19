@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.design.widget.TabLayout;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -115,13 +114,8 @@ public class LocalStorageAccessExercise{
 
 
     //Get all rows that match date YYYY-MM-DD (pass in date to search, then table you are looking at...)
-<<<<<<< HEAD
-    public static Cursor selectByDate(String date, Context c){
-        return LocalStorageAccess.getInstance(c).selectByDate(date, TABLE_NAME, DATE);
-=======
     public static Cursor selectByDate(String date, Context context){
         return LocalStorageAccess.getInstance(context).selectByDate(date, TABLE_NAME, DATE);
->>>>>>> refs/remotes/origin/master
     }
 
     public static Cursor selectAllDatabyDateRange(String startDate, String endDate, Context context){

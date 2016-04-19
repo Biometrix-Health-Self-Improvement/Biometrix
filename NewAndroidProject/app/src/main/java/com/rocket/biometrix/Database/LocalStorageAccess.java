@@ -335,12 +335,6 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
         return rowNumberInserted;
     }
 
-<<<<<<< HEAD
-    //Get all rows that match date YYYY-MM-DD (pass in date to search, then table you are looking at...)
-    public static Cursor selectByDate(String dayte, String tbl, String date_col){
-        SQLiteDatabase db = m_instance.getWritableDatabase();
-        Cursor cur=db.rawQuery("SELECT * FROM "+tbl+" WHERE "+date_col+ " == "+dayte, null);
-=======
     /**
      * Get all rows that match date YYYY-MM-DD (pass in date to search, then table you are looking at...
      * @param date The date that you want all values for
@@ -352,8 +346,6 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
         SQLiteDatabase db= m_instance.getReadableDatabase();
 
         Cursor cur = db.query(table, null, date_col + " = ?", new String[]{date}, null, null, null);
->>>>>>> refs/remotes/origin/master
-
         return cur;
     }
 
