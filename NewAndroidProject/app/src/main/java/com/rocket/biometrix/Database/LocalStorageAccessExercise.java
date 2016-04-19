@@ -207,4 +207,19 @@ public class LocalStorageAccessExercise{
     {
         return LocalStorageAccess.selectAllEntries(c, TABLE_NAME, DATE + " DESC, " + TIME + " DESC", curUserOnly);
     }
+
+    public static Cursor getMonthEntries(Context c, int year, int month)
+    {
+        String date = year + "-";
+        if(month <10)
+            date +="0";
+        date += month + "-01";
+
+        SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_NAME, new String[]{DATE, TIME, TITLE, TYPE, MINUTES, REPS, LAPS, WEIGHT, INTY},
+                DATE + " BETWEEN (date(?)) AND (date(?, '+1 month','-1 day'))", new String[]{date, date}, null, null, DATE);
+
+        return cursor;
+    }
 }

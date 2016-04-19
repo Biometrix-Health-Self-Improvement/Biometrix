@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 
 import com.rocket.biometrix.Analysis.BiometrixAnalysis;
+import com.rocket.biometrix.Analysis.ExerciseGraph;
 import com.rocket.biometrix.Analysis.GraphBase;
 import com.rocket.biometrix.Analysis.MoodGraph;
 import com.rocket.biometrix.Analysis.SleepGraph;
@@ -318,6 +319,10 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
     public void SleepGraph(View v){
         activeFragment = new SleepGraph();
+        replaceFragment(activeFragment);
+    }
+    public  void ExerciseGraph(View v){
+        activeFragment = new ExerciseGraph();
         replaceFragment(activeFragment);
     }
 }

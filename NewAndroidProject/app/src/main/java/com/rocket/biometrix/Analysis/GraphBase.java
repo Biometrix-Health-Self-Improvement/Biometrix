@@ -10,6 +10,8 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
 import com.jjoe64.graphview.*;
 import com.jjoe64.graphview.helper.*;
 
@@ -87,6 +89,10 @@ public abstract class GraphBase extends Fragment {
         }
         populateGraph();
     }
+
+
+    abstract protected void setMonthYearTitle();
+
 
     abstract public void populateGraph();
 

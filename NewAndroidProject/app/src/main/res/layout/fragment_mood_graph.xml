@@ -19,5 +19,21 @@
         android:id="@+id/buttonNextMood"
         android:onClick="graphNext" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/monthTextViewMood"
+        android:layout_alignBottom="@+id/buttonNextMood"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/yearTextViewMood"
+        android:layout_above="@+id/monthTextViewMood"
+        android:layout_centerHorizontal="true" />
+
 
 </RelativeLayout>
