@@ -176,6 +176,7 @@ public class GetLogin extends Fragment implements AsyncResponse {
                     //Logs the user in with their login token.
                     LocalAccount.Login(username, jsonObject.getString("Token"));
 
+                    
                     getActivity().getFragmentManager().popBackStack();
                 } else
                 //Assume it was a password reset

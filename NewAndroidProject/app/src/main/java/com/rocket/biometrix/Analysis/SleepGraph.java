@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 /**
  * Created by tannalynn on 4/9/2016.
+ *
  */
 public class SleepGraph extends GraphBase{
     @Override
@@ -32,7 +33,7 @@ public class SleepGraph extends GraphBase{
         qual.setColor(Color.RED);
 
         StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
-        staticLabelsFormatter.setHorizontalLabels(new String[]{"1", "10", "20", "31"});
+        //staticLabelsFormatter.setHorizontalLabels(new String[]{"1", "10", "20", "31"});
         graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
 
         graph.addSeries(len);

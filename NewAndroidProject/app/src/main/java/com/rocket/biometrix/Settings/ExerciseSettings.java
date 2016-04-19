@@ -1,50 +1,51 @@
-package com.rocket.biometrix;
+package com.rocket.biometrix.Settings;
 
-import android.app.Fragment;
-import android.content.Intent;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
-import com.rocket.biometrix.EditPastEntries.EditPastActivity;
-import com.rocket.biometrix.Settings.ModuleSettings;
-
+import com.rocket.biometrix.NavigationDrawerActivity;
+import com.rocket.biometrix.R;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link HomeScreen.OnFragmentInteractionListener} interface
+ * {@link ExerciseSettings.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link HomeScreen#newInstance} factory method to
+ * Use the {@link ExerciseSettings#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeScreen extends Fragment {
+public class ExerciseSettings extends Fragment {
+    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
-    public HomeScreen() {
+    public ExerciseSettings() {
         // Required empty public constructor
     }
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeScreen.
+     * @return A new instance of fragment ExerciseSettings.
      */
-    public static HomeScreen newInstance(String param1, String param2) {
-        HomeScreen fragment = new HomeScreen();
+    // TODO: Rename and change types and number of parameters
+    public static ExerciseSettings newInstance(String param1, String param2) {
+        ExerciseSettings fragment = new ExerciseSettings();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -63,44 +64,17 @@ public class HomeScreen extends Fragment {
         try{
             NavigationDrawerActivity nav = (NavigationDrawerActivity) getActivity();
             //Change the title of the action bar to reflect the current fragment
-            nav.setActionBarTitleFromFragment(R.string.action_bar_title_home_screen);
+            nav.setActionBarTitleFromFragment(R.string.action_bar_title_exercise_settings);
             //set activities active fragment to this one
             nav.activeFragment = this;
         } catch (Exception e){}
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View v = inflater.inflate(R.layout.fragment_home_screen, container, false);
-
-        final Button btnEdit = (Button) v.findViewById(R.id.home_edit);
-        btnEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), EditPastActivity.class);
-
-                //Future extensibility:
-                //intent.putExtra("NavBar Fragment Stack",fraggle);
-                startActivity(intent);
-            }
-        });
-
-        return v;
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        int id = item.getItemId();
-
-        if(id == R.id.action_settings){
-            Fragment frag = new ModuleSettings();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return inflater.inflate(R.layout.fragment_exercise_settings, container, false);
     }
 
     /**
@@ -114,6 +88,11 @@ public class HomeScreen extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void onAcceptClick(View v){
+
     }
 }

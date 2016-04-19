@@ -26,15 +26,22 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
     //Incremented to 6. To autoincrement, the primary key must say integer, not int
     //Incremented to 7. Standardizing format to match Excel file, also Medication module is now a thing
     //Incremented to 8. Sync Table now exists, updated columns removed
-    protected static final int DATABASE_VERSION = 8;
+    //Incremented to 9. Sync table username field changed to avoid same names on inner join
+    //10. Sync table given webkey column to uniquely identify removals and updates
+    protected static final int DATABASE_VERSION = 10;
     protected static LocalStorageAccess m_instance = null;
 
     //Strings for the sync table creation
     public static final String SYNC_TABLE_NAME = "Sync";
     public static final String SYNC_TABLE_NAME_COLUMN = "TableName";
     public static final String SYNC_KEY_COLUMN = "Key";
+    public static final String SYNC_WEB_KEY_COLUMN = "WebKey";
     public static final String SYNC_STATUS_COLUMN = "Status";
-    public static final String SYNC_USERNAME_COLUMN = "Username";
+
+    //Making this one different than other tables, since this is basically the only table that needs
+    // to be joined on
+    //and it causes more headache to try to have this be Username
+    public static final String SYNC_USERNAME_COLUMN = "SyncUsername";
 
     //Status codes for the sync table
     public static final int SYNC_NEEDS_ADDED = 1;
@@ -116,7 +123,7 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
                 SYNC_USERNAME_COLUMN + " varchar(50) Not Null, " +
                 SYNC_TABLE_NAME_COLUMN + " varchar(50) Not Null, " +
                 SYNC_KEY_COLUMN + " int Not Null, " +
-                //SYNC_STATUS_COLUMN + " int default 0 " +
+                SYNC_WEB_KEY_COLUMN + " int Null, " +
                 SYNC_STATUS_COLUMN + " int default 0, " +
                 " unique (" + SYNC_TABLE_NAME_COLUMN + ", " + SYNC_KEY_COLUMN + ") ON CONFLICT FAIL " +
                 ");";
@@ -128,13 +135,15 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
      * @param c The current context which is used to grab the database
      * @param tableName The name of the table that the entry is for
      * @param keyValue The value of the primary key for the table the entry is for
+     * @param webKey The value of the web key in order to ensure it is correctly identified on the
+     *               webserver. THIS SHOULD BE -1 FOR INSERTS AS THERE IS NOT ONE
      * @param status One of the status codes for the sync table that determines what operation needs
      *               to be performed on the web database
      * @return An integer value for the status. -1 means an error occurred. 0 means that no change
      * was made (which is usually fine) and greater than 0 means that the column was updated or
      * inserted successfully
      */
-    public int insertOrUpdateSyncTable(Context c, String tableName, int keyValue, int status)
+    public int insertOrUpdateSyncTable(Context c, String tableName, int keyValue, int webKey, int status)
     {
         int returnStatus = -1;
         SQLiteDatabase db = getInstance(c).getWritableDatabase();
@@ -151,6 +160,15 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
             //Contains the new status values for insert or update
             ContentValues contentValues = new ContentValues();
             contentValues.put(SYNC_STATUS_COLUMN, status);
+
+            if(webKey == -1)
+            {
+                contentValues.put(SYNC_WEB_KEY_COLUMN, (String)null);
+            }
+            else
+            {
+                contentValues.put(SYNC_WEB_KEY_COLUMN, webKey);
+            }
 
             //If a value was found then an update is needed, not an insert
             if (cursor.moveToFirst()) {
@@ -208,18 +226,29 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
      * @param c The current context which is used to grab the database
      * @param tableName The name of the table that the entry is for
      * @param keyValue The value of the primary key for the entry that needs to be removed
+     * @param isLocalKey A boolean value, if true then the key referred to is a local key, if false
+     *                   the key is a web key
      * @return A boolean for whether the operation succeeded or failed
      */
-    public boolean deleteEntryFromSyncTable(Context c, String tableName, int keyValue)
+    public boolean deleteEntryFromSyncTable(Context c, String tableName, int keyValue, boolean isLocalKey)
     {
         boolean returnStatus = false;
         SQLiteDatabase db = getInstance(c).getWritableDatabase();
 
+        String deleteQuery = SYNC_TABLE_NAME_COLUMN + " = ? AND ";
+
+        if (isLocalKey)
+        {
+            deleteQuery +=  SYNC_KEY_COLUMN + " = ?";
+        }
+        else
+        {
+            deleteQuery += SYNC_WEB_KEY_COLUMN + " = ?";
+        }
+
         //Select Status From Sync Where TableName = *tableName* AND Key = *keyValue*
         int deletedRows =  db.delete(SYNC_TABLE_NAME,
-                SYNC_TABLE_NAME_COLUMN + " = ? AND " + SYNC_KEY_COLUMN + " = ?",
-                new String[] {tableName, Integer.toString(keyValue)});
-
+                deleteQuery, new String[] {tableName, Integer.toString(keyValue)});
 
         if (deletedRows == 1)
         {
@@ -396,13 +425,13 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
 
     /**
      * Returns all rows for the currently logged in user. If no user is logged in, returns the
-     * columns for the user "default"
+     * columns for the user "default". Returns all columns.
      * @param c The current context which is used by the database queries
      * @param tableName The name of the table to select entries on
      * @param orderBy A string to determine how the data is ordered by SQLite statement
      * @param curUserOnly True means return only data for the currently logged in user, false means
      *                    return all data for local users
-     * @return A Cursor to all of the columns for the sleep table for the current user
+     * @return A Cursor to all of the columns on the table for the current user
      */
     public static Cursor selectAllEntries(Context c, String tableName, String orderBy, boolean curUserOnly)
     {
@@ -421,6 +450,155 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
         else
         {
             return database.query(tableName, null, null, null, null, null, orderBy);
+        }
+    }
+
+    /**
+     * Returns all rows for the currently logged in user. If no user is logged in, returns the
+     * columns for the user "default"
+     * @param c The current context which is used by the database queries
+     * @param tableName The name of the table to select entries on
+     * @param orderBy A string to determine how the data is ordered by SQLite statement
+     * @param columns An array of strings corresponding to the column names to return
+     * @param curUserOnly True means return only data for the currently logged in user, false means
+     *                    return all data for local users
+     * @return A Cursor to all of the columns on the table for the current user
+     */
+    public static Cursor selectAllEntries(Context c, String tableName, String orderBy, String columns[],
+                                          boolean curUserOnly)
+    {
+        SQLiteDatabase database = getInstance(c).getReadableDatabase();
+
+        if (curUserOnly)
+        {
+            String username = LocalAccount.DEFAULT_NAME;
+
+            if (LocalAccount.isLoggedIn()) {
+                username = LocalAccount.GetInstance().GetUsername();
+            }
+
+            return database.query(tableName, columns, "Username = ?", new String[]{username}, null, null, orderBy);
+        }
+        else
+        {
+            return database.query(tableName, columns, null, null, null, null, orderBy);
+        }
+    }
+
+    /**
+     * Selects all of the entries for the passed in table that match the type passed
+     * @param c The current context which is used by the database queries
+     * @param tableName The name of the table to select entries on
+     * @param localKey The name of the primary key for the local table
+     * @param columns The names of the columns that are to be returned, should be all for update and
+     *                add, and the primary keys for delete
+     * @param curUserOnly True means return only data for the currently logged in user, false means
+     *                    return all data for local users
+     * @return A Cursor to all of the columns that need to be updated
+     */
+    public static Cursor selectPendingEntries(Context c, String tableName, String localKey, String columns[]
+            , boolean curUserOnly, int syncType)
+    {
+        SQLiteDatabase database = getInstance(c).getReadableDatabase();
+
+        //e.g. Mood INNER JOIN SYNC ON MOOD.LocalMoodID = Sync.Key AND Sync.TableName = Mood
+        String joinedTable = tableName + " INNER JOIN " + SYNC_TABLE_NAME + " ON " + tableName +
+                "." + localKey + " = " + SYNC_TABLE_NAME + "." + SYNC_KEY_COLUMN + " AND " +
+                SYNC_TABLE_NAME + "." + SYNC_TABLE_NAME_COLUMN + " = '" + tableName + "'";
+
+        String statusCheck = SYNC_STATUS_COLUMN + " = ";
+
+        switch (syncType)
+        {
+            case SYNC_NEEDS_ADDED:
+                statusCheck += SYNC_NEEDS_ADDED;
+                break;
+            case SYNC_NEEDS_UPDATED:
+                statusCheck += SYNC_NEEDS_UPDATED;
+                break;
+            case SYNC_NEEDS_DELETED:
+                statusCheck += SYNC_NEEDS_DELETED;
+                break;
+            default:
+                return null;
+        }
+
+        try
+        {
+            if (curUserOnly)
+            {
+                String username = LocalAccount.DEFAULT_NAME;
+
+                if (LocalAccount.isLoggedIn())
+                {
+                    username = LocalAccount.GetInstance().GetUsername();
+                }
+
+                //e.g. select all mood columns for the username where the status is needs added
+                return database.query(joinedTable, columns, "Username = ? AND " + statusCheck,
+                        new String[]{username}, null, null, null);
+            }
+            else
+            {
+                return database.query(joinedTable, columns, statusCheck,
+                        null, null, null, null);
+            }
+        }
+        catch (Exception except)
+        {
+            except.getMessage();
+            return null;
+        }
+    }
+
+    /**
+     * Selects all of the entries for the passed in table that match the type passed
+     * @param c The current context which is used by the database queries
+     * @param tableName The name of the table to select entries on
+     * @param localKey The name of the primary key for the local table
+     * @param columns The names of the columns that are to be returned, should be the local key
+     *                and the web key
+     * @param curUserOnly True means return only data for the currently logged in user, false means
+     *                    return all data for local users
+     * @return A Cursor to all of the columns that need to be updated
+     */
+    public static Cursor selectNonPendingEntries(Context c, String tableName, String localKey, String columns[]
+            , boolean curUserOnly)
+    {
+        SQLiteDatabase database = getInstance(c).getReadableDatabase();
+
+        //e.g. Mood LEFT INNER JOIN SYNC ON MOOD.LocalMoodID = Sync.Key AND Sync.TableName = Mood
+        String joinedTable = tableName + " LEFT OUTER JOIN " + SYNC_TABLE_NAME + " ON " + tableName +
+                "." + localKey + " = " + SYNC_TABLE_NAME + "." + SYNC_KEY_COLUMN + " AND " +
+                SYNC_TABLE_NAME + "." + SYNC_TABLE_NAME_COLUMN + " = '" + tableName + "'";
+
+        String statusCheck = SYNC_KEY_COLUMN + " is null";
+
+        try
+        {
+            if (curUserOnly)
+            {
+                String username = LocalAccount.DEFAULT_NAME;
+
+                if (LocalAccount.isLoggedIn())
+                {
+                    username = LocalAccount.GetInstance().GetUsername();
+                }
+
+                //e.g. select all mood columns for the username where the status is needs added
+                return database.query(joinedTable, columns, "Username = ? AND " + statusCheck,
+                        new String[]{username}, null, null, null);
+            }
+            else
+            {
+                return database.query(joinedTable, columns, statusCheck,
+                        null, null, null, null);
+            }
+        }
+        catch (Exception except)
+        {
+            except.getMessage();
+            return null;
         }
     }
 }

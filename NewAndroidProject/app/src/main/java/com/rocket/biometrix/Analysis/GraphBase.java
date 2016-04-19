@@ -76,7 +76,9 @@ public abstract class GraphBase extends Fragment {
         populateGraph();
     }
     public void nextMonth(){
-        if(year <= Calendar.getInstance().get(Calendar.YEAR) && month < Calendar.getInstance().get(Calendar.MONTH)+1) {
+        if (year < Calendar.getInstance().get(Calendar.YEAR)
+                || (year == Calendar.getInstance().get(Calendar.YEAR)
+                    && month < Calendar.getInstance().get(Calendar.MONTH)+1)) {
             month++;
             if (month > 12) {
                 year++;

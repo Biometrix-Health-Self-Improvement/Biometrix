@@ -1,0 +1,139 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rocket.biometrix.Settings.MedicationSettings">
+
+    <ScrollView
+        android:id="@+id/MedicationSettingsScrollView"
+        style="@style/scrollview_parent_list"
+        android:layout_below="@+id/dividerUpper">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:stretchColumns="0">
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/MedicationSettingsTextView"
+                    android:text="Medication Module Settings"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
+
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableBrandNameTextView"
+                    android:text="Disable Brand Name"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchBrandName"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisablePrescribersNameTextView"
+                    android:text="Disable Prescriber's Name"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchPrescribersName"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableDoseAmountTextView"
+                    android:text="Disable Dose Amount"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchDoseAmount"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableConsumptionInstructionsTextView"
+                    android:text="Disable Consumption Instructions"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchConsumptionInstructions"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableConsumptionWarningsTextView"
+                    android:text="Disable Consumption Warnings"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchConsumptionWarnings"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow>
+                <TextView
+                    android:id="@+id/DisableMedicationNotesInputTextView"
+                    android:text="Disable Notes Input"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchMedicationNotesInput"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <Button
+                android:id="@+id/MedicationSettingsAcceptButton"
+                style="@style/accept_button"
+                android:onClick="EntryAcceptOnClick" />
+
+        </TableLayout>
+    </ScrollView>
+
+</FrameLayout>

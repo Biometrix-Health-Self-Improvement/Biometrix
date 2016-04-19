@@ -117,18 +117,18 @@ public class EditCalendar extends Fragment {
                 String[] dateSelected = { Integer.toString(year),Integer.toString(month),Integer.toString(dayOfMonth)};
                 String dateSelectedFormatted = StringDateTimeConverter.convertCalDateString(dateSelected);
 
-<<<<<<< HEAD
+
                 //Retrieve cursor(s)
                 Cursor datesExercise = LocalStorageAccessExercise.selectByDate(dateSelectedFormatted,getActivity());
                 int cunt = datesExercise.getCount();
                String FUCKTHISHIT = DatabaseUtils.dumpCursorToString(datesExercise);
                 Log.v("EX_CURS", DatabaseUtils.dumpCursorToString(datesExercise));
-=======
+
                 //Pass selectByDate() cursor to fill ListView
                 Cursor exercise = LocalStorageAccessExercise.selectByDate(dateSelectedFormatted, view.getContext());
 
 
->>>>>>> refs/remotes/origin/master
+
                 //getActivity() for the context.
                 Toast.makeText(getActivity(), dateSelectedFormatted, Toast.LENGTH_LONG).show();
 
