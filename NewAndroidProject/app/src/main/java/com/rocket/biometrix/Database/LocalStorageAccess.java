@@ -346,7 +346,6 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
         SQLiteDatabase db= m_instance.getReadableDatabase();
 
         Cursor cur = db.query(table, null, date_col + " = ?", new String[]{date}, null, null, null);
-
         return cur;
     }
 

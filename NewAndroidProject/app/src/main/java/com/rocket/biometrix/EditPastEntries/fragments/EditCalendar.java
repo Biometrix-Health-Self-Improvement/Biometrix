@@ -2,9 +2,10 @@ package com.rocket.biometrix.EditPastEntries.fragments;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
+import android.database.DatabaseUtils;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +31,7 @@ public class EditCalendar extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
+    // TODO: Rename and change types of parameters (Will use them for tabbed calendars to switch UI events)
     private String mParam1;
     private String mParam2;
 
@@ -58,6 +59,30 @@ public class EditCalendar extends Fragment {
         return fragment;
     }
 
+    //When parent activity OnCreate is finished, can access UI elements
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener (from EditCalendar)");
+        }
+    }
+
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +94,7 @@ public class EditCalendar extends Fragment {
 
 
 
-
+    //automatically called after onCreate
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -92,15 +117,25 @@ public class EditCalendar extends Fragment {
                 String[] dateSelected = { Integer.toString(year),Integer.toString(month),Integer.toString(dayOfMonth)};
                 String dateSelectedFormatted = StringDateTimeConverter.convertCalDateString(dateSelected);
 
+
+                //Retrieve cursor(s)
+                Cursor datesExercise = LocalStorageAccessExercise.selectByDate(dateSelectedFormatted,getActivity());
+                int cunt = datesExercise.getCount();
+               String FUCKTHISHIT = DatabaseUtils.dumpCursorToString(datesExercise);
+                Log.v("EX_CURS", DatabaseUtils.dumpCursorToString(datesExercise));
+
                 //Pass selectByDate() cursor to fill ListView
                 Cursor exercise = LocalStorageAccessExercise.selectByDate(dateSelectedFormatted, view.getContext());
+
 
 
                 //getActivity() for the context.
                 Toast.makeText(getActivity(), dateSelectedFormatted, Toast.LENGTH_LONG).show();
 
-
-
+                if (mListener != null) {
+                    mListener.onFragDateSelect("exercise", datesExercise);
+                    //other tables go here
+                }
             }
 
         });
@@ -108,37 +143,12 @@ public class EditCalendar extends Fragment {
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
-    //When parent activity OnCreate is finished, can access UI elements
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
 
     /**
+     * Implement this method to get the cursor the calendar generates
+     * Return 1 if it fails please.
+     *
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
@@ -149,7 +159,8 @@ public class EditCalendar extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        //Pass String and Cursor to an activity (fills up EPA dictionary)
+        //Return 1 if failed.
+        int onFragDateSelect(String table, Cursor datesQuery);
     }
 }

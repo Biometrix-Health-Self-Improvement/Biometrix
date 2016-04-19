@@ -1,21 +1,18 @@
 package com.rocket.biometrix.SleepModule;
 
+import android.app.Fragment;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
-
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -139,7 +136,6 @@ public class SleepParent extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-      //  void onFragmentInteraction(String title);
         void onFragmentInteraction(Uri uri);
     }
 }
