@@ -73,7 +73,10 @@ public class SleepParent extends Fragment {
 
             //set activities active fragment to this one
             nav.activeFragment = this;
-        } catch (Exception e){}
+        } catch (Exception e)
+        {
+            e.getMessage();
+        }
 
     }
 
@@ -91,10 +94,11 @@ public class SleepParent extends Fragment {
 
     /**
      * Updates the scroll view with the information contained in the database for sleep.
+     * @param v The view to uses for getting the database entries
      */
     private void UpdatePreviousEntries(View v)
     {
-        Cursor sleepCursor = LocalStorageAccessSleep.selectAll(v.getContext());
+        Cursor sleepCursor = LocalStorageAccessSleep.selectAll(v.getContext(), true);
 
         displayEntriesLayout.removeAllViews();
 
@@ -105,7 +109,6 @@ public class SleepParent extends Fragment {
 
             //Creates the string that will be displayed.
             StringBuilder dispString = new StringBuilder();
-
 
             dispString.append(sleepCursor.getString(sleepCursor.getColumnIndex(LocalStorageAccessSleep.DATE)));
             dispString.append(" for ");

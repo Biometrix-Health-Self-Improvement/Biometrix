@@ -14,6 +14,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+
+import com.rocket.biometrix.Analysis.BiometrixAnalysis;
+import com.rocket.biometrix.Analysis.GraphBase;
+import com.rocket.biometrix.Analysis.MoodGraph;
+import com.rocket.biometrix.Analysis.SleepGraph;
 import com.rocket.biometrix.DietModule.DietEntry;
 import com.rocket.biometrix.DietModule.DietParent;
 import com.rocket.biometrix.ExerciseModule.ExerciseEntry;
@@ -27,7 +32,10 @@ import com.rocket.biometrix.MedicationModule.MedicationParent;
 import com.rocket.biometrix.MoodModule.MoodEntry;
 import com.rocket.biometrix.MoodModule.MoodParent;
 import com.rocket.biometrix.SleepModule.SleepEntry;
+
 import com.rocket.biometrix.SleepModule.SleepParent;
+
+import org.json.JSONObject;
 
 public class NavigationDrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -111,7 +119,9 @@ public class NavigationDrawerActivity extends AppCompatActivity
         } else if (id == R.id.nav_medication_module) {
             frag = new MedicationParent();
         } else if (id == R.id.nav_analytics) { //TODO: menu open analytics fragment
-
+            //TODO: Actually do something with the statistical analysis. Also, might want to call this
+            //in whatever fragment we decide to open
+            JSONObject jsonObject = BiometrixAnalysis.AnalyzeAllModulesBasic(getApplicationContext());
         } else if (id == R.id.nav_settings) { //TODO: menu open settings fragment
 
         } else if (id == R.id.nav_login) {
@@ -210,7 +220,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 ((DietEntry) activeFragment).onDoneClick(v);
                 newFragment = new DietParent();
             } else if (activeFragment.getClass() == MedicationEntry.class){
-
+                ((MedicationEntry) activeFragment).onDoneClick(v);
                 newFragment = new MedicationParent();
             }
 
@@ -252,5 +262,24 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 Toast.makeText(getApplicationContext(), "Account logged out", Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+
+
+
+    public void MoodGraph(View v) {
+        activeFragment = new MoodGraph();
+        replaceFragment(activeFragment);
+    }
+    public void graphNext(View v) {
+        ((GraphBase)activeFragment).nextMonth();
+    }
+    public void graphPrev(View v) {
+        ((GraphBase)activeFragment).prevMonth();
+    }
+
+    public void SleepGraph(View v){
+        activeFragment = new SleepGraph();
+        replaceFragment(activeFragment);
     }
 }

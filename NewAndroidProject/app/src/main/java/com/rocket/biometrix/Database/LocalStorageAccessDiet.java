@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -19,7 +20,7 @@ public class LocalStorageAccessDiet {
     public static final String LOCAL_DIET_ID = "LocalDietID";
     public static final String USER_NAME = "UserName";
     public static final String WEB_DIET_ID = "WebDietID";
-    public static final String DATE= "Date";
+    public static final String DATE = "Date";
     public static final String TYPE = "FoodType";
     public static final String MEAL = "Meal";
     public static final String SERVING = "ServingSize";
@@ -37,44 +38,40 @@ public class LocalStorageAccessDiet {
     public static final String VITAMINB = "VitaminB";
     public static final String CALCIUM = "Calcium";
     public static final String IRON = "Iron";
-    public static final String NOTE= "Notes";
-
-    //Updated = Has the field changed from what the webserver has? This has to be an int, so 0 =false 1 =true
-    public static final String UPDATED = "Updated";
+    public static final String NOTE = "Notes";
 
     //Every single column that is available in the table
-    private final static String[] cols = {LOCAL_DIET_ID, USER_NAME, WEB_DIET_ID, DATE, TYPE, MEAL,
-            SERVING, CALORIES, TOTALFAT, SATFAT, TRANSFAT, CHOLESTEROL, SODIUM, TOTALCARBS, FIBER,
-            SUGARS, PROTEIN, VITAMINA, VITAMINB, CALCIUM, IRON, NOTE, UPDATED};
-
-    //Group together all int columns to avoid a super long create table function
-    public static final String[] intCols = {CALORIES, TOTALFAT, SATFAT, TRANSFAT, CHOLESTEROL, SODIUM, TOTALCARBS, FIBER,
-    SUGARS, PROTEIN, VITAMINA, VITAMINB, CALCIUM, IRON};
+    public static final String[] cols = {LOCAL_DIET_ID, USER_NAME, WEB_DIET_ID, DATE,
+            TYPE, MEAL, SERVING, CALORIES, TOTALFAT, SATFAT, TRANSFAT, CHOLESTEROL, SODIUM, TOTALCARBS,
+            FIBER, SUGARS, PROTEIN, VITAMINA, VITAMINB, CALCIUM, IRON, NOTE};
 
     private LocalStorageAccessDiet(){}
 
     public static String createTable() {
 
-        StringBuilder tableSQL = new StringBuilder();
-
-        tableSQL.append("CREATE TABLE " + TABLE_NAME + " ( " +
-                LOCAL_DIET_ID + " integer primary key, " +
+        return "CREATE TABLE " + TABLE_NAME + " ( " +
+                LOCAL_DIET_ID + " integer primary key autoincrement, " +
                 USER_NAME + " varchar(50) Not Null, " +
                 WEB_DIET_ID + " int Null, " +
                 DATE + " date Not Null, " +
-                TYPE + " varchar(40) Not null, " +
+                TYPE + " varchar(40) Not Null, " +
                 MEAL + " varchar(20) Null, " +
-                SERVING + " VARCHAR(20) Null, ");
-
-        //Loops through each collumn and makes it an int Null column
-        for (String col : intCols)
-        {
-            tableSQL.append(col + " int Null, ");
-        }
-        tableSQL.append(NOTE + " varchar(255), " +
-                UPDATED + " int default 0" +");");
-
-        return tableSQL.toString();
+                SERVING + " varchar(20) Null, " +
+                CALORIES + " int Null, " +
+                TOTALFAT + " int Null, " +
+                SATFAT + " int Null, " +
+                TRANSFAT + " int Null, " +
+                CHOLESTEROL + " int Null, " +
+                SODIUM + " int Null, " +
+                TOTALCARBS + " int Null, " +
+                FIBER + " int Null, " +
+                SUGARS + " int Null, " +
+                PROTEIN + " int Null, " +
+                VITAMINA + " int Null, " +
+                VITAMINB + " int Null, " +
+                CALCIUM + " int Null, " +
+                IRON + " int Null, " +
+                NOTE + " varchar(255)" +");";
     }
 
     public static String getTableName() {return  TABLE_NAME;}
@@ -111,12 +108,10 @@ public class LocalStorageAccessDiet {
      */
     public static List<String[]> getEntries(Context c)
     {
-        String query = "Select " + DATE + ", " + MEAL + ", " + CALORIES +
-                " FROM " + TABLE_NAME + " Order By " + DATE;
-
         SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
 
-        Cursor cursor = db.rawQuery(query, null);
+        //Select DATE, MEAL, CALORIES from TABLE_NAME Order By DATE DESC
+        Cursor cursor = db.query(TABLE_NAME, new String[]{DATE, MEAL, CALORIES}, null, null, null, null, DATE + " DESC");
 
         List<String[]> lst = new LinkedList<String[]>();
 
@@ -141,5 +136,49 @@ public class LocalStorageAccessDiet {
         cursor.close();
         db.close();
         return lst;
+    }
+
+    /**
+     * Updates the ID that is stored locally for reference to the entry on the webserver
+     * @param localID The ID number locally
+     * @param webID The ID number on the web
+     */
+    public static void updateWebIDReference(Integer localID, Integer webID, Context context)
+    {
+        SQLiteDatabase db = LocalStorageAccess.getInstance(context).getWritableDatabase();
+
+        ContentValues webCV = new ContentValues();
+
+        webCV.put(WEB_DIET_ID, webID);
+
+        int num_rows = db.update(TABLE_NAME, webCV, LOCAL_DIET_ID + " = ?", new String[]{localID.toString()});
+
+        db.close();
+
+        if (num_rows < 1)
+        {
+            Toast.makeText(context, "Could not create reference between web database and local database", Toast.LENGTH_LONG).show();
+        }
+        else
+        {
+            if (!LocalStorageAccess.getInstance(context).deleteEntryFromSyncTable(context, TABLE_NAME, localID) )
+            {
+                Toast.makeText(context, "Could not update synchronization table", Toast.LENGTH_LONG).show();
+            }
+        }
+
+    }
+
+    /**
+     * Returns all rows for the currently logged in user. If no user is logged in, returns the
+     * columns for the user "default"
+     * @param c The current context
+     * @param curUserOnly A boolean value representing whether all users should be displayed (false)
+     *                    or only the currently logged in user (true)
+     * @return A Cursor to all of the columns for the sleep table for the current user
+     */
+    public static Cursor selectAll(Context c, boolean curUserOnly)
+    {
+        return LocalStorageAccess.selectAllEntries(c, TABLE_NAME, DATE + " DESC", curUserOnly);
     }
 }

@@ -1,0 +1,23 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rocket.biometrix.Analysis.MoodGraph">
+
+    <com.jjoe64.graphview.GraphView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/graphMood"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/buttonPrevMood" />
+
+    <Button style="@style/graph_prev_month"
+        android:id="@+id/buttonPrevMood"
+        android:onClick="graphPrev" />
+
+    <Button style="@style/graph_next_month"
+        android:id="@+id/buttonNextMood"
+        android:onClick="graphNext" />
+
+
+</RelativeLayout>

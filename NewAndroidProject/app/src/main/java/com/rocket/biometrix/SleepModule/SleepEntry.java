@@ -17,12 +17,14 @@ import android.widget.ArrayAdapter;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rocket.biometrix.Common.DateTimeSelectorPopulateTextView;
 import com.rocket.biometrix.Common.StringDateTimeConverter;
 import com.rocket.biometrix.Database.AsyncResponse;
 import com.rocket.biometrix.Database.DatabaseConnect;
 import com.rocket.biometrix.Database.DatabaseConnectionTypes;
+import com.rocket.biometrix.Database.JsonCVHelper;
 import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.Database.LocalStorageAccessSleep;
@@ -30,9 +32,14 @@ import com.rocket.biometrix.Login.LocalAccount;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
+import org.json.JSONObject;
+
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,11 +49,10 @@ import java.util.GregorianCalendar;
  * Use the {@link SleepEntry#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SleepEntry extends Fragment implements AsyncResponse{
+public class SleepEntry extends Fragment implements AsyncResponse {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
 
 
     private TextView endDateTextView; //Reference for the end date textview so it only is grabbed once
@@ -105,19 +111,19 @@ public class SleepEntry extends Fragment implements AsyncResponse{
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        try{
+        try {
             NavigationDrawerActivity nav = (NavigationDrawerActivity) getActivity();
             //Change the title of the action bar to reflect the current fragment
             nav.setActionBarTitleFromFragment(R.string.action_bar_title_sleep_parent);
             //set activities active fragment to this one
             nav.activeFragment = this;
-        } catch (Exception e){}
+        } catch (Exception e) {
+        }
 
 
     }
 
-    protected void GetViewReferences(View v)
-    {
+    protected void GetViewReferences(View v) {
         endDateTextView = (TextView) v.findViewById(R.id.sleepEndTimeTextView);
         hourSeekBar = (SeekBar) v.findViewById(R.id.sleepHoursSeekBar);
         minuteSeekBar = (SeekBar) v.findViewById(R.id.sleepMinutesSeekBar);
@@ -134,10 +140,9 @@ public class SleepEntry extends Fragment implements AsyncResponse{
     /**
      * Sets up the listeners for the view objects
      */
-    protected void SetupListeners(View v)
-    {
+    protected void SetupListeners(View v) {
         //Sets up the date and time fields to work with the activity that grabs them.
-        DateTimeSelectorPopulateTextView timeSelectSetup = new DateTimeSelectorPopulateTextView(getActivity(),v, R.id.sleepStartDateTextView, R.id.sleepStartTimeTextView);
+        DateTimeSelectorPopulateTextView timeSelectSetup = new DateTimeSelectorPopulateTextView(getActivity(), v, R.id.sleepStartDateTextView, R.id.sleepStartTimeTextView);
         timeSelectSetup.Populate();
 
         //Sets up the listeners so the seek bars call updates when changed.
@@ -178,8 +183,7 @@ public class SleepEntry extends Fragment implements AsyncResponse{
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
                 //Ensures that a quality too low cannot be given
-                if(progress < minQuality)
-                {
+                if (progress < minQuality) {
                     qualitySeekBar.setProgress(minQuality);
                 }
 
@@ -233,19 +237,16 @@ public class SleepEntry extends Fragment implements AsyncResponse{
         //Following code was adapted from JP's exercise entry code..
         //Array adapter from sleep string resources
         ArrayAdapter spinnerAdapter = ArrayAdapter.createFromResource(
-                getActivity(), R.array.sleep_gen_health_array,android.R.layout.simple_spinner_item);
+                getActivity(), R.array.sleep_gen_health_array, android.R.layout.simple_spinner_item);
 
         generalHealthSpinner.setAdapter(spinnerAdapter);
 
         //Listener for selected minute taps and getting the tapped minutes as strings.
-        generalHealthSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
+        generalHealthSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             protected Adapter initializedAdapter = null;
 
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id)
-            {
-                if (initializedAdapter != parentView.getAdapter())
-                {
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                if (initializedAdapter != parentView.getAdapter()) {
                     initializedAdapter = parentView.getAdapter();
                     return;
                 }
@@ -286,12 +287,12 @@ public class SleepEntry extends Fragment implements AsyncResponse{
 
         return v;
     }
+
     /**
      * Updates the times to match the addition of the current time and entered time, as well as updates
      * the time spent.
      */
-    public void UpdateEndTimes()
-    {
+    public void UpdateEndTimes() {
         //Grabs initial time and date
         String dateText = startDateTextView.getText().toString();
         String timeText = startTimeTextView.getText().toString();
@@ -307,8 +308,7 @@ public class SleepEntry extends Fragment implements AsyncResponse{
         stringBuilder.append(enteredHours.toString());
         stringBuilder.append(":");
 
-        if (enteredMinutes < 10)
-        {
+        if (enteredMinutes < 10) {
             stringBuilder.append("0");
         }
         stringBuilder.append(enteredMinutes.toString());
@@ -328,8 +328,7 @@ public class SleepEntry extends Fragment implements AsyncResponse{
         splitTime = timeText.split(" ")[0].split(":");
 
         //Does not continue of there were an incorrect number of elements parsed.
-        if ((splitDate.length == 3) && (splitTime.length == 2))
-        {
+        if ((splitDate.length == 3) && (splitTime.length == 2)) {
             //Parses date
             Integer month = Integer.parseInt(splitDate[0].trim());
             Integer day = Integer.parseInt(splitDate[1].trim());
@@ -340,8 +339,7 @@ public class SleepEntry extends Fragment implements AsyncResponse{
             Integer minute = Integer.parseInt(splitTime[1].trim());
 
             //12 extra hours for PM selected
-            if (pmTime)
-            {
+            if (pmTime) {
                 hour = hour + 12;
             }
 
@@ -360,10 +358,10 @@ public class SleepEntry extends Fragment implements AsyncResponse{
     }
 
 
-     /*
-    * Stores the users data when the done button is clicked
-    *
-     */
+    /*
+   * Stores the users data when the done button is clicked
+   *
+    */
     public void onDoneClick(View v) {
         String dateText = startDateTextView.getText().toString();
         String timeText = startTimeTextView.getText().toString();
@@ -372,35 +370,37 @@ public class SleepEntry extends Fragment implements AsyncResponse{
         dateText = dateText.substring(dateText.indexOf(",") + 1).trim();
         timeText = timeText.substring(timeText.indexOf(":") + 2).trim();
         duration = duration.substring(duration.indexOf(":") + 2).trim();
+        DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+        Date date = null;
+        try{ date = format.parse(dateText); } catch (Exception e) { }
+        format = new SimpleDateFormat("yyyy-MM-dd");
+        dateText = format.format(date);
 
         Integer quality = qualitySeekBar.getProgress();
 
         String notes = noteTextView.getText().toString();
         String status = generalHealthSpinner.getSelectedItem().toString();
 
-        String username = "default";
+        String username = LocalAccount.DEFAULT_NAME;
 
-        if (LocalAccount.isLoggedIn() )
-        {
+        if (LocalAccount.isLoggedIn()) {
             username = LocalAccount.GetInstance().GetUsername();
         }
 
         //Make string array for all of the above data
-        String[] sleepEntryData = {null, username, null, dateText, timeText, duration, quality.toString(), notes, status, "0" };
+        String[] sleepEntryData = {null, username, null, dateText, timeText, duration, quality.toString(), notes, status};
 
         //Retrieves column names from the class
         String[] columnNames = LocalStorageAccessSleep.getColumns();
 
 
-        if (columnNames.length == sleepEntryData.length)
-        {
+        if (columnNames.length == sleepEntryData.length) {
             ContentValues rowToBeInserted = new ContentValues();
             int dataIndex = 0;
 
-            for (String column : columnNames)
-            {
+            for (String column : columnNames) {
                 //Insert column name ripped from LSA child class, and the user's entry data we gathered above
-                if(column != LocalStorageAccessSleep.LOCAL_SLEEP_ID) {
+                if (column != LocalStorageAccessSleep.LOCAL_SLEEP_ID) {
                     rowToBeInserted.put(column, sleepEntryData[dataIndex]);
                 }
                 dataIndex++;
@@ -409,24 +409,27 @@ public class SleepEntry extends Fragment implements AsyncResponse{
             //Call insert method
             LocalStorageAccessSleep.insertFromContentValues(rowToBeInserted, v.getContext());
 
-            int id = LocalStorageAccessSleep.GetLastID(v.getContext());
-
-            rowToBeInserted.put(LocalStorageAccessSleep.LOCAL_SLEEP_ID, id);
-            rowToBeInserted.remove(LocalStorageAccessSleep.USER_NAME);
-
-            String jsonToInsert = DatabaseConnect.convertToJSON(rowToBeInserted);
-
-            //Trys to insert the user's data
-            try
+            //Assumes that any user who is logged in wants their data backed up.
+            //TODO: Local Account setting for turning off always backup?
+            if (LocalAccount.isLoggedIn() )
             {
+                int id = LocalStorageAccessSleep.GetLastID(v.getContext());
+
+                //Adds the primary key of the field to the sync table along with the value marking it
+                //needs to be added to the webdatabase
+                LocalStorageAccess.getInstance(v.getContext()).insertOrUpdateSyncTable(v.getContext(),
+                        LocalStorageAccessSleep.TABLE_NAME, id, LocalStorageAccess.SYNC_NEEDS_ADDED);
+
+                //Makes the change to the web database (which updates the sync table on success)
+                rowToBeInserted.put(LocalStorageAccessSleep.LOCAL_SLEEP_ID, id);
+                rowToBeInserted.remove(LocalStorageAccessSleep.USER_NAME);
+
+                String jsonToInsert = JsonCVHelper.convertToJSON(rowToBeInserted);
+
+                //Trys to insert the user's data
                 new DatabaseConnect(this).execute(DatabaseConnectionTypes.INSERT_TABLE_VALUES, jsonToInsert,
                         LocalAccount.GetInstance().GetToken(),
-                        //"asdf",
                         DatabaseConnectionTypes.SLEEP_TABLE);
-            }
-            catch (NullPointerException except)
-            {
-                //TODO display error if user is not logged in.
             }
 
 
@@ -438,8 +441,32 @@ public class SleepEntry extends Fragment implements AsyncResponse{
         void onFragmentInteraction(Uri uri);
     }
 
-    public void processFinish(String result)
-    {
-        Log.i("", result);
+    /**
+     * Called asynchronously when the call to the webserver is done. This method updates the webID
+     * reference that is stored on the local database
+     *
+     * @param result The json encoded regular string that contains the WebID and localID of the
+     *               updated row
+     */
+    public void processFinish(String result) {
+        //Getting context for LSA constructor
+        Context context = entryView.getContext();
+
+        JSONObject jsonObject;
+        jsonObject = JsonCVHelper.processServerJsonString(result, context, "Could not create sleep entry on web database");
+
+        if (jsonObject != null)
+        {
+            int[] tableIDs = new int[2];
+            JsonCVHelper.getIDColumns(tableIDs, jsonObject, context);
+
+            if (tableIDs[0] != -1 && tableIDs[1] != -1)
+            {
+                LocalStorageAccessSleep.updateWebIDReference(tableIDs[0], tableIDs[1], context);
+            } else
+            {
+                Toast.makeText(context, "There was an error processing information from the webserver", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }

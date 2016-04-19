@@ -98,11 +98,12 @@ public class MoodParent extends Fragment {
 
                 //Creates the string that will be displayed.
                 StringBuilder str = new StringBuilder();
-                str.append(data[1]);
+                str.append(data[0]);
                 str.append("   Depr.: ");
-                str.append(data[3]);
+
+                str.append(getDescString(data[2]));
                 str.append("   Elev.: ");
-                str.append(data[4]);
+                str.append(getDescString(data[3]));
 
                 textView.setText(str);
                 displayEntriesLayout.addView(textView);
@@ -110,6 +111,22 @@ public class MoodParent extends Fragment {
         } catch (Exception x){}
     }
 
+    String getDescString(String intStr){
+        switch (intStr) { //get string based on rating
+            case "0": //none
+                return getResources().getString(R.string.mood_rating_none);
+            case "1": //mild
+                return getResources().getString(R.string.mood_rating_mild);
+            case "2": //moderate
+                return getResources().getString(R.string.mood_rating_mod);
+            case "3": //severe
+                return getResources().getString(R.string.mood_rating_sev);
+            case "4": //very severe
+                return getResources().getString(R.string.mood_rating_vsev);
+            default:
+                return "error";
+        }
+    }
 
     /**
      * This interface must be implemented by activities that contain this

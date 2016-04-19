@@ -11,16 +11,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rocket.biometrix.Common.DateTimeSelectorPopulateTextView;
 import com.rocket.biometrix.Database.AsyncResponse;
 import com.rocket.biometrix.Database.DatabaseConnect;
 import com.rocket.biometrix.Database.DatabaseConnectionTypes;
+import com.rocket.biometrix.Database.JsonCVHelper;
 import com.rocket.biometrix.Database.LocalStorageAccess;
+import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.Database.LocalStorageAccessMood;
 import com.rocket.biometrix.Login.LocalAccount;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
+
+import org.json.JSONObject;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,7 +49,7 @@ public class MoodEntry extends Fragment implements AsyncResponse {
     private String mParam2;
 
     View view;
-    String dep="None", elev="None", irr="None", anx="None";
+    String dep="0", elev="0", irr="0", anx="0";
 
 
     private OnFragmentInteractionListener mListener;
@@ -196,27 +206,33 @@ public class MoodEntry extends Fragment implements AsyncResponse {
                 break;
         }
         desc.setText(str);
-        return str;
+        return Integer.toString(prog);
     }
 
 
-    public void onDoneClick(View v)
-    {
+    public void onDoneClick(View v) {
         //get date, time, and notes
-        String notes= ((TextView)view.findViewById(R.id.moodDetailsEditText)).getText().toString();
-        String dateShort=((TextView)view.findViewById(R.id.moodCreateEntryDateSelect)).getText().toString().substring(11);
+        String notes = ((TextView) view.findViewById(R.id.moodDetailsEditText)).getText().toString();
+        String datetmp = ((TextView) view.findViewById(R.id.moodCreateEntryDateSelect)).getText().toString().substring(11);
 
-        String time = ((TextView)view.findViewById(R.id.moodCreateEntryTimeSelect)).getText().toString().substring(6);
+        DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+        Date date = null;
+        try {
+            date = format.parse(datetmp);
+        } catch (Exception e) {
+        }
+        format = new SimpleDateFormat("yyyy-MM-dd");
+        String dateShort = format.format(date);
+        String time = ((TextView) view.findViewById(R.id.moodCreateEntryTimeSelect)).getText().toString().substring(6);
 
-        String username = "default";
+        String username = LocalAccount.DEFAULT_NAME;
 
-        if (LocalAccount.isLoggedIn())
-        {
+        if (LocalAccount.isLoggedIn()) {
             username = LocalAccount.GetInstance().GetUsername();
         }
 
         //Strings in order are LOCAL_MOOD_ID, USER_NAME, WEB_MOOD_ID, DATE, TIME, DEP, ELEV, IRR, ANX, NOTE, UPDATED
-        String[] data = new String[]{null, username, null, dateShort, time, dep, elev, irr, anx, notes, "0"};
+        String[] data = new String[]{null, username, null, dateShort, time, dep, elev, irr, anx, notes};
 
         Bundle moodBundle = new Bundle();
         moodBundle.putStringArray("moodBundleKey", data);
@@ -225,31 +241,31 @@ public class MoodEntry extends Fragment implements AsyncResponse {
 
         String[] cols = LocalStorageAccessMood.getColumns();
 
-        ContentValues row= new ContentValues();
-        int dataIndex=0;
-        for(String col: cols){
+        ContentValues row = new ContentValues();
+        int dataIndex = 0;
+        for (String col : cols) {
             row.put(col, data[dataIndex++]);
         }
         LocalStorageAccessMood.AddEntry(row, v.getContext());
 
-        int id = LocalStorageAccessMood.GetLastID(v.getContext());
-
-        row.put(LocalStorageAccessMood.LOCAL_MOOD_ID, id);
-        row.remove(LocalStorageAccessMood.USER_NAME);
-
-        String jsonToInsert = DatabaseConnect.convertToJSON(row);
-
-        //Trys to insert the user's data
-        try
+        if (LocalAccount.isLoggedIn())
         {
+            int id = LocalStorageAccessMood.GetLastID(v.getContext());
+
+            //Adds the primary key of the field to the sync table along with the value marking it
+            //needs to be added to the webdatabase
+            LocalStorageAccess.getInstance(v.getContext()).insertOrUpdateSyncTable(v.getContext(),
+                    LocalStorageAccessMood.TABLE_NAME, id, LocalStorageAccess.SYNC_NEEDS_ADDED);
+
+            row.put(LocalStorageAccessMood.LOCAL_MOOD_ID, id);
+            row.remove(LocalStorageAccessMood.USER_NAME);
+
+            String jsonToInsert = JsonCVHelper.convertToJSON(row);
+
+            //Trys to insert the user's data
             new DatabaseConnect(this).execute(DatabaseConnectionTypes.INSERT_TABLE_VALUES, jsonToInsert,
                     LocalAccount.GetInstance().GetToken(),
-                    //"asdf",
                     DatabaseConnectionTypes.MOOD_TABLE);
-        }
-        catch (NullPointerException except)
-        {
-            //TODO display error if user is not logged in.
         }
 
     }
@@ -270,9 +286,34 @@ public class MoodEntry extends Fragment implements AsyncResponse {
         void onFragmentInteraction(Uri uri);
     }
 
+    /**
+     * Called asynchronously when the call to the webserver is done. This method updates the webID
+     * reference that is stored on the local database
+     * @param result The json encoded regular string that contains the WebID and localID of the
+     *               updated row
+     */
     public void processFinish(String result)
     {
-        Log.i("", result);
+        //Getting context for LSA constructor
+        Context context = view.getContext();
+
+        JSONObject jsonObject;
+        jsonObject = JsonCVHelper.processServerJsonString(result, context, "Could not create mood entry on web database");
+
+        if (jsonObject != null)
+        {
+            int[] tableIDs = new int[2];
+            JsonCVHelper.getIDColumns(tableIDs, jsonObject, context);
+
+            if (tableIDs[0] != -1 && tableIDs[1] != -1)
+            {
+                LocalStorageAccessMood.updateWebIDReference(tableIDs[0], tableIDs[1], context);
+            }
+            else
+            {
+                Toast.makeText(context, "There was an error processing information from the webserver", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
 }

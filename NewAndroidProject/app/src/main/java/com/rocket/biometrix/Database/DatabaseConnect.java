@@ -1,8 +1,8 @@
 package com.rocket.biometrix.Database;
 
-import android.content.ContentValues;
 import android.os.AsyncTask;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -103,14 +103,26 @@ public class DatabaseConnect extends AsyncTask<String, Void, Void>
                 //And the table to insert into. This determines which stored procedure is called.
                 case DatabaseConnectionTypes.INSERT_TABLE_VALUES:
                 case DatabaseConnectionTypes.UPDATE_TABLE_VALUES:
+                case DatabaseConnectionTypes.DELETE_TABLE_VALUES:
+                    //These are == not .equals by design. This means that the strings must be
+                    //obtained from DatabaseConnectionTypes or no operation will take place
                     if(params[0] == DatabaseConnectionTypes.INSERT_TABLE_VALUES)
                     {
                         db_operation = "Insert";
                     }
-                    else
+                    else if (params[0] == DatabaseConnectionTypes.UPDATE_TABLE_VALUES)
                     {
                         db_operation = "Update";
                     }
+                    else if(params[0] == DatabaseConnectionTypes.DELETE_TABLE_VALUES)
+                    {
+                        db_operation = "Delete";
+                    }
+                    else
+                    {
+                        db_operation = "none";
+                    }
+
                     jsonParam.put("Params", params[1]);
                     jsonParam.put("Token", params[2]);
                     jsonParam.put("Table", params[3]);
@@ -122,7 +134,7 @@ public class DatabaseConnect extends AsyncTask<String, Void, Void>
 
             jsonParam.put("Operation", db_operation);
         }
-        catch (org.json.JSONException jsonExcept)
+        catch (JSONException jsonExcept)
         {
             returnResult = "Problems parsing output to server";
         }
@@ -239,56 +251,6 @@ public class DatabaseConnect extends AsyncTask<String, Void, Void>
     {
         //Calls back to the other module with the resulting string
         delegate.processFinish(returnResult);
-    }
-
-
-    /**
-     * Converts a ContentValues into JSON to prepare it for passing to the webserver and then the
-     * database
-     * @param contentValues The content values to convert
-     * @return A string object that is formatted as JSON
-     */
-    public static String convertToJSON(ContentValues contentValues)
-    {
-        StringBuilder jsonBuilder = new StringBuilder(contentValues.toString());
-
-        //Reads backwards through the string. Essentially, there needs to be a , between every element
-        //so this looks for = and then sets the next whitespace before that = to a , and then adds a new
-        //space
-        //Every key and value also needs to be quoted in the JSON pair (note this means all values
-        //are originally interpreted as strings, SQL should be able to handle the type conversion)
-        boolean readEqual = false;
-        jsonBuilder.append('"');
-
-        for (int i = jsonBuilder.length() - 1; i > 0; --i)
-        {
-            if (jsonBuilder.charAt(i) == '=')
-            {
-                readEqual = true;
-
-                jsonBuilder.insert(i+1, '"');
-                jsonBuilder.insert(i, '"');
-            }
-            else if (jsonBuilder.charAt(i) == ' ' && readEqual)
-            {
-                readEqual = false;
-                jsonBuilder.setCharAt(i, ',');
-                jsonBuilder.insert(i+1, ' ');
-
-                jsonBuilder.insert(i+2, '"');
-                jsonBuilder.insert(i, '"');
-            }
-        }
-
-        jsonBuilder.insert(0, '"');
-
-        //Json strings start with { and end with }
-        jsonBuilder.insert(0, '{');
-        jsonBuilder.append('}');
-
-        //Json strings have : instead of =, so make that replacement
-        //Also, "" means an empty string so it can be null instead (blank in json)
-        return jsonBuilder.toString().replace('=', ':');
     }
 
 }

@@ -4,7 +4,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,43 +15,37 @@ import java.util.List;
  */
 public class LocalStorageAccessMood {
 
-    private static final String LOCAL_DB_NAME = "BiometrixLocal";
-    private static final int LOCAL_DB_VERSION = 1;
-
+    //Table name and all columns
     public static final String TABLE_NAME = "Mood";
     public static final String LOCAL_MOOD_ID = "LocalMoodID";
     public static final String USER_NAME = "UserName";
     public static final String WEB_MOOD_ID = "WebMoodID";
-    public static final String DATE= "Date";
-    public static final String TIME= "Time";
+    public static final String DATE = "Date";
+    public static final String TIME = "Time";
     public static final String DEP = "Depression";
-    public static final String ELEV= "Elevated";
+    public static final String ELEV = "Elevated";
     public static final String IRR = "Irritable";
     public static final String ANX = "Anxiety";
-    public static final String NOTE= "Notes";
+    public static final String NOTE = "Notes";
 
-    //Updated = Has the field changed from what the webserver has? This has to be an int, so 0 =false 1 =true
-    public static final String UPDATED = "Updated";
-
-    private final static String[] cols = {LOCAL_MOOD_ID, USER_NAME, WEB_MOOD_ID, DATE, TIME, DEP, ELEV, IRR, ANX, NOTE, UPDATED};
+    public static final String[] cols = {LOCAL_MOOD_ID, USER_NAME, WEB_MOOD_ID, DATE,
+            TIME, DEP, ELEV, IRR, ANX, NOTE};
 
     private LocalStorageAccessMood(){}
 
     public static String createTable() {
         //Creates the SQL string to make the SLEEP table
-        String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " ( " +
-                LOCAL_MOOD_ID + " integer primary key, " +
+        return "CREATE TABLE " + TABLE_NAME + " ( " +
+                LOCAL_MOOD_ID + " integer primary key autoincrement, " +
                 USER_NAME + " varchar(50) Not Null, " +
                 WEB_MOOD_ID + " int Null, " +
                 DATE + " date Not Null, " +
-                TIME + " time Not null, " +
-                DEP + " VARCHAR(50), " +
-                ELEV + " VARCHAR(50), " +
-                IRR + " VARCHAR(50), " +
-                ANX + " VARCHAR(50), " +
-                NOTE + " varchar(255), " +
-                UPDATED + " int default 0" +");";
-        return CREATE_TABLE;
+                TIME + " time Not Null, " +
+                DEP + " int Null, " +
+                ELEV + " int Null, " +
+                IRR + " int Null, " +
+                ANX + " int Null, " +
+                NOTE + " varchar(255)" +");";
     }
 
     public static String getTableName() {return  TABLE_NAME;}
@@ -67,22 +63,20 @@ public class LocalStorageAccessMood {
      * Makes a call to the base class with the needed parameters to pull out the last primary key
      * entered
      * @param c
-     * @return The integer value of the last primary key entered.
+     * @return The integer value of the last primary key entered.cc
      */
     public static int GetLastID(Context c)
     {
         return LocalStorageAccess.getInstance(c).GetLastID(c, LOCAL_MOOD_ID, TABLE_NAME);
     }
 
-    public static List<String[]> getEntries(Context c){
-        String query = "Select " + DATE + ", " + TIME + ", " +
-                DEP + ", " + ELEV + ", " + IRR + ", " + ANX + ", " + NOTE +
-                " FROM " + TABLE_NAME + " Order By " + DATE;
-
+    public static List<String[]> getEntries(Context c)
+    {
 
         SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
 
-        Cursor cursor = db.rawQuery(query, null);
+        //Select DATE, TIME, DEP, ELEV, IRR, ANX, NOTE FROM TABLE_NAME ORDER BY DATE DESC
+        Cursor cursor = db.query(TABLE_NAME, new String[]{DATE, TIME, DEP, ELEV, IRR, ANX, NOTE}, null, null, null, null, DATE + " DESC, " + TIME + " DESC");
 
         List<String[]> lst = new LinkedList<String[]>();
 
@@ -110,5 +104,64 @@ public class LocalStorageAccessMood {
         cursor.close();
         db.close();
         return lst;
+    }
+
+    public static Cursor getMonthEntries(Context c, int year, int month)
+    {
+        String date = year + "-";
+        if(month <10)
+            date +="0";
+        date += month + "-01";
+
+        SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_NAME, new String[]{DATE, TIME, DEP, ELEV, IRR, ANX, NOTE},
+                DATE + " BETWEEN (date(?)) AND (date(?, '+1 month','-1 day'))", new String[]{date, date}, null, null, DATE);
+
+
+        return cursor;
+    }
+
+    /**
+     * Updates the ID that is stored locally for reference to the entry on the webserver
+     * @param localID The ID number locally
+     * @param webID The ID number on the web
+     */
+    public static void updateWebIDReference(Integer localID, Integer webID, Context context)
+    {
+        SQLiteDatabase db = LocalStorageAccess.getInstance(context).getWritableDatabase();
+
+        ContentValues webCV = new ContentValues();
+
+        webCV.put(WEB_MOOD_ID, webID);
+
+        int num_rows = db.update(TABLE_NAME, webCV, LOCAL_MOOD_ID + " = ?", new String[]{localID.toString()});
+        db.close();
+
+        if (num_rows < 1)
+        {
+            Toast.makeText(context, "Could not create reference between web database and local database", Toast.LENGTH_LONG).show();
+        }
+        else
+        {
+            if (!LocalStorageAccess.getInstance(context).deleteEntryFromSyncTable(context, TABLE_NAME, localID) )
+            {
+                Toast.makeText(context, "Could not update synchronization table", Toast.LENGTH_LONG).show();
+            }
+        }
+
+    }
+
+    /**
+     * Returns all rows for the currently logged in user. If no user is logged in, returns the
+     * columns for the user "default"
+     * @param c The current context
+     * @param curUserOnly A boolean value representing whether all users should be displayed (false)
+     *                    or only the currently logged in user (true)
+     * @return A Cursor to all of the columns for the sleep table for the current user
+     */
+    public static Cursor selectAll(Context c, boolean curUserOnly)
+    {
+        return LocalStorageAccess.selectAllEntries(c, TABLE_NAME, DATE + " DESC, " + TIME + " DESC", curUserOnly);
     }
 }

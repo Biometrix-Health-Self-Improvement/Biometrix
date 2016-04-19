@@ -14,6 +14,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
  */
 public class LocalAccount
 {
+    public static final String DEFAULT_NAME = "Default";
+
     //Reference variables for information needed by shared preferences
     private static final int PREFERENCE_PRIVATE_MODE = 0;
     private SharedPreferences sharedPreferences;
