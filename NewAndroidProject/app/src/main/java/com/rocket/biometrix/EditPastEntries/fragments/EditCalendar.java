@@ -124,11 +124,6 @@ public class EditCalendar extends Fragment {
                String FUCKTHISHIT = DatabaseUtils.dumpCursorToString(datesExercise);
                 Log.v("EX_CURS", DatabaseUtils.dumpCursorToString(datesExercise));
 
-                //Pass selectByDate() cursor to fill ListView
-                Cursor exercise = LocalStorageAccessExercise.selectByDate(dateSelectedFormatted, view.getContext());
-
-
-
                 //getActivity() for the context.
                 Toast.makeText(getActivity(), dateSelectedFormatted, Toast.LENGTH_LONG).show();
 
