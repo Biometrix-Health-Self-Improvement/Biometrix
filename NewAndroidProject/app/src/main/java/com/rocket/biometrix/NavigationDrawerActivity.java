@@ -325,7 +325,10 @@ public class NavigationDrawerActivity extends AppCompatActivity
         Menu navMenu = navView.getMenu();
 
         SetItemVisibility(navMenu, R.id.nav_mood_module, SettingKeys.MOOD_MODULE);
-
+        SetItemVisibility(navMenu, R.id.nav_sleep_module, SettingKeys.SLEEP_MODULE);
+        SetItemVisibility(navMenu, R.id.nav_exercise_module, SettingKeys.EXERCISE_MODULE);
+        SetItemVisibility(navMenu, R.id.nav_diet_module, SettingKeys.DIET_MODULE);
+        SetItemVisibility(navMenu, R.id.nav_medication_module, SettingKeys.MEDICATION_MODULE);
 
         //Makes a few options invisible if the user is not logged in.
         if(!LocalAccount.isLoggedIn() )
