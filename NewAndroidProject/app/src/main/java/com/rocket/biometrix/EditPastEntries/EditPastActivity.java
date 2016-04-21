@@ -80,22 +80,25 @@ public class EditPastActivity extends AppCompatActivity
 
         List<CursorPair> stackCursorList = new ArrayList<CursorPair>(mCursorList);
 
-        mCursorList.clear();
+        mCursorList.clear(); //Hack to remove stale cursors from last Cal fragment callback
 
         return stackCursorList;
     }
 
     //Cal Fragment
+    //TODO: For multiple tables to work; this needs to be refactored to accept a list of CursorPairs genned from calendar
     @Override
     public int onFragDateSelect(String table, Cursor datesQuery) {
         int errno = 0;
 
         //TODO: Error Checking
         mCursorList.add(new CursorPair(table,datesQuery));
+        //IE here do a quick count() check on the list of cursor pairs then mCursorList = CP parameter
         mNewDateTouched = true;
 
         //Callback to RV adapter
         ECF.updateCandies();
+
 
         return errno;
     }
