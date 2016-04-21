@@ -129,7 +129,7 @@ public class EditCalendar extends Fragment {
 
                 if (mListener != null) {
                     mListener.onFragDateSelect("exercise", datesExercise);
-                    //other tables go here
+                    //TODO: Refactor onFragDateSelect to accept list of CursorPair
                 }
             }
 
