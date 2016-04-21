@@ -56,14 +56,12 @@ public class EditPastActivity extends AppCompatActivity
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, ECF).commit();
 
+
+            //v.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1));
+
         }
 
-        //TODO: Get tests (can be hardcoded not true tests) running to demo current RV code
-        //https://developer.android.com/training/material/lists-cards.html
-        //TODO: FInally finish RV code and start adding tab code etc. in actually extensible way
-        //TODO: PRAY TO SWEET BABY JESUS that changes to the LocalDB don't ruin my life.
-
-    }
+    }//end onCreate()
 
 
 
@@ -79,7 +77,12 @@ public class EditPastActivity extends AppCompatActivity
     public List<CursorPair> getCursorList() {
 
         mNewDateTouched = false;
-        return mCursorList;
+
+        List<CursorPair> stackCursorList = new ArrayList<CursorPair>(mCursorList);
+
+        mCursorList.clear();
+
+        return stackCursorList;
     }
 
     //Cal Fragment
@@ -91,7 +94,7 @@ public class EditPastActivity extends AppCompatActivity
         mCursorList.add(new CursorPair(table,datesQuery));
         mNewDateTouched = true;
 
-        //TODO: DOES this actually work???
+        //Callback to RV adapter
         ECF.updateCandies();
 
         return errno;

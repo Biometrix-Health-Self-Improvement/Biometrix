@@ -120,8 +120,8 @@ public class EditCalendar extends Fragment {
 
                 //Retrieve cursor(s)
                 Cursor datesExercise = LocalStorageAccessExercise.selectByDate(dateSelectedFormatted,getActivity());
-                int cunt = datesExercise.getCount();
-               String FUCKTHISHIT = DatabaseUtils.dumpCursorToString(datesExercise);
+                int count = datesExercise.getCount();
+               String EX_CURSn = DatabaseUtils.dumpCursorToString(datesExercise);
                 Log.v("EX_CURS", DatabaseUtils.dumpCursorToString(datesExercise));
 
                 //getActivity() for the context.

@@ -109,7 +109,7 @@ public class EntryCandiesFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
-
+//TODO: only update what's changed using sync table
     public void updateCandies(){
 
         //declare the adapter and attach it to the recyclerview

@@ -3,6 +3,7 @@ package com.rocket.biometrix.Database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -346,6 +347,7 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
         SQLiteDatabase db= m_instance.getReadableDatabase();
 
         Cursor cur = db.query(table, null, date_col + " = ?", new String[]{date}, null, null, null);
+        Log.v("LSA CURS", DatabaseUtils.dumpCursorToString(cur));
         return cur;
     }
 
