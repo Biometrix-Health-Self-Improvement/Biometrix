@@ -20,6 +20,7 @@ import com.rocket.biometrix.Analysis.ExerciseGraph;
 import com.rocket.biometrix.Analysis.GraphBase;
 import com.rocket.biometrix.Analysis.MoodGraph;
 import com.rocket.biometrix.Analysis.SleepGraph;
+import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.Sync;
 import com.rocket.biometrix.DietModule.DietEntry;
 import com.rocket.biometrix.DietModule.DietParent;
@@ -29,6 +30,7 @@ import com.rocket.biometrix.Login.CreateLogin;
 import com.rocket.biometrix.Login.GetLogin;
 import com.rocket.biometrix.Login.GoogleLogin;
 import com.rocket.biometrix.Login.LocalAccount;
+import com.rocket.biometrix.Login.SettingKeys;
 import com.rocket.biometrix.MedicationModule.MedicationEntry;
 import com.rocket.biometrix.MedicationModule.MedicationParent;
 import com.rocket.biometrix.MoodModule.MoodEntry;
@@ -50,6 +52,9 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
     //keeps track of the currently active fragment
     public Fragment activeFragment = null;
+
+    //A reference to the navigation view
+    protected NavigationView navView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +79,10 @@ public class NavigationDrawerActivity extends AppCompatActivity
         transaction.addToBackStack(null);
         transaction.commit();
 
+        //Local account/settings setup
+        navView = navigationView;
+        LocalAccount.setNavDrawerRef(this);
+        UpdateMenuItems();
     }
 
     @Override
@@ -261,6 +270,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
             } else if (activeFragment.getClass() == MedicationSettings.class){
                 ((MedicationSettings) activeFragment).onAcceptClick(v);
                 newFragment = new MedicationEntry();
+            } else if (activeFragment.getClass() == ModuleSettings.class )
+            {
+                ((ModuleSettings)activeFragment).onAcceptClick(v);
+                //Updates menu items if the module settings were changed
+                UpdateMenuItems();
             }
 
             //replaces the current fragment with the parent fragment
@@ -304,7 +318,48 @@ public class NavigationDrawerActivity extends AppCompatActivity
     }
 
 
+    /**
+     * Shows or hides items in the navdrawer based on whether or not the user's account has them listed
+     */
+    public void UpdateMenuItems()
+    {
+        Menu navMenu = navView.getMenu();
 
+        SetItemVisibility(navMenu, R.id.nav_mood_module, SettingKeys.MOOD_MODULE);
+
+
+        //Makes a few options invisible if the user is not logged in.
+        if(!LocalAccount.isLoggedIn() )
+        {
+            navMenu.findItem(R.id.nav_sync).setVisible(false);
+            navMenu.findItem(R.id.nav_logout).setVisible(false);
+            navMenu.findItem(R.id.nav_analytics).setVisible(false);
+        }
+        else
+        {
+            navMenu.findItem(R.id.nav_sync).setVisible(true);
+            navMenu.findItem(R.id.nav_logout).setVisible(true);
+            navMenu.findItem(R.id.nav_analytics).setVisible(true);
+        }
+
+    }
+
+    /**
+     * For use in the UpdateMenuItems above, set's the item's visibility based on settings
+     * @param navMenu A reference to the menu
+     * @param itemID The R.id. value of the item
+     * @param key The key for the setting
+     */
+    private void SetItemVisibility(Menu navMenu, int itemID, String key)
+    {
+        if (!LocalAccount.GetInstance().getBoolean(getApplicationContext(), key, true)) {
+            navMenu.findItem(itemID).setVisible(false);
+        }
+        else
+        {
+            navMenu.findItem(itemID).setVisible(true);
+        }
+    }
 
     public void MoodGraph(View v) {
         activeFragment = new MoodGraph();

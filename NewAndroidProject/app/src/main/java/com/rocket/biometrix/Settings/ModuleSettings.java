@@ -7,9 +7,14 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Switch;
 
+import com.rocket.biometrix.Login.LocalAccount;
+import com.rocket.biometrix.Login.SettingKeys;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
+
+import java.util.Set;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,6 +35,8 @@ public class ModuleSettings extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    private Switch moodSwitch;
 
     public ModuleSettings() {
         // Required empty public constructor
@@ -72,9 +79,20 @@ public class ModuleSettings extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             Bundle savedInstanceState)
+    {
+        View view = inflater.inflate(R.layout.fragment_module_settings, container, false);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_module_settings, container, false);
+
+        //Grab reference to local account
+        LocalAccount localAccount = LocalAccount.GetInstance();
+
+        //Grab reference to the switch and set it accordingly
+        boolean moodCheck = localAccount.getBoolean(view.getContext(), SettingKeys.MOOD_MODULE, true);
+        moodSwitch = ((Switch) view.findViewById(R.id.DisableSwitchMoodModule));
+        moodSwitch.setChecked(moodCheck);
+
+        return view;
     }
 
     /**
@@ -92,7 +110,12 @@ public class ModuleSettings extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public void onAcceptClick(View v){
+    public void onAcceptClick(View v)
+    {
+        LocalAccount localAccount = LocalAccount.GetInstance();
+
+        boolean moodChecked = moodSwitch.isChecked();
+        localAccount.setBoolean(v.getContext(), SettingKeys.MOOD_MODULE, moodChecked);
 
     }
 }

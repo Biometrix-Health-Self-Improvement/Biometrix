@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.rocket.biometrix.NavigationDrawerActivity;
 
 /**
  * Created by TJ on 1/24/2016.
@@ -12,8 +13,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
  *
  * Since only one user can be logged in at a time, this will be a singleton.
  */
-public class LocalAccount
-{
+public class LocalAccount {
     public static final String DEFAULT_NAME = "Default";
 
     //Reference variables for information needed by shared preferences
@@ -37,8 +37,17 @@ public class LocalAccount
     //A token signed by the webserver to ensure the user is currently valid
     private String webServerToken;
 
+    //A reference to the navigation drawer, used to call update
+    private static NavigationDrawerActivity navDrawerRef;
+
+    public static void setNavDrawerRef(NavigationDrawerActivity ref)
+    {
+        navDrawerRef = ref;
+    }
+
     /**
      * Creates the LocalAccount. Private since this is a singleton
+     *
      * @param jsonToken The token that was passed back by the webserver
      */
     private LocalAccount(String jsonToken)
@@ -51,7 +60,7 @@ public class LocalAccount
      * this changes to the new user. This should only be used for regular sign-in, not google sign in
      *
      * @param new_username The username of the newly logged in user.
-     * @param jsonToken The token returned by the server when the login was called.
+     * @param jsonToken    The token returned by the server when the login was called.
      */
     public static LocalAccount Login(String new_username, String jsonToken)
     {
@@ -63,11 +72,14 @@ public class LocalAccount
 
         _instance = new LocalAccount(jsonToken);
 
+        navDrawerRef.UpdateMenuItems();
+
         return _instance;
     }
 
     /**
      * Returns whether a google account is currently signed in or not
+     *
      * @return True if a google account is signed in, false if not.
      */
     public static boolean isGoogleAccountSignedIn()
@@ -80,17 +92,21 @@ public class LocalAccount
 
     /**
      * Returns whether a user is currently logged in or not
+     *
      * @return True if there is a user logged in, false otherwise.
      */
     public static boolean isLoggedIn()
     {
         if (_instance == null) return false;
 
+        if (username.equals(DEFAULT_NAME)) return false;
+
         return true;
     }
 
     /**
      * Logs the user in with their google account instead of with their Biometrix account
+     *
      * @param googleSignInAccount A reference to the google account that will be held
      * @return A reference to the account that was logged in
      */
@@ -98,7 +114,7 @@ public class LocalAccount
     {
         //If there is no google account signed in, sign the user in. If the currently logged in account
         //is the same as the one being logged in, do nothing
-        if (googleAccount == null || !(googleAccount.getIdToken().equals(googleSignInAccount.getIdToken() ) ) )
+        if (googleAccount == null || !(googleAccount.getIdToken().equals(googleSignInAccount.getIdToken())))
         {
             //Sets the static fields before creating the login
             googleAccount = googleSignInAccount;
@@ -113,28 +129,30 @@ public class LocalAccount
 
     /**
      * Retrieves a reference to the currently logged in local account
-     * @return A reference to the local account, throws NullPointerException if login was not called
-     * first
+     *
+     * @return A reference to the local account
      */
-    public static LocalAccount GetInstance() throws NullPointerException
+    public static LocalAccount GetInstance()
     {
         if (_instance == null)
-            throw new NullPointerException("Login not called for LocalAccount");
+        {
+            _instance = new LocalAccount(null);
+            username = DEFAULT_NAME;
+        }
 
         return _instance;
     }
 
     /**
-     * Logs the current user out of the system. This means that login will have to be called before
-     * get instance is valid again
+     * Logs the current user out of the system and sets the default user as logged in
      */
     public static void Logout()
     {
-        _instance = null;
-
         googleAccount = null;
+        _instance = null;
+        _instance = GetInstance();
 
-        username = DEFAULT_NAME;
+        navDrawerRef.UpdateMenuItems();
     }
 
     /**
@@ -149,12 +167,17 @@ public class LocalAccount
 
     /**
      * Returns the currently logged in user's token.
+     *
      * @return A string containing the user's token
      */
-    public String GetToken() { return webServerToken; }
+    public String GetToken()
+    {
+        return webServerToken;
+    }
 
     /**
      * Sets up the shared preferences for the current user and context to allow reading or writing
+     *
      * @param context The current context
      */
     private void setupPreferences(Context context)
@@ -169,92 +192,30 @@ public class LocalAccount
     }
 
     /**
-     * Determines if the currently logged in user has the diet module enabled
-     * @param context The current context that is calling. (Application.getContext() )
-     * @return Defaults to true, if user has set the dietEnabled key to false, returns false
+     * Retrieves a boolean value that was stored with the passed in key. If no value has been
+     * stored yet, this returns the default
+     *
+     * @param context      The current context. Needed to pull user settings.
+     * @param key          The key of the key value pair
+     * @param defaultValue The value that is returned if no value has been stored yet
+     * @return The stored value that corresponds to the key, or the defaultValue if no value is stored
      */
-    public boolean isDietEnabled(Context context)
+    public boolean getBoolean(Context context, String key, boolean defaultValue)
     {
         setupPreferences(context);
-        return sharedPreferences.getBoolean("dietEnabled", true);
+        return sharedPreferences.getBoolean(key, defaultValue);
     }
 
     /**
-     * Sets the shared parameter for the diet module being enabled/disabled
-     * @param context The current context
-     * @param enabled Whether to enable or disable the module
+     * Sets a boolean value of the passed in key to the passed in value
+     *
+     * @param context The current context which is needed to get user data
+     * @param key     The key to look up the entry for
+     * @param value   The value to store
      */
-    public void changeDietStatus(Context context, boolean enabled)
+    public void setBoolean(Context context, String key, boolean value)
     {
         setupPreferences(context);
-        preferenceEditor.putBoolean("dietEnabled", enabled).commit();
+        preferenceEditor.putBoolean(key, value).commit();
     }
-
-    /**
-     * Determines if the currently logged in user has the sleep module enabled
-     * @param context The current context that is calling. (Application.getContext() )
-     * @return Defaults to true, if user has set the sleepEnabled key to false, returns false
-     */
-    public boolean isSleepEnabled(Context context)
-    {
-        setupPreferences(context);
-        return sharedPreferences.getBoolean("sleepEnabled", true);
-    }
-
-    /**
-     * Sets the shared parameter for the sleep module being enabled/disabled
-     * @param context The current context
-     * @param enabled Whether to enable or disable the module
-     */
-    public void changeSleepStatus(Context context, boolean enabled)
-    {
-        setupPreferences(context);
-        preferenceEditor.putBoolean("sleepEnabled", enabled).commit();
-    }
-
-    /**
-     * Determines if the currently logged in user has the medication module enabled
-     * @param context The current context that is calling. (Application.getContext() )
-     * @return Defaults to true, if user has set the medicationEnabled key to false, returns false
-     */
-    public boolean isMedicationEnabled(Context context)
-    {
-        setupPreferences(context);
-        return sharedPreferences.getBoolean("medicationEnabled", true);
-    }
-
-    /**
-     * Sets the shared parameter for the medication module being enabled/disabled
-     * @param context The current context
-     * @param enabled Whether to enable or disable the module
-     */
-    public void changeMedicationStatus(Context context, boolean enabled)
-    {
-        setupPreferences(context);
-        preferenceEditor.putBoolean("medicationEnabled", enabled).commit();
-    }
-
-    /**
-     * Determines if the currently logged in user has the exercise module enabled
-     * @param context The current context that is calling. (Application.getContext() )
-     * @return Defaults to true, if user has set the exerciseEnabled key to false, returns false
-     */
-    public boolean isExerciseEnabled(Context context)
-    {
-        setupPreferences(context);
-        return sharedPreferences.getBoolean("exerciseEnabled", true);
-    }
-
-    /**
-     * Sets the shared parameter for the exercise module being enabled/disabled
-     * @param context The current context
-     * @param enabled Whether to enable or disable the module
-     */
-    public void changeExerciseStatus(Context context, boolean enabled)
-    {
-        setupPreferences(context);
-        preferenceEditor.putBoolean("exerciseEnabled", enabled).commit();
-    }
-
-
 }
