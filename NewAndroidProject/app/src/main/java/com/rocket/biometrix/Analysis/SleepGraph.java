@@ -30,20 +30,16 @@ public class SleepGraph extends GraphBase{
         LineGraphSeries<DataPoint> len = new LineGraphSeries<>(dp.get(0));
         len.setTitle("Duration of Sleep");
 
-        LineGraphSeries<DataPoint> qual = new LineGraphSeries<>(dp.get(1));
+        LineGraphSeries<DataPoint> qual
+                = new LineGraphSeries<>(dp.get(1));
         qual.setTitle("Quality of Sleep");
         qual.setColor(Color.RED);
 
         StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
-        //staticLabelsFormatter.setHorizontalLabels(new String[]{"1", "10", "20", "31"});
-        if(!len.isEmpty()) {
-            graph.getViewport().setMinX(1);
-            graph.getViewport().setMaxX(31);
-            //graph.getViewport().setXAxisBoundsManual(true);
-        }
-        else{
-            graph.getViewport().setXAxisBoundsManual(false);
-        }
+//        staticLabelsFormatter.setHorizontalLabels(new String[]{"1", "10", "20", "31"});
+//        graph.getViewport().setMinX(1);
+//        graph.getViewport().setMaxX(31);
+//        graph.getViewport().setXAxisBoundsManual(true);
 
         graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
 

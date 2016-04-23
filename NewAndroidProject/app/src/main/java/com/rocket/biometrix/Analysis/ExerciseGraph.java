@@ -12,8 +12,10 @@ import android.widget.TextView;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.LegendRenderer;
+import com.jjoe64.graphview.helper.StaticLabelsFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.PointsGraphSeries;
 import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.Database.LocalStorageAccessMood;
 import com.rocket.biometrix.R;
@@ -31,12 +33,20 @@ public class ExerciseGraph extends GraphBase {
         graph.removeAllSeries();
         ArrayList<DataPoint[]> dp = getDataPointArray(year, month);
 
-        LineGraphSeries<DataPoint> len = new LineGraphSeries<DataPoint>(dp.get(0));
+        PointsGraphSeries<DataPoint> len
+                = new PointsGraphSeries<DataPoint>(dp.get(0));
         len.setTitle("Minutes");
 
         graph.setTitle("Exercise");
         graph.addSeries(len);
 
+        StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
+//        staticLabelsFormatter.setHorizontalLabels(new String[]{"1", "10", "20", "31"});
+//        graph.getViewport().setMinX(1);
+//        graph.getViewport().setMaxX(31);
+//        graph.getViewport().setXAxisBoundsManual(true);
+//
+        graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
         graph.getLegendRenderer().setVisible(true);
         graph.getLegendRenderer().setTextSize(25);
         graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);

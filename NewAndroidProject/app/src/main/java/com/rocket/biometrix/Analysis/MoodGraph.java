@@ -44,10 +44,11 @@ public class MoodGraph extends GraphBase {
 
         StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
         staticLabelsFormatter.setVerticalLabels(new String[]{"None", "Mild", "Moderate", "Severe", "Very Severe"});
-        //staticLabelsFormatter.setHorizontalLabels(new String[]{"1", "10", "20", "31"});
-        //graph.getViewport().setMinX(1);
-        //graph.getViewport().setMaxX(31);
-        //graph.getViewport().setXAxisBoundsManual(true);
+//        staticLabelsFormatter.setHorizontalLabels(new String[]{"1", "10", "20", "31"});
+//        graph.getViewport().setMinX(1);
+//        graph.getViewport().setMaxX(31);
+//
+//        graph.getViewport().setXAxisBoundsManual(true);
 
         graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
         graph.setTitle("Mood");
