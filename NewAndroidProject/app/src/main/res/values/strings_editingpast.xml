@@ -2,6 +2,6 @@
 <resources>
 
     <!--Strings that can edit the past-->
-    <string name="EntryPointA">Edit Past Entries</string>
+    <string name="EntryPointA">Manage Entries</string>
 
 </resources>

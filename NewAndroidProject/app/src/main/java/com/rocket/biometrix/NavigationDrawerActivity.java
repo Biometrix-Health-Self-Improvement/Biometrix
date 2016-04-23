@@ -102,15 +102,52 @@ public class NavigationDrawerActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * The method called when one of the items on the help side of the nav drawer is called
+     * @param item The item that was clicked on in order to call this event
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Fragment frag = new HomeScreen();
+        Fragment frag;
         switch(item.getItemId()) {
             case R.id.action_help:
 
                 return true;
             case R.id.action_settings:
-                frag = new ModuleSettings();
+                Class fragClass = activeFragment.getClass();
+
+                if(fragClass.equals(SleepParent.class) || fragClass.equals(SleepGraph.class)
+                        || fragClass.equals(SleepEntry.class))
+                {
+                    frag = new SleepSettings();
+                }
+                else if(fragClass.equals(MoodParent.class) || fragClass.equals(MoodGraph.class)
+                        || fragClass.equals(MoodEntry.class))
+                {
+                    frag = new MoodSettings();
+                }
+                else if(fragClass.equals(DietParent.class) //TODO: || fragClass.equals(DietGraph.class)
+                        || fragClass.equals(DietEntry.class))
+                {
+                    frag = new DietSettings();
+                }
+                else if(fragClass.equals(MedicationParent.class) //TODO: || fragClass.equals(MedicationGraph.class)
+                        || fragClass.equals(MedicationEntry.class))
+                {
+                    frag = new MedicationSettings();
+                }
+                else if(fragClass.equals(ExerciseParent.class) //TODO: || fragClass.equals(ExerciseGraph.class)
+                        || fragClass.equals(SleepEntry.class))
+                {
+                    frag = new ExerciseSettings();
+                }
+                else
+                {
+                    frag = new ModuleSettings();
+                }
+
+                replaceFragment(frag);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -326,7 +363,10 @@ public class NavigationDrawerActivity extends AppCompatActivity
         Menu navMenu = navView.getMenu();
 
         SetItemVisibility(navMenu, R.id.nav_mood_module, SettingKeys.MOOD_MODULE);
-
+        SetItemVisibility(navMenu, R.id.nav_sleep_module, SettingKeys.SLEEP_MODULE);
+        SetItemVisibility(navMenu, R.id.nav_exercise_module, SettingKeys.EXERCISE_MODULE);
+        SetItemVisibility(navMenu, R.id.nav_diet_module, SettingKeys.DIET_MODULE);
+        SetItemVisibility(navMenu, R.id.nav_medication_module, SettingKeys.MEDICATION_MODULE);
 
         //Makes a few options invisible if the user is not logged in.
         if(!LocalAccount.isLoggedIn() )

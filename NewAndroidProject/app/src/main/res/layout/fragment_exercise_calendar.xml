@@ -1,14 +1,14 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
+             android:layout_width="260dp"
+             android:layout_height="280dp"
              tools:context=".EditCalendar">
 
     <!-- TODO: Update blank fragment layout -->
 
     <CalendarView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="260dp"
+        android:layout_height="280dp"
         android:id="@+id/ex_CV"
         android:layout_gravity="center_horizontal|top"
         android:layout_margin="10dp"

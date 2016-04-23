@@ -7,5 +7,8 @@ package com.rocket.biometrix.Login;
 public class SettingKeys
 {
     public static final String MOOD_MODULE = "MoodModuleEnabled";
-
+    public static final String SLEEP_MODULE = "SleepModuleEnable";
+    public static final String EXERCISE_MODULE = "ExerciseModuleEnable";
+    public static final String DIET_MODULE = "DietModuleEnable";
+    public static final String MEDICATION_MODULE = "MedicationModuleEnable";
 }

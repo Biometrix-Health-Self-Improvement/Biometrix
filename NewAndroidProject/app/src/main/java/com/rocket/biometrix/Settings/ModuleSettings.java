@@ -37,6 +37,10 @@ public class ModuleSettings extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     private Switch moodSwitch;
+    private Switch sleepSwitch;
+    private Switch exerciseSwitch;
+    private Switch dietSwitch;
+    private Switch medicationSwitch;
 
     public ModuleSettings() {
         // Required empty public constructor
@@ -92,6 +96,21 @@ public class ModuleSettings extends Fragment {
         moodSwitch = ((Switch) view.findViewById(R.id.DisableSwitchMoodModule));
         moodSwitch.setChecked(moodCheck);
 
+        boolean sleepCheck = localAccount.getBoolean(view.getContext(), SettingKeys.SLEEP_MODULE, true);
+        sleepSwitch = ((Switch) view.findViewById(R.id.DisableSwitchSleepModule));
+        sleepSwitch.setChecked(sleepCheck);
+
+        boolean exerciseCheck = localAccount.getBoolean(view.getContext(), SettingKeys.EXERCISE_MODULE, true);
+        exerciseSwitch = ((Switch) view.findViewById(R.id.DisableSwitchExerciseModule));
+        exerciseSwitch.setChecked(exerciseCheck);
+
+        boolean dietCheck = localAccount.getBoolean(view.getContext(), SettingKeys.DIET_MODULE, true);
+        dietSwitch = ((Switch) view.findViewById(R.id.DisableSwitchDietModule));
+        dietSwitch.setChecked(dietCheck);
+
+        boolean medicationCheck = localAccount.getBoolean(view.getContext(), SettingKeys.MEDICATION_MODULE, true);
+        medicationSwitch = ((Switch) view.findViewById(R.id.DisableSwitchMedicationModule));
+        medicationSwitch.setChecked(medicationCheck);
         return view;
     }
 
@@ -115,7 +134,15 @@ public class ModuleSettings extends Fragment {
         LocalAccount localAccount = LocalAccount.GetInstance();
 
         boolean moodChecked = moodSwitch.isChecked();
-        localAccount.setBoolean(v.getContext(), SettingKeys.MOOD_MODULE, moodChecked);
+        boolean sleepChecked = sleepSwitch.isChecked();
+        boolean exerciseChecked = exerciseSwitch.isChecked();
+        boolean dietChecked = dietSwitch.isChecked();
+        boolean medicationChecked = medicationSwitch.isChecked();
 
+        localAccount.setBoolean(v.getContext(), SettingKeys.MOOD_MODULE, moodChecked);
+        localAccount.setBoolean(v.getContext(), SettingKeys.SLEEP_MODULE, sleepChecked);
+        localAccount.setBoolean(v.getContext(), SettingKeys.EXERCISE_MODULE, exerciseChecked);
+        localAccount.setBoolean(v.getContext(), SettingKeys.DIET_MODULE, dietChecked);
+        localAccount.setBoolean(v.getContext(), SettingKeys.MEDICATION_MODULE, medicationChecked);
     }
 }
