@@ -42,16 +42,20 @@ public class MoodGraph extends GraphBase {
         anx.setTitle("Anxiety");
         anx.setColor(Color.GREEN);
 
-        setDateBounds();
+
+        StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
+        staticLabelsFormatter.setVerticalLabels(new String[]{"None", "Mild", "Moderate", "Severe", "Very Severe"});
+        staticLabelsFormatter.setDynamicLabelFormatter(setDateBounds(graph));
+        graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
 
         graph.setTitle("Mood");
-        if(!dep.isEmpty()) {
+        if(!dep.isEmpty()){
             graph.addSeries(dep);
             graph.addSeries(elev);
             graph.addSeries(irr);
             graph.addSeries(anx);
         }
-        setLegend();
+        setLegend(graph);
         setMonthYearTitle();
     }
 

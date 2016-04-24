@@ -36,13 +36,13 @@ public class ExerciseGraph extends GraphBase {
         PointsGraphSeries<DataPoint> len = new PointsGraphSeries<DataPoint>(dp.get(0));
         len.setTitle("Minutes");
 
-        setDateBounds();
+        setDateBounds(graph);
 
         graph.setTitle("Exercise");
         if(!len.isEmpty()) graph.addSeries(len);
 
 
-        setLegend();
+        setLegend(graph);
         setMonthYearTitle();
     }
 

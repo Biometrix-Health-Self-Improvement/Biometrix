@@ -36,13 +36,13 @@ public class SleepGraph extends GraphBase{
         qual.setTitle("Quality of Sleep");
         qual.setColor(Color.RED);
 
-        setDateBounds();
+        setDateBounds(graph);
 
         if(!len.isEmpty()) graph.addSeries(len);
         if(!qual.isEmpty()) graph.addSeries(qual);
         graph.setTitle("Sleep");
 
-        setLegend();
+        setLegend(graph);
         setMonthYearTitle();
     }
 

@@ -91,7 +91,7 @@ public abstract class GraphBase extends Fragment {
         populateGraph();
     }
 
-    protected void setDateBounds(){
+    protected DefaultLabelFormatter setDateBounds(GraphView graph){
         int numDays = new GregorianCalendar(year, month-1, 1).getActualMaximum(Calendar.DAY_OF_MONTH);
 
         graph.getViewport().setMinX(1);
@@ -100,11 +100,15 @@ public abstract class GraphBase extends Fragment {
 
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMaximumFractionDigits(0);
-        graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter(nf,nf));
+
+        DefaultLabelFormatter label = new DefaultLabelFormatter(nf,NumberFormat.getInstance());
+
+        graph.getGridLabelRenderer().setLabelFormatter(label);
+        return label ;
 
     }
 
-    protected void setLegend(){
+    protected void setLegend(GraphView graph){
         graph.getLegendRenderer().setVisible(true);
         graph.getLegendRenderer().setTextSize(25);
         graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
