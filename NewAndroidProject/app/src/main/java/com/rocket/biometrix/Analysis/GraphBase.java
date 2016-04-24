@@ -110,7 +110,7 @@ public abstract class GraphBase extends Fragment {
 
     protected void setLegend(GraphView graph){
         graph.getLegendRenderer().setVisible(true);
-        graph.getLegendRenderer().setTextSize(25);
+        graph.getLegendRenderer().setTextSize(30);
         graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
     }
 

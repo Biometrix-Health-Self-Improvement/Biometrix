@@ -186,4 +186,30 @@ public class LocalStorageAccessDiet {
     {
         return LocalStorageAccess.selectAllEntries(c, TABLE_NAME, DATE + " DESC", curUserOnly);
     }
+
+    public static Cursor getMonthEntries(Context c, int year, int month) {
+        String date = year + "-";
+        if(month <10)
+            date +="0";
+        date += month + "-01";
+
+        SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_NAME, new String[]{DATE, "SUM("+CALORIES+")", "SUM("+TOTALFAT+")", "SUM("+TOTALCARBS+")", "SUM("+FIBER+")", "SUM("+PROTEIN+")", "count(*)"},
+                DATE + " BETWEEN (date(?)) AND (date(?, '+1 month','-1 day'))", new String[]{date, date}, DATE, null, DATE);
+
+
+
+        return cursor;
+    }
 }
+/*
+
+     CALORIES = "Calories";
+     TOTALFAT = "TotalFat";
+     SODIUM + " int Null, " +
+     TOTALCARBS + " int Null, " +
+     FIBER + " int Null, " +
+     SUGARS + " int Null, " +
+     PROTEIN + " int Null, " +
+ */
