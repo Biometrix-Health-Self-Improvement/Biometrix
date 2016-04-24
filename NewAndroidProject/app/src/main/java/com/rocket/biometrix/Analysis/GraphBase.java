@@ -25,6 +25,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,7 +61,7 @@ public abstract class GraphBase extends Fragment {
         // Inflate the layout for this fragment
         v = graphInflate(inflater, container);
 
-        graph = getGraph();//(GraphView) v.findViewById(R.id.graphMood);
+        graph = getGraph(); //gets the correct graph from derived class
 
         year = Calendar.getInstance().get(Calendar.YEAR);
         month = Calendar.getInstance().get(Calendar.MONTH)+1;
@@ -88,6 +89,25 @@ public abstract class GraphBase extends Fragment {
             }
         }
         populateGraph();
+    }
+
+    protected void setDateBounds(){
+        int numDays = new GregorianCalendar(year, month-1, 1).getActualMaximum(Calendar.DAY_OF_MONTH);
+
+        graph.getViewport().setMinX(1);
+        graph.getViewport().setMaxX(numDays);
+        graph.getViewport().setXAxisBoundsManual(true);
+
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMaximumFractionDigits(0);
+        graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter(nf,nf));
+
+    }
+
+    protected void setLegend(){
+        graph.getLegendRenderer().setVisible(true);
+        graph.getLegendRenderer().setTextSize(25);
+        graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
     }
 
 

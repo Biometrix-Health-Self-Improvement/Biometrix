@@ -16,6 +16,8 @@ import com.rocket.biometrix.R;
 
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 /**
  * Created by tannalynn on 4/9/2016.
@@ -30,26 +32,17 @@ public class SleepGraph extends GraphBase{
         LineGraphSeries<DataPoint> len = new LineGraphSeries<>(dp.get(0));
         len.setTitle("Duration of Sleep");
 
-        LineGraphSeries<DataPoint> qual
-                = new LineGraphSeries<>(dp.get(1));
+        LineGraphSeries<DataPoint> qual = new LineGraphSeries<>(dp.get(1));
         qual.setTitle("Quality of Sleep");
         qual.setColor(Color.RED);
 
-        StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
-//        staticLabelsFormatter.setHorizontalLabels(new String[]{"1", "10", "20", "31"});
-//        graph.getViewport().setMinX(1);
-//        graph.getViewport().setMaxX(31);
-//        graph.getViewport().setXAxisBoundsManual(true);
+        setDateBounds();
 
-        graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
-
-        graph.addSeries(len);
-        graph.addSeries(qual);
+        if(!len.isEmpty()) graph.addSeries(len);
+        if(!qual.isEmpty()) graph.addSeries(qual);
         graph.setTitle("Sleep");
 
-        graph.getLegendRenderer().setVisible(true);
-        graph.getLegendRenderer().setTextSize(25);
-        graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+        setLegend();
         setMonthYearTitle();
     }
 
