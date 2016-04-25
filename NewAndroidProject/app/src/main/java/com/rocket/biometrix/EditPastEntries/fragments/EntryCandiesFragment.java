@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.rocket.biometrix.Database.LocalStorageAccessExercise;
+import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.EditPastEntries.CandyItems;
 import com.rocket.biometrix.EditPastEntries.CursorHelper;
 import com.rocket.biometrix.EditPastEntries.CursorPair;
@@ -130,8 +131,10 @@ public class EntryCandiesFragment extends Fragment {
             if (taybell.getTableName() == "exercise") {
                 CursorHelper exerciseCH = new CursorHelper(taybell, LocalStorageAccessExercise.TITLE, LocalStorageAccessExercise.TIME);
                 allCH.add(exerciseCH);
+            }else if(taybell.getTableName() == "sleep") {
+                CursorHelper sleepCH = new CursorHelper(taybell, LocalStorageAccessSleep.QUALITY, LocalStorageAccessSleep.TIME);
+                allCH.add(sleepCH);
             }
-
         }
 
         for(CursorHelper CurseHel : allCH){
