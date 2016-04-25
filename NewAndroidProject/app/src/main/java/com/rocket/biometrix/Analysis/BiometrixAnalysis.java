@@ -1,6 +1,5 @@
 package com.rocket.biometrix.Analysis;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
@@ -17,6 +16,9 @@ import org.json.JSONObject;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
+
+import android.util.Pair;
 
 /**
  * Created by TJ on 4/6/2016.
@@ -40,6 +42,8 @@ public class BiometrixAnalysis
     public static final String MEDIAN = "Median";
     public static final String COUNT = "Count";
 
+    private static JSONObject statJsonObject = null;
+
     /**
      * Private constructor since this class should never be directly instantiated
      */
@@ -47,12 +51,11 @@ public class BiometrixAnalysis
     { }
 
     /**
-     * Performs the basic analysis on all tracked modules and returns a Json object with the statistical
-     * data encapsulated
+     * Performs the basic analysis on all tracked modules and stores a static jsonobject that has
+     * the analysis performed on it
      * @param context A context to give to the local storage methods in order to pull data
-     * @return A JsonObject containing the analyzed tables as keys and then statistical data
      */
-    public static JSONObject AnalyzeAllModulesBasic(Context context)
+    private static void AnalyzeAllModulesBasic(Context context)
     {
         JSONObject jsonObject = new JSONObject();
 
@@ -79,7 +82,7 @@ public class BiometrixAnalysis
             except.getMessage();
         }
 
-        return jsonObject;
+        statJsonObject = jsonObject;
     }
 
     /**
@@ -101,12 +104,10 @@ public class BiometrixAnalysis
                 if (cursor.moveToFirst())
                 {
                     boolean isTracked = true;
-                    String debug = cursor.getColumnName(i);
 
                     //Checks the column against the list of untracked columns to ensure it is not in there
                     for (String string : UNTRACKED_INT_COLS)
                     {
-
 
                         if (string.equals(cursor.getColumnName(i)))
                         {
@@ -212,6 +213,7 @@ public class BiometrixAnalysis
             except.getMessage();
         }
 
+        cursor.close();
 
         return jsonObject;
     }
@@ -307,6 +309,7 @@ public class BiometrixAnalysis
             except.getMessage();
         }
 
+        cursor.close();
 
         return jsonObject;
     }
@@ -345,5 +348,50 @@ public class BiometrixAnalysis
         }
 
         return retVal;
+    }
+
+
+    /**
+     * The only public method in this class, makes the calls to perform the needed analysis
+     * @param context The current context, needed for database calls
+     * @return A JSONObject containing all of the information that was gathered.
+     */
+    public static JSONObject Analyze( Context context)
+    {
+        JSONObject jsonObject = new JSONObject();
+
+        if (statJsonObject == null)
+        {
+            AnalyzeAllModulesBasic(context);
+        }
+
+
+
+
+        //Free up the memory of the basic analysis portion.
+        statJsonObject = null;
+
+        return jsonObject;
+    }
+
+    /**
+     * Grabs a list of pairs of each value in the passed in column of the passed in table (if it is
+     * not null)
+     * @param tableName Name of the table to pull from
+     * @param dateName Name of the date field on the table
+     * @param columnName Name of the column to pull from on the table
+     * @param context The context to use for database operations
+     * @return A list containing pairs of integers. The integers are the value, and then the
+     */
+    private List<Pair<Integer, Integer>> getColumnDatesAndValues(String tableName, String dateName,
+                                                                 String columnName, Context context)
+    {
+        List<Pair<Integer, Integer>> returnList = new LinkedList<>();
+
+        Cursor cursor = LocalStorageAccess.selectAllEntries(context, LocalStorageAccessMood.TABLE_NAME,
+                LocalStorageAccessMood.DATE + " DESC",
+                new String[]{LocalStorageAccessMood.DEP, LocalStorageAccessMood.DATE}, true);
+
+        return returnList;
     }
 }

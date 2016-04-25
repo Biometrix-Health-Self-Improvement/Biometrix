@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Toast;
 
 
+import com.rocket.biometrix.Analysis.AnalysisFragment;
 import com.rocket.biometrix.Analysis.BiometrixAnalysis;
 import com.rocket.biometrix.Analysis.DietGraph;
 import com.rocket.biometrix.Analysis.ExerciseGraph;
@@ -172,9 +173,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
         } else if (id == R.id.nav_medication_module) {
             frag = new MedicationParent();
         } else if (id == R.id.nav_analytics) { //TODO: menu open analytics fragment
-            //TODO: Actually do something with the statistical analysis. Also, might want to call this
-            //in whatever fragment we decide to open
-            JSONObject jsonObject = BiometrixAnalysis.AnalyzeAllModulesBasic(getApplicationContext());
+            frag = new AnalysisFragment();
         } else if (id == R.id.nav_settings) {
             frag = new ModuleSettings();
         } else if (id == R.id.nav_login) {
@@ -280,6 +279,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 ((MedicationEntry) activeFragment).onDoneClick(v);
                 newFragment = new MedicationParent();
             }
+            //If the active fragment is analysis, the default will be called and user will be taken
+            //back to the home page.
 
             //replaces the current fragment with the parent fragment
             replaceFragment(newFragment);
@@ -325,6 +326,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
     }
     public  void passwordSignIn(View v){
         ((com.rocket.biometrix.Login.GetLogin)activeFragment).okayButtonClick(v);
+    }
+
+    public void onRunButtonClick(View v)
+    {
+        ((com.rocket.biometrix.Analysis.AnalysisFragment)activeFragment).onRunButtonClick(v);
     }
 
     public void cancelButton(View v){
