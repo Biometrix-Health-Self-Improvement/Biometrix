@@ -16,13 +16,11 @@ import android.widget.Toast;
 
 
 import com.rocket.biometrix.Analysis.AnalysisFragment;
-import com.rocket.biometrix.Analysis.BiometrixAnalysis;
 import com.rocket.biometrix.Analysis.DietGraph;
 import com.rocket.biometrix.Analysis.ExerciseGraph;
 import com.rocket.biometrix.Analysis.GraphBase;
 import com.rocket.biometrix.Analysis.MoodGraph;
 import com.rocket.biometrix.Analysis.SleepGraph;
-import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.Sync;
 import com.rocket.biometrix.DietModule.DietEntry;
 import com.rocket.biometrix.DietModule.DietParent;
@@ -32,7 +30,7 @@ import com.rocket.biometrix.Login.CreateLogin;
 import com.rocket.biometrix.Login.GetLogin;
 import com.rocket.biometrix.Login.GoogleLogin;
 import com.rocket.biometrix.Login.LocalAccount;
-import com.rocket.biometrix.Login.SettingKeys;
+import com.rocket.biometrix.Login.SettingsHelper;
 import com.rocket.biometrix.MedicationModule.MedicationEntry;
 import com.rocket.biometrix.MedicationModule.MedicationParent;
 import com.rocket.biometrix.MoodModule.MoodEntry;
@@ -46,8 +44,6 @@ import com.rocket.biometrix.Settings.SleepSettings;
 import com.rocket.biometrix.SleepModule.SleepEntry;
 
 import com.rocket.biometrix.SleepModule.SleepParent;
-
-import org.json.JSONObject;
 
 public class NavigationDrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -140,7 +136,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                     frag = new MedicationSettings();
                 }
                 else if(fragClass.equals(ExerciseParent.class) //TODO: || fragClass.equals(ExerciseGraph.class)
-                        || fragClass.equals(SleepEntry.class))
+                        || fragClass.equals(ExerciseEntry.class))
                 {
                     frag = new ExerciseSettings();
                 }
@@ -369,11 +365,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
     {
         Menu navMenu = navView.getMenu();
 
-        SetItemVisibility(navMenu, R.id.nav_mood_module, SettingKeys.MOOD_MODULE);
-        SetItemVisibility(navMenu, R.id.nav_sleep_module, SettingKeys.SLEEP_MODULE);
-        SetItemVisibility(navMenu, R.id.nav_exercise_module, SettingKeys.EXERCISE_MODULE);
-        SetItemVisibility(navMenu, R.id.nav_diet_module, SettingKeys.DIET_MODULE);
-        SetItemVisibility(navMenu, R.id.nav_medication_module, SettingKeys.MEDICATION_MODULE);
+        SetItemVisibility(navMenu, R.id.nav_mood_module, SettingsHelper.MOOD_MODULE);
+        SetItemVisibility(navMenu, R.id.nav_sleep_module, SettingsHelper.SLEEP_MODULE);
+        SetItemVisibility(navMenu, R.id.nav_exercise_module, SettingsHelper.EXERCISE_MODULE);
+        SetItemVisibility(navMenu, R.id.nav_diet_module, SettingsHelper.DIET_MODULE);
+        SetItemVisibility(navMenu, R.id.nav_medication_module, SettingsHelper.MEDICATION_MODULE);
 
         //Makes a few options invisible if the user is not logged in.
         if(!LocalAccount.isLoggedIn() )

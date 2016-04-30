@@ -1,6 +1,5 @@
 package com.rocket.biometrix.Settings;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -10,11 +9,9 @@ import android.view.ViewGroup;
 import android.widget.Switch;
 
 import com.rocket.biometrix.Login.LocalAccount;
-import com.rocket.biometrix.Login.SettingKeys;
+import com.rocket.biometrix.Login.SettingsHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
-
-import java.util.Set;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,12 +32,6 @@ public class ModuleSettings extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
-
-    private Switch moodSwitch;
-    private Switch sleepSwitch;
-    private Switch exerciseSwitch;
-    private Switch dietSwitch;
-    private Switch medicationSwitch;
 
     public ModuleSettings() {
         // Required empty public constructor
@@ -88,31 +79,11 @@ public class ModuleSettings extends Fragment {
         View view = inflater.inflate(R.layout.fragment_module_settings, container, false);
         // Inflate the layout for this fragment
 
-        //Grab reference to local account
-        LocalAccount localAccount = LocalAccount.GetInstance();
+        SettingsHelper.setupSwitches(view, SettingsHelper.getAllModuleKeysAndRIDs(), true);
 
-        //Grab reference to the switch and set it accordingly
-        boolean moodCheck = localAccount.getBoolean(view.getContext(), SettingKeys.MOOD_MODULE, true);
-        moodSwitch = ((Switch) view.findViewById(R.id.DisableSwitchMoodModule));
-        moodSwitch.setChecked(moodCheck);
-
-        boolean sleepCheck = localAccount.getBoolean(view.getContext(), SettingKeys.SLEEP_MODULE, true);
-        sleepSwitch = ((Switch) view.findViewById(R.id.DisableSwitchSleepModule));
-        sleepSwitch.setChecked(sleepCheck);
-
-        boolean exerciseCheck = localAccount.getBoolean(view.getContext(), SettingKeys.EXERCISE_MODULE, true);
-        exerciseSwitch = ((Switch) view.findViewById(R.id.DisableSwitchExerciseModule));
-        exerciseSwitch.setChecked(exerciseCheck);
-
-        boolean dietCheck = localAccount.getBoolean(view.getContext(), SettingKeys.DIET_MODULE, true);
-        dietSwitch = ((Switch) view.findViewById(R.id.DisableSwitchDietModule));
-        dietSwitch.setChecked(dietCheck);
-
-        boolean medicationCheck = localAccount.getBoolean(view.getContext(), SettingKeys.MEDICATION_MODULE, true);
-        medicationSwitch = ((Switch) view.findViewById(R.id.DisableSwitchMedicationModule));
-        medicationSwitch.setChecked(medicationCheck);
         return view;
     }
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -129,20 +100,11 @@ public class ModuleSettings extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public void onAcceptClick(View v)
-    {
-        LocalAccount localAccount = LocalAccount.GetInstance();
-
-        boolean moodChecked = moodSwitch.isChecked();
-        boolean sleepChecked = sleepSwitch.isChecked();
-        boolean exerciseChecked = exerciseSwitch.isChecked();
-        boolean dietChecked = dietSwitch.isChecked();
-        boolean medicationChecked = medicationSwitch.isChecked();
-
-        localAccount.setBoolean(v.getContext(), SettingKeys.MOOD_MODULE, moodChecked);
-        localAccount.setBoolean(v.getContext(), SettingKeys.SLEEP_MODULE, sleepChecked);
-        localAccount.setBoolean(v.getContext(), SettingKeys.EXERCISE_MODULE, exerciseChecked);
-        localAccount.setBoolean(v.getContext(), SettingKeys.DIET_MODULE, dietChecked);
-        localAccount.setBoolean(v.getContext(), SettingKeys.MEDICATION_MODULE, medicationChecked);
+    /**
+     * Commits changes to the local account
+     * @param v
+     */
+    public void onAcceptClick(View v) {
+        SettingsHelper.storeSwitchValues(getView(), SettingsHelper.getAllModuleKeysAndRIDs());
     }
 }

@@ -45,6 +45,11 @@ public class LocalStorageAccessDiet {
             TYPE, MEAL, SERVING, CALORIES, TOTALFAT, SATFAT, TRANSFAT, CHOLESTEROL, SODIUM, TOTALCARBS,
             FIBER, SUGARS, PROTEIN, VITAMINA, VITAMINB, CALCIUM, IRON, NOTE};
 
+    //All integer columns in the field. Used for analysis
+    public static final String[] intcols = {CALORIES, TOTALFAT, SATFAT, TRANSFAT,
+            CHOLESTEROL, SODIUM, TOTALCARBS, FIBER, SUGARS, PROTEIN, VITAMINA,
+            VITAMINB, CALCIUM, IRON};
+
     private LocalStorageAccessDiet(){}
 
     public static String createTable() {
@@ -89,6 +94,10 @@ public class LocalStorageAccessDiet {
 
     public static String[] getColumns(){
         return cols;
+    }
+
+    public static String[] getAnalysisColumns() {
+        return intcols;
     }
 
     /**

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.rocket.biometrix.Login.SettingsHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -29,6 +30,7 @@ public class MedicationSettings extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private View settingsView;
     private OnFragmentInteractionListener mListener;
 
     public MedicationSettings() {
@@ -74,7 +76,10 @@ public class MedicationSettings extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_medication_settings, container, false);
+        View view = inflater.inflate(R.layout.fragment_medication_settings, container, false);
+        settingsView = view;
+        SettingsHelper.setupSwitches(view, SettingsHelper.getAllMedicationKeysAndRIDs(), true);
+        return view;
     }
 
     /**
@@ -93,6 +98,6 @@ public class MedicationSettings extends Fragment {
     }
 
     public void onAcceptClick(View v){
-
+        SettingsHelper.storeSwitchValues(settingsView, SettingsHelper.getAllMedicationKeysAndRIDs());
     }
 }

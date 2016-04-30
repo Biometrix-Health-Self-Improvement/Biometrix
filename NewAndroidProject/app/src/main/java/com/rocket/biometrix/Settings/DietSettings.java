@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.rocket.biometrix.Login.SettingsHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -28,6 +29,8 @@ public class DietSettings extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private View settingsView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -74,7 +77,10 @@ public class DietSettings extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_diet_settings, container, false);
+        View view = inflater.inflate(R.layout.fragment_diet_settings, container, false);
+        settingsView = view;
+        SettingsHelper.setupSwitches(view, SettingsHelper.getAllDietKeysAndRIDs(), true);
+        return view;
     }
 
     /**
@@ -93,6 +99,6 @@ public class DietSettings extends Fragment {
     }
 
     public void onAcceptClick(View v){
-
+        SettingsHelper.storeSwitchValues(settingsView, SettingsHelper.getAllDietKeysAndRIDs());
     }
 }
