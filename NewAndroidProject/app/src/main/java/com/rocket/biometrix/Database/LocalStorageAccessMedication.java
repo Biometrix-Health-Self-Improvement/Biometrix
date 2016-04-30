@@ -31,6 +31,8 @@ public class LocalStorageAccessMedication {
     public static final String[] columns = {LOCAL_MEDICATION_ID, USER_NAME, WEB_MEDICATION_ID,
             DATE, TIME, BRAND_NAME, PRESCRIBER, DOSE, INSTRUCTIONS, WARNINGS, NOTES};
 
+
+
     public LocalStorageAccessMedication(Context context){
     }
 

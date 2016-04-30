@@ -26,6 +26,8 @@ public class LocalStorageAccessSleep {
     public static final String[] columns = {LOCAL_SLEEP_ID, USER_NAME, WEB_SLEEP_ID, DATE,
             TIME, DURATION, QUALITY, NOTES, HEALTH};
 
+    public static final String[] anslysiscolumns = {DURATION, QUALITY};
+
     public LocalStorageAccessSleep(Context context){
     }
 
@@ -62,6 +64,12 @@ public class LocalStorageAccessSleep {
     public static String[] getColumns()
     {
         return columns;
+    }
+
+    //Returns the columns for the table
+    public static String[] getAnalysisColumns()
+    {
+        return anslysiscolumns;
     }
 
     public static String getUIDColumn()
