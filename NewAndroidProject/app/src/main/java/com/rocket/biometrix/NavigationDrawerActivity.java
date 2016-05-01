@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Toast;
 
 
+import com.rocket.biometrix.Analysis.AllGraph;
 import com.rocket.biometrix.Analysis.AnalysisFragment;
 import com.rocket.biometrix.Analysis.DietGraph;
 import com.rocket.biometrix.Analysis.ExerciseGraph;
@@ -425,6 +426,10 @@ public class NavigationDrawerActivity extends AppCompatActivity
     }
     public  void DietGraph(View v){
         activeFragment = new DietGraph();
+        replaceFragment(activeFragment);
+    }
+    public  void AllGraph(View v){
+        activeFragment = new AllGraph();
         replaceFragment(activeFragment);
     }
 }

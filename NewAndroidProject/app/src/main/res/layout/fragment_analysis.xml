@@ -15,6 +15,10 @@
             android:layout_alignParentEnd="true"
             android:onClick="onRunButtonClick"/>
 
+        <Button style="@style/graph"
+            android:id="@+id/goToGraphAll"
+            android:onClick="AllGraph" />
+
         <ScrollView
             style="@style/scrollview_parent_list"
             android:id="@+id/analysisScrollView"

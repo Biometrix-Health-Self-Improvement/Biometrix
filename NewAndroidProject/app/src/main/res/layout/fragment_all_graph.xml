@@ -1,0 +1,68 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.rocket.biometrix.Analysis.AllGraph">
+
+    <Button style="@style/graph_prev_month"
+        android:id="@+id/buttonPrevAll"
+        android:onClick="graphPrev" />
+
+    <Button style="@style/graph_next_month"
+        android:id="@+id/buttonNextAll"
+        android:onClick="graphNext" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/monthTextViewAll"
+        android:layout_alignBottom="@+id/buttonNextAll"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/yearTextViewAll"
+        android:layout_above="@+id/monthTextViewAll"
+        android:layout_centerHorizontal="true" />
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/buttonNextAll">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <com.jjoe64.graphview.GraphView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/grapAllDep"
+        android:layout_marginTop="10dp"
+         />
+
+    <com.jjoe64.graphview.GraphView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/grapAllElev"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/grapAllDep" />
+
+    <com.jjoe64.graphview.GraphView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/grapAllIrr"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/grapAllElev" />
+
+    <com.jjoe64.graphview.GraphView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/grapAllAnx"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/grapAllIrr" />
+    </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>
