@@ -1,5 +1,6 @@
 package com.rocket.biometrix.Analysis;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
 
@@ -9,17 +10,23 @@ import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.Database.LocalStorageAccessMedication;
 import com.rocket.biometrix.Database.LocalStorageAccessMood;
 import com.rocket.biometrix.Database.LocalStorageAccessSleep;
+import com.rocket.biometrix.ExerciseModule.ExerciseEntry;
 import com.rocket.biometrix.Login.LocalAccount;
 import com.rocket.biometrix.Login.SettingsHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.util.Log;
 import android.util.Pair;
 
 /**
@@ -44,181 +51,11 @@ public class BiometrixAnalysis
     public static final String MEDIAN = "Median";
     public static final String COUNT = "Count";
 
-    private static JSONObject statJsonObject = null;
-
     /**
-     * Private constructor since this class should never be directly instantiated
+     * Empty constructor
      */
-    private BiometrixAnalysis()
+    public BiometrixAnalysis()
     { }
-
-    /**
-     * Performs the basic analysis on all tracked modules and stores a static jsonobject that has
-     * the analysis performed on it
-     * @param context A context to give to the local storage methods in order to pull data
-     */
-    private static void AnalyzeAllModulesBasic(Context context)
-    {
-        JSONObject jsonObject = new JSONObject();
-
-        JSONObject moodJson = AnalyzeIntFieldsBasic(LocalStorageAccessMood.selectAll(context, true));
-        JSONObject dietJson = AnalyzeIntFieldsBasic(LocalStorageAccessDiet.selectAll(context, true));
-        JSONObject exerciseJson = AnalyzeIntFieldsBasic(LocalStorageAccessExercise.selectAll(context, true));
-        JSONObject sleepJson = AnalyzeIntFieldsBasic(LocalStorageAccessSleep.selectAll(context, true));
-        JSONObject sleepJsonDuration = AnalyzeTimeField(LocalStorageAccessSleep.selectAll(context, true), LocalStorageAccessSleep.DURATION);
-
-        try
-        {
-            if (sleepJsonDuration.has(LocalStorageAccessSleep.DURATION) )
-            {
-                sleepJson.put(LocalStorageAccessSleep.DURATION, sleepJsonDuration.getJSONObject(LocalStorageAccessSleep.DURATION));
-            }
-
-            jsonObject.put(LocalStorageAccessMood.TABLE_NAME, moodJson);
-            jsonObject.put(LocalStorageAccessDiet.TABLE_NAME, dietJson);
-            jsonObject.put(LocalStorageAccessExercise.TABLE_NAME, exerciseJson);
-            jsonObject.put(LocalStorageAccessSleep.TABLE_NAME, sleepJson);
-        }
-        catch (JSONException except)
-        {
-            except.getMessage();
-        }
-
-        statJsonObject = jsonObject;
-    }
-
-    /**
-     * Performs basic analysis on the integer fields of the passed in cursor. Basic analysis
-     * consists of operations such as the mean, median, min, max, and standard deviation
-     * @param cursor A cursor containing all the rows that are to be analyzed
-     * @return A JSONObject that contains all of the analyzed rows along with the calculated
-     * values.
-     */
-    protected static JSONObject AnalyzeIntFieldsBasic(Cursor cursor)
-    {
-        JSONObject jsonObject = new JSONObject();
-
-        try {
-            //Loop through each column
-            for (int i = 0; i < cursor.getColumnCount(); ++i)
-            {
-                //Check if there are any rows in the set and move to the first one
-                if (cursor.moveToFirst())
-                {
-                    boolean isTracked = true;
-
-                    //Checks the column against the list of untracked columns to ensure it is not in there
-                    for (String string : UNTRACKED_INT_COLS)
-                    {
-
-                        if (string.equals(cursor.getColumnName(i)))
-                        {
-                            isTracked = false;
-                            break;
-                        }
-                    }
-
-                    //Check that the column actually has the value type expected (i.e. not all nulls
-                    //and not containing strings or dates etc.
-                    boolean hasValidInt = false;
-
-                    //Don't need to check if there is a non-null value if the field is not tracked
-                    if (isTracked)
-                    {
-                        if (cursor.getType(i) == Cursor.FIELD_TYPE_INTEGER)
-                        {
-                            hasValidInt = true;
-                        }
-                        else if(cursor.getType(i) == Cursor.FIELD_TYPE_NULL)
-                        {
-                            boolean invalidTypeFound = false;
-
-                            while (cursor.moveToNext() && !hasValidInt && !invalidTypeFound)
-                            {
-                                if (cursor.getType(i) == Cursor.FIELD_TYPE_INTEGER)
-                                {
-                                    hasValidInt = true;
-                                }
-                                else if (cursor.getType(i) != Cursor.FIELD_TYPE_NULL)
-                                {
-                                    invalidTypeFound = true;
-                                }
-                            }
-                        }
-                    }
-
-                    //Only care about columns that store integers for this method
-                    //Only process the value if it is a tracked column
-                    if (hasValidInt && isTracked)
-                    {
-                        LinkedList<Integer> list = new LinkedList<Integer>();
-
-                        list.add(cursor.getInt(i));
-
-                        while (cursor.moveToNext())
-                        {
-                            //Since nulls have to be allowed, check that the current thing is
-                            //actually an integer
-                            if (cursor.getType(i) == Cursor.FIELD_TYPE_INTEGER)
-                            {
-                                list.add(cursor.getInt(i));
-                            }
-                        }
-
-                        Collections.sort(list);
-
-                        int totalValue = 0;
-                        float mean = 0;
-                        int min = list.getFirst();
-                        int max = list.getLast();
-                        float median = 0;
-                        int totalNum = list.size();
-
-                        //If there are an even number of elements, then the median is an average of
-                        //the two middle elements
-                        if (totalNum % 2 == 0) {
-                            median = (list.get((int) ((float)totalNum / 2) - 1)  );
-                            median += list.get((int) (((float)totalNum / 2)));
-                            median /= 2;
-                        } //The median is the very middle element
-                        else {
-                            median = list.get((int) Math.floor((float) totalNum / 2));
-                        }
-
-                        for (int j = 0; j < totalNum; ++j) {
-                            totalValue += list.get(j);
-                        }
-
-                        mean = (float)totalValue / (float)totalNum;
-
-                        String columnName = cursor.getColumnName(i);
-
-                        JSONObject column = new JSONObject();
-
-                        column.put(MIN, min);
-                        column.put(MAX, max);
-                        column.put(MEAN, mean);
-                        column.put(MEDIAN, median);
-                        column.put(COUNT, totalNum);
-
-                        jsonObject.put(columnName, column);
-                    }
-                }
-            }
-        }
-        catch (JSONException except)
-        {
-            except.getMessage();
-        }
-        catch (Exception except)
-        {
-            except.getMessage();
-        }
-
-        cursor.close();
-
-        return jsonObject;
-    }
 
     /**
      * Performs the same basic analysis as above, but on one specific column that is declared as a
@@ -227,7 +64,7 @@ public class BiometrixAnalysis
      * @return A JSONObject that contains the analyzed row name as the key and then has the
      * statistical information encapsulated. Returns an empty JSONObject upon error.
      */
-    protected static JSONObject AnalyzeTimeField(Cursor cursor, String columnName)
+    protected JSONObject AnalyzeTimeField(Cursor cursor, String columnName)
     {
         JSONObject jsonObject = new JSONObject();
 
@@ -323,7 +160,7 @@ public class BiometrixAnalysis
      * @return The number of minutes in the passed in time string. Returns -1 if the format is
      * not as expected
      */
-    protected static Integer ConvertTimeToMinutes(String timeString)
+    protected Integer ConvertTimeToMinutes(String timeString)
     {
         Integer retVal = -1;
 
@@ -358,110 +195,84 @@ public class BiometrixAnalysis
      * @param context The current context, needed for database calls
      * @return A JSONObject containing all of the information that was gathered.
      */
-    public static JSONObject Analyze( Context context)
+    public JSONObject Analyze( Context context)
     {
         JSONObject jsonObject = new JSONObject();
 
-        //Get basic statistic info in statJson object
-        AnalyzeAllModulesBasic(context);
-
-        List<String> tableNames = new ArrayList<>();
-        List<List<String>> columnLists = new LinkedList<>();
+        List<TableList> tableLists = new LinkedList<>();
 
         if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.DIET_MODULE, true))
         {
-            tableNames.add(LocalStorageAccessDiet.TABLE_NAME);
+            TableList tableList = new TableList(LocalStorageAccessDiet.TABLE_NAME);
 
-            columnLists.add(getMoodAnalysisColumns(context) );
+            for ( String string : SettingsHelper.getEnabledColumns(context, SettingsHelper.getAnalysisDietKeysAndColumns(), true) )
+            {
+                ColumnList colList = new ColumnList(getColumnDatesAndValues(
+                        tableList.tableName, LocalStorageAccessDiet.DATE, string, context, true),
+                        string);
+
+                tableList.addColumnList(colList);
+            }
+
+            tableLists.add(tableList);
         }
 
         if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.EXERCISE_MODULE, true))
         {
-            tableNames.add(LocalStorageAccessExercise.TABLE_NAME);
+            TableList tableList = new TableList(LocalStorageAccessExercise.TABLE_NAME);
+
+            for ( String string : SettingsHelper.getEnabledColumns(context, SettingsHelper.getAnalysisExerciseKeysAndColumns(), true) )
+            {
+                ColumnList colList = new ColumnList(getColumnDatesAndValues(
+                        tableList.tableName, LocalStorageAccessExercise.DATE, string, context, true),
+                        string);
+
+                tableList.addColumnList(colList);
+            }
+
+            tableLists.add(tableList);
         }
 
         if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.MOOD_MODULE, true))
         {
-            tableNames.add(LocalStorageAccessMood.TABLE_NAME);
+            TableList tableList = new TableList(LocalStorageAccessMood.TABLE_NAME);
+
+            for ( String string : SettingsHelper.getEnabledColumns(context, SettingsHelper.getAnalysisMoodKeysAndColumns(), true) )
+            {
+                ColumnList colList = new ColumnList(getColumnDatesAndValues(
+                        tableList.tableName, LocalStorageAccessMood.DATE, string, context, true),
+                        string);
+
+                tableList.addColumnList(colList);
+            }
+
+            tableLists.add(tableList);
         }
 
         if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.SLEEP_MODULE, true))
         {
-            tableNames.add(LocalStorageAccessSleep.TABLE_NAME);
+            TableList tableList = new TableList(LocalStorageAccessSleep.TABLE_NAME);
+
+            if (SettingsHelper.isSleepDurationEnabled(context) )
+            {
+
+                if (SettingsHelper.isSleepQualityEnabled(context) )
+                {
+
+                }
+                else
+                {
+
+                }
+            }
+            else if (SettingsHelper.isSleepQualityEnabled(context) )
+            {
+
+            }
         }
-
-
-        //Free up the memory of the basic analysis portion.
-        statJsonObject = null;
 
         return jsonObject;
     }
-
-    /**
-     * Returns all of the columns that are used for analysis of the mood module that are enabled
-     * @param context The current context. Needed to grab user settings
-     * @return A linked list that contains the analysis columns
-     */
-    private static List<String> getDietAnalysisColumns(Context context)
-    {
-        List<String> analysisColumns = new LinkedList<>();
-
-        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.MOOD_DEP, true))
-        {
-            analysisColumns.add(LocalStorageAccessMood.DEP);
-        }
-
-        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.MOOD_ELEV, true))
-        {
-            analysisColumns.add(LocalStorageAccessMood.ELEV);
-        }
-
-        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.MOOD_IRRITABLE, true))
-        {
-            analysisColumns.add(LocalStorageAccessMood.IRR);
-        }
-
-        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.MOOD_ANX, true))
-        {
-            analysisColumns.add(LocalStorageAccessMood.ANX);
-        }
-
-        return analysisColumns;
-    }
-
-    /**
-     * Returns all of the columns that are used for analysis of the mood module that are enabled
-     * @param context The current context. Needed to grab user settings
-     * @return A linked list that contains the analysis columns
-     */
-    private static List<String> getMoodAnalysisColumns(Context context)
-    {
-        List<String> analysisColumns = new LinkedList<>();
-
-        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.MOOD_DEP, true))
-        {
-            analysisColumns.add(LocalStorageAccessMood.DEP);
-        }
-
-        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.MOOD_ELEV, true))
-        {
-            analysisColumns.add(LocalStorageAccessMood.ELEV);
-        }
-
-        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.MOOD_IRRITABLE, true))
-        {
-            analysisColumns.add(LocalStorageAccessMood.IRR);
-        }
-
-        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.MOOD_ANX, true))
-        {
-            analysisColumns.add(LocalStorageAccessMood.ANX);
-        }
-
-        return analysisColumns;
-    }
-
-
 
     /**
      * Grabs a list of pairs of each value in the passed in column of the passed in table (if it is
@@ -470,16 +281,203 @@ public class BiometrixAnalysis
      * @param dateName Name of the date field on the table
      * @param columnName Name of the column to pull from on the table
      * @param context The context to use for database operations
+     * @param average A boolean value. If true, the day's values are averaged. If false, they are summed
      * @return A list containing pairs of integers. The integers are the value, and then the
      */
-    private List<Pair<Integer, Integer>> getColumnDatesAndValuesAverage(String tableName, String dateName,
-                                                                 String columnName, Context context)
+    private List<Pair<Float, Integer>> getColumnDatesAndValues(String tableName, String dateName,
+                                                                 String columnName, Context context, boolean average)
     {
-        List<Pair<Integer, Integer>> returnList = new LinkedList<>();
+        List<Pair<Float, Integer>> returnList = new LinkedList<>();
 
-        Cursor cursor = LocalStorageAccess.selectAllEntries(context, tableName, dateName + " DESC",
-                new String[]{columnName, dateName}, true);
+        Cursor cursor = null;
+        try {
+            cursor = LocalStorageAccess.selectAllEntries(context, tableName, dateName + " DESC",
+                    new String[]{columnName, dateName}, true);
+        }
+        catch (Exception e)
+        {
+            e.getMessage();
+        }
 
+        int prevDate, curDate, dayTotal, numEntriesInDay;
+
+        //Set to an invalid date for first compare
+        curDate = -1;
+
+        boolean firstDay = true;
+        numEntriesInDay = 0;
+        dayTotal = 0;
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        if (cursor.moveToFirst() )
+        {
+            while (!cursor.isAfterLast() )
+            {
+                String dateString = cursor.getString(1);
+
+                try {
+                    Date enteredDate = dateFormat.parse(dateString);
+
+                    prevDate = curDate;
+                    curDate = getDateIntValue(enteredDate);
+
+                    //If still on the same day, add the entries together
+                    if(curDate == prevDate)
+                    {
+                        ++numEntriesInDay;
+                        dayTotal += cursor.getInt(0);
+                    }
+                    else
+                    //If not on the same day, add the last day's average as an entry for that day
+                    {
+                        if (!firstDay )
+                        {
+                            float entry;
+
+                            if (average)
+                            {
+                                entry = (float) dayTotal / (float) numEntriesInDay;
+                            }
+                            else
+                            {
+                                entry = (float) dayTotal;
+                            }
+
+                            returnList.add(new Pair<>(entry, prevDate));
+                        }
+                        else
+                        {
+                            firstDay = false;
+                        }
+
+                        numEntriesInDay = 1;
+                        dayTotal = cursor.getInt(0);
+                    }
+
+                    cursor.moveToNext();
+
+                    if (cursor.isAfterLast() )
+                    {
+                        float entry;
+
+                        if (average)
+                        {
+                            entry = (float) dayTotal / (float) numEntriesInDay;
+                        }
+                        else
+                        {
+                            entry = (float) dayTotal;
+                        }
+
+                        returnList.add(new Pair<>(entry, prevDate));
+                    }
+                } catch (Exception except) {
+                    Log.i("AnalysisParse", "Could not change string " + dateString);
+                }
+            }
+        }
+
+        cursor.close();
         return returnList;
     }
+
+    /**
+     * Retrieves an integer value unique to each day
+     * @param date The date to grab from
+     * @return An integer that corresponds to the number of days since Jan 1. 1970
+     */
+    private int getDateIntValue(Date date)
+    {
+        int day_num = -1;
+        day_num = (int) (date.getTime() /86400000L);
+
+        return day_num;
+    }
+
+    /**
+     * A class to hold all of the data for a single table. This is primarily the table's name and then
+     * a list of columnLists
+     */
+    class TableList
+    {
+        private String tableName;
+        private List<ColumnList> columnLists;
+
+        private TableList(String table)
+        {
+            tableName = table;
+            columnLists = new LinkedList<>();
+        }
+
+        private void addColumnList(ColumnList newList)
+        {
+            columnLists.add(newList);
+        }
+    }
+
+    /**
+     * A class to hold the data for one column list. This includes information like the statistical
+     * data for the column as well as the table and column name.
+     */
+    class ColumnList
+    {
+        private int totalCount;
+        private float median;
+        private float mean;
+        private float min;
+        private float max;
+
+        private String columnName;
+        private List<Pair<Float, Integer>> list;
+
+        private ColumnList(List<Pair<Float, Integer>> newList, String column)
+        {
+            list = newList;
+            columnName = column;
+            totalCount = list.size();
+
+            statAnalysis();
+        }
+
+        /**
+         * Performs basic statistical analysis on the current list
+         */
+        private void statAnalysis()
+        {
+            if (totalCount > 0)
+            {
+                List<Float> floatList = new ArrayList<>(totalCount);
+
+                for (Pair<Float, Integer> pair : list) {
+                    floatList.add(pair.first);
+                }
+
+                Collections.sort(floatList);
+
+                float totalValue = 0;
+                min = floatList.get(0);
+                max = floatList.get(floatList.size() - 1);
+
+                //If there are an even number of elements, then the median is an average of
+                //the two middle elements
+                if (totalCount % 2 == 0) {
+                    median = (floatList.get((int) ((float) totalCount / 2) - 1));
+                    median += floatList.get((int) (((float) totalCount / 2)));
+                    median /= 2;
+                } //The median is the very middle element
+                else {
+                    median = floatList.get((int) Math.floor((float) totalCount / 2));
+                }
+
+                for (int j = 0; j < totalCount; ++j) {
+                    totalValue += floatList.get(j);
+                }
+
+                mean = (float) totalValue / (float) totalCount;
+            }
+        }
+    }
 }
+
+

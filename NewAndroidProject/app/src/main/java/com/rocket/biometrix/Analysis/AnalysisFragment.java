@@ -29,8 +29,6 @@ public class AnalysisFragment extends Fragment {
         // Required empty public constructor
     }
 
-
-
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -106,6 +104,9 @@ public class AnalysisFragment extends Fragment {
         else
         {
             Button runButton = (Button)(view.findViewById(R.id.runAnalysisButton));
+            BiometrixAnalysis analysis = new BiometrixAnalysis();
+
+            analysis.Analyze(view.getContext());
             runButton.setText("Done");
 
             hasRun = true;

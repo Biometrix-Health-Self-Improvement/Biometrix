@@ -11,6 +11,9 @@ import com.rocket.biometrix.Database.LocalStorageAccessMood;
 import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.R;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Created by TJ on 4/18/2016.
  * The key names for the settings used by local account
@@ -54,6 +57,30 @@ public class SettingsHelper {
             boolean isChecked = ((Switch) view.findViewById(Integer.parseInt(stringArray[1]))).isChecked();
             localAccount.setBoolean(view.getContext(), stringArray[0], isChecked);
         }
+    }
+
+    /**
+     * Retrieves a list of columns that are enabled based on user settings
+     * @param context The current context used to grab user settings
+     * @param keysAndColumns A 2D array of the keys and their associated columns
+     * @param defaultValue Whether to default to true or not if the setting is not found
+     * @return A list of strings that contain the names of the enabled columns
+     */
+    public static List<String> getEnabledColumns(Context context, String[][] keysAndColumns, boolean defaultValue)
+    {
+        List<String> returnString = new LinkedList<>();
+
+        LocalAccount localAccount = LocalAccount.GetInstance();
+
+        for (String[] stringArray : keysAndColumns) {
+            boolean isSet = localAccount.getBoolean(context, stringArray[0], defaultValue);
+
+            if (isSet) {
+                returnString.add(stringArray[1]);
+            }
+        }
+
+        return returnString;
     }
 
     //Module disable/enable settings
