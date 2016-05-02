@@ -12,7 +12,10 @@ import android.widget.Toast;
 
 import com.rocket.biometrix.Common.StringDateTimeConverter;
 import com.rocket.biometrix.Database.LocalStorageAccess;
+import com.rocket.biometrix.Database.LocalStorageAccessDiet;
 import com.rocket.biometrix.Database.LocalStorageAccessExercise;
+import com.rocket.biometrix.Database.LocalStorageAccessMedication;
+import com.rocket.biometrix.Database.LocalStorageAccessMood;
 import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.EditPastEntries.CursorPair;
 import com.rocket.biometrix.R;
@@ -122,10 +125,22 @@ public class EditCalendar extends Fragment {
                 String dateSelectedFormatted = StringDateTimeConverter.convertCalDateString(dateSelected);
 
 
-                //Retrieve cursor(s)
+                //Retrieve cursor(s) CONNECTED TO ENTRYCANDIESFRAGEMENT (horrible design)
                 Cursor datesExercise = LocalStorageAccessExercise.selectByDate(dateSelectedFormatted, getActivity());
+
                 Cursor datesSleep = LocalStorageAccess.selectByDate(dateSelectedFormatted,
                         LocalStorageAccessSleep.TABLE_NAME, LocalStorageAccessSleep.DATE);
+
+                Cursor datesMood = LocalStorageAccess.selectByDate(dateSelectedFormatted, LocalStorageAccessMood.TABLE_NAME, LocalStorageAccessMood.DATE);
+                //~Please understand, we were under harsh time constraints.
+                Cursor datesMedz = LocalStorageAccess.selectByDate(dateSelectedFormatted, LocalStorageAccessMedication.TABLE_NAME, LocalStorageAccessMedication.DATE);
+                //~God forgives, but he never forgets. The codebase has rotted. Each line a step further from the light, another sin.
+                Cursor datesDiet = LocalStorageAccess.selectByDate(dateSelectedFormatted, LocalStorageAccessDiet.TABLE_NAME, LocalStorageAccessDiet.DATE);
+                //~Now I understand why someone would abandon a world they created.
+
+
+
+
 
                 //getActivity() for the context.
                 Toast.makeText(getActivity(), dateSelectedFormatted, Toast.LENGTH_LONG).show();
@@ -134,9 +149,12 @@ public class EditCalendar extends Fragment {
                     List<CursorPair> cpInjecting = new ArrayList<CursorPair>();
                     cpInjecting.add(new CursorPair("exercise", datesExercise));
                     cpInjecting.add(new CursorPair("sleep", datesSleep));
+                    cpInjecting.add(new CursorPair("mood", datesMood));
+                    cpInjecting.add(new CursorPair("medication", datesMedz));
+                    cpInjecting.add(new CursorPair("diet", datesDiet));
+                    //~I've left Angels to inherit this codebase. They will soon learn of betrayal.
 
                     mListener.onFragDateSelect(cpInjecting);
-                    //TODO: Refactor onFragDateSelect to accept list of CursorPair
                 }
             }
 
