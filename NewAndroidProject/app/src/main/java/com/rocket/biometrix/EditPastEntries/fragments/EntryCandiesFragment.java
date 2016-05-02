@@ -132,19 +132,19 @@ public class EntryCandiesFragment extends Fragment {
         for (CursorPair taybell : Queries) {
             //System.out.println();
             if (taybell.getTableName().equals("exercise")) {
-                CursorHelper exerciseCH = new CursorHelper(taybell, LocalStorageAccessExercise.TITLE, LocalStorageAccessExercise.TIME);
+                CursorHelper exerciseCH = new CursorHelper(taybell, LocalStorageAccessExercise.TITLE, LocalStorageAccessExercise.TIME, LocalStorageAccessExercise.LOCAL_EXERCISE_ID);
                 allCH.add(exerciseCH);
             }else if(taybell.getTableName().equals("sleep")) {
-                CursorHelper sleepCH = new CursorHelper(taybell, LocalStorageAccessSleep.QUALITY, LocalStorageAccessSleep.TIME);
+                CursorHelper sleepCH = new CursorHelper(taybell, LocalStorageAccessSleep.QUALITY, LocalStorageAccessSleep.TIME, LocalStorageAccessSleep.LOCAL_SLEEP_ID);
                 allCH.add(sleepCH);
             }else if(taybell.getTableName().equals("mood")){
-                CursorHelper moodCH = new CursorHelper(taybell, "DEP: " + LocalStorageAccessMood.DEP, LocalStorageAccessMood.TIME);
+                CursorHelper moodCH = new CursorHelper(taybell, "DEP: " + LocalStorageAccessMood.DEP, LocalStorageAccessMood.TIME, LocalStorageAccessMood.LOCAL_MOOD_ID);
                 allCH.add(moodCH);
             }else if(taybell.getTableName().equals("medication")){
-                CursorHelper medCH = new CursorHelper(taybell, LocalStorageAccessMedication.BRAND_NAME, LocalStorageAccessMedication.TIME);
+                CursorHelper medCH = new CursorHelper(taybell, LocalStorageAccessMedication.BRAND_NAME, LocalStorageAccessMedication.TIME, LocalStorageAccessMedication.LOCAL_MEDICATION_ID);
                 allCH.add(medCH);
             }else if(taybell.getTableName().equals("diet")){
-                CursorHelper dietCH = new CursorHelper(taybell, LocalStorageAccessDiet.TYPE, LocalStorageAccessDiet.MEAL);
+                CursorHelper dietCH = new CursorHelper(taybell, LocalStorageAccessDiet.TYPE, LocalStorageAccessDiet.MEAL, LocalStorageAccessDiet.LOCAL_DIET_ID);
                 allCH.add(dietCH);
             }
         }
@@ -155,6 +155,8 @@ public class EntryCandiesFragment extends Fragment {
 
                 item.title = CurseHel.mTitleStrings[j];
                 item.time = CurseHel.mTimeStrings[j];
+                item._ID = CurseHel.mUIDs[j];
+                item.type = (CurseHel.mCursorPair.getTableName());
 
                 candyItemslist.add(item);
             }
@@ -179,7 +181,6 @@ public class EntryCandiesFragment extends Fragment {
 
         List<CursorPair> getCursorList();
     }
-
 
 
 }

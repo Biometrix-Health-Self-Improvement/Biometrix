@@ -64,8 +64,6 @@ public class EditPastActivity extends AppCompatActivity
     }//end onCreate()
 
 
-
-
     //RV Fragment
     @Override
     public boolean isListCurrent() {
