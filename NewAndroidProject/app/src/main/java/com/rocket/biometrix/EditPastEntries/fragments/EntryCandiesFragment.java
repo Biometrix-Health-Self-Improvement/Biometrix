@@ -10,7 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.rocket.biometrix.Database.LocalStorageAccessDiet;
 import com.rocket.biometrix.Database.LocalStorageAccessExercise;
+import com.rocket.biometrix.Database.LocalStorageAccessMedication;
+import com.rocket.biometrix.Database.LocalStorageAccessMood;
 import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.EditPastEntries.CandyItems;
 import com.rocket.biometrix.EditPastEntries.CursorHelper;
@@ -128,12 +131,21 @@ public class EntryCandiesFragment extends Fragment {
         //Populate all Cursor Helper list
         for (CursorPair taybell : Queries) {
             //System.out.println();
-            if (taybell.getTableName() == "exercise") {
+            if (taybell.getTableName().equals("exercise")) {
                 CursorHelper exerciseCH = new CursorHelper(taybell, LocalStorageAccessExercise.TITLE, LocalStorageAccessExercise.TIME);
                 allCH.add(exerciseCH);
-            }else if(taybell.getTableName() == "sleep") {
+            }else if(taybell.getTableName().equals("sleep")) {
                 CursorHelper sleepCH = new CursorHelper(taybell, LocalStorageAccessSleep.QUALITY, LocalStorageAccessSleep.TIME);
                 allCH.add(sleepCH);
+            }else if(taybell.getTableName().equals("mood")){
+                CursorHelper moodCH = new CursorHelper(taybell, "DEP: " + LocalStorageAccessMood.DEP, LocalStorageAccessMood.TIME);
+                allCH.add(moodCH);
+            }else if(taybell.getTableName().equals("medication")){
+                CursorHelper medCH = new CursorHelper(taybell, LocalStorageAccessMedication.BRAND_NAME, LocalStorageAccessMedication.TIME);
+                allCH.add(medCH);
+            }else if(taybell.getTableName().equals("diet")){
+                CursorHelper dietCH = new CursorHelper(taybell, LocalStorageAccessDiet.TYPE, LocalStorageAccessDiet.MEAL);
+                allCH.add(dietCH);
             }
         }
 
