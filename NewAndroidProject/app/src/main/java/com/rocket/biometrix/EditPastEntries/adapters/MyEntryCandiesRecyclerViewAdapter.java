@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.rocket.biometrix.Common.StringDateTimeConverter;
 import com.rocket.biometrix.EditPastEntries.CandyItems;
 import com.rocket.biometrix.EditPastEntries.EntryCandyViewHolder;
 import com.rocket.biometrix.NavigationDrawerActivity;
@@ -52,7 +53,7 @@ public class MyEntryCandiesRecyclerViewAdapter extends RecyclerView.Adapter<Entr
                     //TODO:Open up edit entry with proper info for candy touched
                     //rowEntryClicked(holder.type.toString(), holder._UID); //WAY too complicated to make 3 interfaces //HOW tf keep references to context/classes?
                     Intent intent = new Intent(mContext, NavigationDrawerActivity.class);
-                    intent.putExtra("tablename", holder.type.toString());
+                    intent.putExtra("tablename", StringDateTimeConverter.GetStringFromTextView(holder.type));
                     intent.putExtra("uid", holder._UID);
                     mContext.startActivity(intent);
 
