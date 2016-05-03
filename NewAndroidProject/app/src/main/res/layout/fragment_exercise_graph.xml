@@ -35,10 +35,4 @@
         android:layout_above="@+id/monthTextViewExercise"
         android:layout_centerHorizontal="true" />
 
-    <com.jjoe64.graphview.GraphView
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:id="@+id/graphExercise2"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/graphExercise" />
 </RelativeLayout>
