@@ -1,21 +1,15 @@
 package com.rocket.biometrix.Analysis;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
 
 import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessDiet;
 import com.rocket.biometrix.Database.LocalStorageAccessExercise;
-import com.rocket.biometrix.Database.LocalStorageAccessMedication;
 import com.rocket.biometrix.Database.LocalStorageAccessMood;
 import com.rocket.biometrix.Database.LocalStorageAccessSleep;
-import com.rocket.biometrix.ExerciseModule.ExerciseEntry;
 import com.rocket.biometrix.Login.LocalAccount;
 import com.rocket.biometrix.Login.SettingsHelper;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -31,26 +25,10 @@ import android.util.Pair;
 
 /**
  * Created by TJ on 4/6/2016.
- * A class with static methods to perform analysis on all of the modules
+ * A class with methods to perform analysis on all of the modules
  */
 public class BiometrixAnalysis
 {
-    //A list of all untracked integer type columns. This mainly consists of primary keys as the user
-    //should not care about those
-    private static final String[] UNTRACKED_INT_COLS = {LocalStorageAccessDiet.WEB_DIET_ID, LocalStorageAccessDiet.LOCAL_DIET_ID,
-            LocalStorageAccessMood.WEB_MOOD_ID, LocalStorageAccessMood.LOCAL_MOOD_ID,
-            LocalStorageAccessExercise.WEB_EXERCISE_ID, LocalStorageAccessExercise.LOCAL_EXERCISE_ID,
-            LocalStorageAccessSleep.WEB_SLEEP_ID, LocalStorageAccessSleep.LOCAL_SLEEP_ID,
-            LocalStorageAccessMedication.WEB_MEDICATION_ID, LocalStorageAccessMedication.LOCAL_MEDICATION_ID};
-
-    //A list of strings that are added onto the end of the column names to be able to retrieve
-    //the values from the contentvalues
-    public static final String MIN = "Min";
-    public static final String MAX = "Max";
-    public static final String MEAN = "Mean";
-    public static final String MEDIAN = "Median";
-    public static final String COUNT = "Count";
-
     /**
      * Empty constructor
      */
@@ -58,99 +36,262 @@ public class BiometrixAnalysis
     { }
 
     /**
-     * Performs the same basic analysis as above, but on one specific column that is declared as a
-     * time variable in the SQLite database
-     * @param cursor A cursor containing all the rows that are to be analyzed
-     * @return A JSONObject that contains the analyzed row name as the key and then has the
-     * statistical information encapsulated. Returns an empty JSONObject upon error.
+     * Retrieves the basic column statistics for the passed in column on the passed in table
+     * @param context The current context, used for database operations
+     * @param columnName The name of the column that is being queried
+     * @param tableName The name of the table that the operations should be performed on
+     * @return A ColumnStatistics object containing the requested information.
      */
-    protected JSONObject AnalyzeTimeField(Cursor cursor, String columnName)
+    public ColumnStatistics getColumnStats(Context context, String columnName, String tableName)
     {
-        JSONObject jsonObject = new JSONObject();
+        ColumnList colList;
+        boolean average = false;
+        String dateColumnName = "";
 
-        try
+        boolean sleepDuration = false;
+
+        switch (tableName)
         {
-            //Check if there are any rows in the set and move to the first one
-            if (cursor.moveToFirst())
+            case LocalStorageAccessDiet.TABLE_NAME:
+                dateColumnName = LocalStorageAccessDiet.DATE;
+                break;
+            case LocalStorageAccessExercise.TABLE_NAME:
+                dateColumnName = LocalStorageAccessExercise.DATE;
+                break;
+            case LocalStorageAccessMood.TABLE_NAME:
+                dateColumnName = LocalStorageAccessMood.DATE;
+                average = true;
+                break;
+            case LocalStorageAccessSleep.TABLE_NAME:
+                dateColumnName = LocalStorageAccessSleep.DATE;
+                if (columnName.equals(LocalStorageAccessSleep.QUALITY))
+                {
+                    average = true;
+                }
+                else if (columnName.equals(LocalStorageAccessSleep.DURATION))
+                {
+                    sleepDuration = true;
+                }
+                break;
+        }
+
+        if (sleepDuration) {
+            colList = new ColumnList(getSleepDuration(context), columnName, tableName, true);
+        }
+        else
+        {
+            colList = new ColumnList(getColumnDatesAndValues(tableName, dateColumnName, columnName, context, average),
+                    columnName, tableName, true);
+        }
+
+
+        ColumnStatistics columnStatistics = new ColumnStatistics(colList.totalCount, colList.median, colList.mean,
+                colList.min, colList.tableName, colList.columnName, colList.max);
+
+        return columnStatistics;
+    }
+
+    /**
+     * Retrieves the basic column statistics for the passed in column on the passed in table
+     * @param context The current context, used for database operations
+     * @param firstColumnName The name of the column that is being queried
+     * @param firstTableName The name of the table that the operations should be performed on
+     * @param secondColumnName The name of the column that is being queried
+     * @param secondTableName The name of the table that the operations should be performed on
+     * @param daysApart The number of days before that the first element is from the second element,
+     *                  e.g. 2 days before, or -2 days before for 2 days after
+     * @return A ColumnStatistics object containing the requested information.
+     */
+    public ColumnCorrelation getColumnCorrelations(Context context, String firstColumnName, String firstTableName,
+                                                  String secondColumnName, String secondTableName, int daysApart)
+    {
+        ColumnList colList = null;
+        ColumnList colList2 = null;
+        boolean average = false;
+        boolean isDuration = false;
+        String dateColumnName = "";
+
+        switch (firstTableName)
+        {
+            case LocalStorageAccessDiet.TABLE_NAME:
+                dateColumnName = LocalStorageAccessDiet.DATE;
+                break;
+            case LocalStorageAccessExercise.TABLE_NAME:
+                dateColumnName = LocalStorageAccessExercise.DATE;
+                break;
+            case LocalStorageAccessMood.TABLE_NAME:
+                dateColumnName = LocalStorageAccessMood.DATE;
+                average = true;
+                break;
+            case LocalStorageAccessSleep.TABLE_NAME:
+                dateColumnName = LocalStorageAccessSleep.DATE;
+
+                if (firstColumnName.equals(LocalStorageAccessSleep.DURATION) )
+                {
+                    colList = new ColumnList(getSleepDuration(context), firstColumnName, firstTableName, false);
+                    isDuration = true;
+                }
+                break;
+        }
+
+        if (!isDuration) {
+            colList = new ColumnList(getColumnDatesAndValues(firstTableName, dateColumnName, firstColumnName, context, average),
+                    firstColumnName, firstTableName, false);
+        }
+        isDuration = false;
+
+        switch (secondTableName)
+        {
+            case LocalStorageAccessDiet.TABLE_NAME:
+                dateColumnName = LocalStorageAccessDiet.DATE;
+                break;
+            case LocalStorageAccessExercise.TABLE_NAME:
+                dateColumnName = LocalStorageAccessExercise.DATE;
+                break;
+            case LocalStorageAccessMood.TABLE_NAME:
+                dateColumnName = LocalStorageAccessMood.DATE;
+                average = true;
+                break;
+            case LocalStorageAccessSleep.TABLE_NAME:
+                dateColumnName = LocalStorageAccessSleep.DATE;
+
+                if (secondColumnName.equals(LocalStorageAccessSleep.DURATION) )
+                {
+                    colList2 = new ColumnList(getSleepDuration(context), secondColumnName, secondTableName, false);
+                    isDuration = true;
+                }
+                break;
+        }
+
+        if (!isDuration) {
+            colList2 = new ColumnList(getColumnDatesAndValues(secondTableName, dateColumnName, secondColumnName, context, average),
+                    secondColumnName, secondTableName, false);
+        }
+
+
+        return getCorrelation(colList, colList2, daysApart);
+    }
+
+    /**
+     * Returns the correlation information for the passed in lists
+     * @param columnList1 The first column list that contains value, date, and statistical information
+     * @param columnList2 The second column list that contains value, date, and statistical information
+     * @param daysApart The number of days the first list is before the second
+     * @return A column correlation that has the statistics for both lists as well as the correlation
+     * value
+     */
+    private ColumnCorrelation getCorrelation(ColumnList columnList1, ColumnList columnList2, int daysApart)
+    {
+        double correlation = 0;
+
+        float productTotal = 0;
+        float sumFirst = 0;
+        float sumFirstSquared = 0;
+        float sumSecond = 0;
+        float sumSecondSquared = 0;
+
+        Iterator<Pair<Float, Integer>> firstListIter =  columnList1.list.iterator();
+        Iterator<Pair<Float, Integer>> secondListIter =  columnList2.list.iterator();
+
+        Pair<Float, Integer> list1Element = null;
+        Pair<Float, Integer> list2Element = null;
+        int adjustedDate = -1;
+
+        boolean isDone = false;
+        int numEntries = 0;
+
+        //Priming read to grab the first elements in the list
+        if (firstListIter.hasNext() && secondListIter.hasNext() )
+        {
+            list1Element = firstListIter.next();
+            list2Element = secondListIter.next();
+
+            adjustedDate = list1Element.second + daysApart;
+        }
+        else
+        {
+            isDone = true;
+        }
+
+
+        while (!isDone )
+        {
+            //If the days are equal according to the adjusted date value, then that means they
+            //need to be compared and both lists should move forward
+            if (adjustedDate == list2Element.second)
             {
+                productTotal += list1Element.first * list2Element.first;
+                sumFirst += list1Element.first;
+                sumFirstSquared += list1Element.first * list1Element.first;
+                sumSecond += list2Element.first;
+                sumSecondSquared += list2Element.first * list2Element.first;
 
-                LinkedList<Integer> list = new LinkedList<Integer>();
-                int columnIndex = cursor.getColumnIndex(columnName);
+                ++numEntries;
 
-                String timeString = cursor.getString(columnIndex);
-                Integer timeInMinutes = ConvertTimeToMinutes(timeString);
-
-                if ( timeInMinutes != -1)
+                if (firstListIter.hasNext() && secondListIter.hasNext() ) {
+                    list1Element = firstListIter.next();
+                    list2Element = secondListIter.next();
+                    adjustedDate = list1Element.second + daysApart;
+                }
+                else
                 {
-                    list.add(timeInMinutes);
+                    isDone = true;
                 }
-
-                while (cursor.moveToNext())
+            }
+            //Since the lists are in descending order, if the adjusted date from the first list is
+            //greater than the second list's date, move the first list forward
+            else if (adjustedDate > list2Element.second)
+            {
+                if (firstListIter.hasNext() ) {
+                    list1Element = firstListIter.next();
+                    adjustedDate = list1Element.second + daysApart;
+                }
+                else
                 {
-                    if (cursor.getType(columnIndex) != Cursor.FIELD_TYPE_NULL)
-                    {
-                        timeString = cursor.getString(cursor.getColumnIndex(columnName));
-
-                        timeInMinutes = ConvertTimeToMinutes(timeString);
-
-                        if ( timeInMinutes != -1)
-                        {
-                            list.add(timeInMinutes);
-                        }
-                    }
+                    isDone = true;
                 }
-
-                Collections.sort(list);
-
-                int totalValue = 0;
-                float mean = 0;
-                int min = list.getFirst();
-                int max = list.getLast();
-                float median = 0;
-                int totalNum = list.size();
-
-                //If there are an even number of elements, then the median is an average of
-                //the two middle elements
-                if (totalNum % 2 == 0) {
-                    median = (list.get((int) ((float)totalNum / 2) - 1)  );
-                    median += list.get((int) (((float)totalNum / 2)));
-                    median /= 2;
-                } //The median is the very middle element
-                else {
-                    median = list.get((int) Math.floor((float) totalNum / 2));
+            }
+            //Otherwise move the second list forward
+            else
+            {
+                if (secondListIter.hasNext() ) {
+                    list2Element = secondListIter.next();
                 }
-
-                for (int j = 0; j < totalNum; ++j) {
-                    totalValue += list.get(j);
+                else
+                {
+                    isDone = true;
                 }
+            }
 
-                mean = (float)totalValue / (float)totalNum;
+        }
 
+        //Avoids division by zero error
+        if (numEntries == 0 || sumFirst == 0 || sumSecond == 0)
+        {
+            correlation = 0;
+        }
+        else
+        {
+            double numerator = numEntries * productTotal - sumFirst * sumSecond;
+            double denominator = numEntries * sumFirstSquared - sumFirst * sumFirst;
+            denominator = Math.sqrt(denominator);
 
-                JSONObject column = new JSONObject();
+            double rightDenominator = numEntries * sumSecondSquared - sumSecond * sumSecond;
+            rightDenominator = Math.sqrt(rightDenominator);
 
-                column.put(MIN, min);
-                column.put(MAX, max);
-                column.put(MEAN, mean);
-                column.put(MEDIAN, median);
-                column.put(COUNT, totalNum);
+            denominator = denominator * rightDenominator;
 
-                jsonObject.put(columnName, column);
-
+            if (denominator == 0)
+            {
+                correlation = 0;
+            }
+            else
+            {
+                correlation = numerator / denominator;
             }
         }
-        catch (JSONException except)
-        {
-            except.getMessage();
-        }
-        catch (Exception except)
-        {
-            except.getMessage();
-        }
 
-        cursor.close();
-
-        return jsonObject;
+        return new ColumnCorrelation(daysApart, correlation, numEntries);
     }
 
     /**
@@ -160,7 +301,7 @@ public class BiometrixAnalysis
      * @return The number of minutes in the passed in time string. Returns -1 if the format is
      * not as expected
      */
-    protected Integer ConvertTimeToMinutes(String timeString)
+    private Integer ConvertTimeToMinutes(String timeString)
     {
         Integer retVal = -1;
 
@@ -189,91 +330,6 @@ public class BiometrixAnalysis
         return retVal;
     }
 
-
-    /**
-     * The only public method in this class, makes the calls to perform the needed analysis
-     * @param context The current context, needed for database calls
-     * @return A JSONObject containing all of the information that was gathered.
-     */
-    public JSONObject Analyze( Context context)
-    {
-        JSONObject jsonObject = new JSONObject();
-
-        List<TableList> tableLists = new LinkedList<>();
-
-        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.DIET_MODULE, true))
-        {
-            TableList tableList = new TableList(LocalStorageAccessDiet.TABLE_NAME);
-
-            for ( String string : SettingsHelper.getEnabledColumns(context, SettingsHelper.getAnalysisDietKeysAndColumns(), true) )
-            {
-                ColumnList colList = new ColumnList(getColumnDatesAndValues(
-                        tableList.tableName, LocalStorageAccessDiet.DATE, string, context, true),
-                        string);
-
-                tableList.addColumnList(colList);
-            }
-
-            tableLists.add(tableList);
-        }
-
-        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.EXERCISE_MODULE, true))
-        {
-            TableList tableList = new TableList(LocalStorageAccessExercise.TABLE_NAME);
-
-            for ( String string : SettingsHelper.getEnabledColumns(context, SettingsHelper.getAnalysisExerciseKeysAndColumns(), true) )
-            {
-                ColumnList colList = new ColumnList(getColumnDatesAndValues(
-                        tableList.tableName, LocalStorageAccessExercise.DATE, string, context, true),
-                        string);
-
-                tableList.addColumnList(colList);
-            }
-
-            tableLists.add(tableList);
-        }
-
-        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.MOOD_MODULE, true))
-        {
-            TableList tableList = new TableList(LocalStorageAccessMood.TABLE_NAME);
-
-            for ( String string : SettingsHelper.getEnabledColumns(context, SettingsHelper.getAnalysisMoodKeysAndColumns(), true) )
-            {
-                ColumnList colList = new ColumnList(getColumnDatesAndValues(
-                        tableList.tableName, LocalStorageAccessMood.DATE, string, context, true),
-                        string);
-
-                tableList.addColumnList(colList);
-            }
-
-            tableLists.add(tableList);
-        }
-
-        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.SLEEP_MODULE, true))
-        {
-            TableList tableList = new TableList(LocalStorageAccessSleep.TABLE_NAME);
-
-            if (SettingsHelper.isSleepDurationEnabled(context) )
-            {
-
-                if (SettingsHelper.isSleepQualityEnabled(context) )
-                {
-
-                }
-                else
-                {
-
-                }
-            }
-            else if (SettingsHelper.isSleepQualityEnabled(context) )
-            {
-
-            }
-        }
-
-        return jsonObject;
-    }
-
     /**
      * Grabs a list of pairs of each value in the passed in column of the passed in table (if it is
      * not null). This reutrns a list of integer pairs where integers on the ame day are averaged
@@ -289,15 +345,8 @@ public class BiometrixAnalysis
     {
         List<Pair<Float, Integer>> returnList = new LinkedList<>();
 
-        Cursor cursor = null;
-        try {
-            cursor = LocalStorageAccess.selectAllEntries(context, tableName, dateName + " DESC",
+        Cursor cursor = LocalStorageAccess.selectAllEntries(context, tableName, dateName + " DESC",
                     new String[]{columnName, dateName}, true);
-        }
-        catch (Exception e)
-        {
-            e.getMessage();
-        }
 
         int prevDate, curDate, dayTotal, numEntriesInDay;
 
@@ -357,6 +406,7 @@ public class BiometrixAnalysis
 
                     cursor.moveToNext();
 
+                    //Duplicate of above code except with current date
                     if (cursor.isAfterLast() )
                     {
                         float entry;
@@ -370,7 +420,7 @@ public class BiometrixAnalysis
                             entry = (float) dayTotal;
                         }
 
-                        returnList.add(new Pair<>(entry, prevDate));
+                        returnList.add(new Pair<>(entry, curDate));
                     }
                 } catch (Exception except) {
                     Log.i("AnalysisParse", "Could not change string " + dateString);
@@ -380,6 +430,112 @@ public class BiometrixAnalysis
 
         cursor.close();
         return returnList;
+    }
+
+    /**
+     * Returns a list of pairs of floats and integers that correspond to the total sleep duration for
+     * the day and an intger representation of the day's date
+     * @param context The context to use to grab database information
+     * @return A list containing the needed information
+     */
+    private List<Pair<Float, Integer>> getSleepDuration(Context context)
+    {
+        List<Pair<Float, Integer>> durationPairList = new LinkedList<>();
+
+        //Grabs a cursor with the duration, quality, date and time in that order
+        //Time is needed because
+        Cursor cursor = null;
+        try {
+            cursor = LocalStorageAccess.selectAllEntries(context, LocalStorageAccessSleep.getTableName(),
+                    LocalStorageAccessSleep.DATE + " DESC",
+                    new String[]{LocalStorageAccessSleep.DURATION, LocalStorageAccessSleep.DATE, LocalStorageAccessSleep.TIME}, true);
+        }
+        catch (Exception e)
+        {
+            e.getMessage();
+        }
+
+        int prevDate, curDate, dayTotalDuration;
+
+        //Set to an invalid date for first compare
+        curDate = -1;
+
+        boolean firstDay = true;
+        dayTotalDuration = 0;
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+
+        if (cursor.moveToFirst() )
+        {
+            while (!cursor.isAfterLast() )
+            {
+                String dateString = cursor.getString(1);
+
+                try {
+                    Date enteredDate = dateFormat.parse(dateString);
+
+                    String timeString = cursor.getString(2);
+                    String durationString = cursor.getString(0);
+
+                    int timeMinutes = ConvertTimeToMinutes(timeString);
+                    int durationMinutes = ConvertTimeToMinutes(durationString);
+
+                    prevDate = curDate;
+                    curDate = getDateIntValue(enteredDate);
+
+                    //If the time of an entry starts before the user's cutoff hour (default is 8am)
+                    //the entry belongs with the previous day
+                    if (timeMinutes * 60 <
+                            LocalAccount.GetInstance().getInt(context, SettingsHelper.SLEEP_INT_CUTOFF_HOUR, 8) )
+                    {
+                        curDate = curDate -1;
+                    }
+
+                    //If still on the same day, add the entries together
+                    if(curDate == prevDate)
+                    {
+                        dayTotalDuration += durationMinutes;
+                    }
+                    else
+                    //If not on the same day, add the last day's average as an entry for that day
+                    //Except on the first day
+                    {
+                        if (!firstDay )
+                        {
+                            float entryDuration;
+                            entryDuration = (float) dayTotalDuration;
+                            dayTotalDuration = 0;
+
+                            durationPairList.add(new Pair<>(entryDuration, prevDate));
+                        }
+                        else
+                        {
+                            firstDay = false;
+                        }
+
+                        dayTotalDuration += durationMinutes;
+                    }
+
+                    cursor.moveToNext();
+
+                    if (cursor.isAfterLast() )
+                    {
+                        float entryDuration;
+                        entryDuration = (float) dayTotalDuration;
+
+                        durationPairList.add(new Pair<>(entryDuration, curDate));
+                    }
+                } catch (Exception except) {
+                    Log.i("AnalysisParse", "Could not change string " + dateString);
+                }
+            }
+        }
+
+        cursor.close();
+
+
+        return durationPairList;
     }
 
     /**
@@ -396,27 +552,6 @@ public class BiometrixAnalysis
     }
 
     /**
-     * A class to hold all of the data for a single table. This is primarily the table's name and then
-     * a list of columnLists
-     */
-    class TableList
-    {
-        private String tableName;
-        private List<ColumnList> columnLists;
-
-        private TableList(String table)
-        {
-            tableName = table;
-            columnLists = new LinkedList<>();
-        }
-
-        private void addColumnList(ColumnList newList)
-        {
-            columnLists.add(newList);
-        }
-    }
-
-    /**
      * A class to hold the data for one column list. This includes information like the statistical
      * data for the column as well as the table and column name.
      */
@@ -429,15 +564,35 @@ public class BiometrixAnalysis
         private float max;
 
         private String columnName;
+        private String tableName;
         private List<Pair<Float, Integer>> list;
 
-        private ColumnList(List<Pair<Float, Integer>> newList, String column)
+        /**
+         * A secondary option if just the list is needed.
+         * @param newList List of float integer pairs to add
+         * @param column Name of the column
+         * @param table Name of the table
+         * @param calculateStats If false, statistical information will not be calculated
+         */
+        private ColumnList(List<Pair<Float, Integer>> newList, String column, String table, boolean calculateStats)
         {
             list = newList;
             columnName = column;
-            totalCount = list.size();
+            tableName = table;
 
-            statAnalysis();
+            if (calculateStats) {
+                totalCount = list.size();
+
+                statAnalysis();
+            }
+            else
+            {
+                totalCount = 0;
+                mean = 0;
+                median = 0;
+                min = 0;
+                max = 0;
+            }
         }
 
         /**

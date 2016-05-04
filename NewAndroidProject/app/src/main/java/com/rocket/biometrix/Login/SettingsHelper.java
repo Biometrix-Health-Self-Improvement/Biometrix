@@ -7,10 +7,12 @@ import android.widget.Switch;
 import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessDiet;
 import com.rocket.biometrix.Database.LocalStorageAccessExercise;
+import com.rocket.biometrix.Database.LocalStorageAccessMedication;
 import com.rocket.biometrix.Database.LocalStorageAccessMood;
 import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.R;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -60,15 +62,52 @@ public class SettingsHelper {
     }
 
     /**
+     * Returns the columns that are available for analysis and are enabled by the user's settings
+     * @param context The current context. Used for determining user settings
+     * @param tableName The name of the table being referred to
+     * @param defaultValue Default to columns being enabled or disabled by default if no setting
+     *                     entry is found
+     * @return Returns a list of strings that are the enabled analysis columns
+     */
+    public static List<String> getEnabledAnalysisColumns(Context context, String tableName, boolean defaultValue)
+    {
+        switch (tableName)
+        {
+            case LocalStorageAccessMood.TABLE_NAME:
+                return getEnabledColumns(context, getAnalysisMoodKeysAndColumns(), defaultValue);
+            case LocalStorageAccessDiet.TABLE_NAME:
+                return getEnabledColumns(context, getAnalysisDietKeysAndColumns(), defaultValue);
+            case LocalStorageAccessSleep.TABLE_NAME:
+                List<String> arrayList = new ArrayList<>();
+                if (LocalAccount.GetInstance().getBoolean(context, SLEEP_QUALITY, true))
+                {
+                    arrayList.add(LocalStorageAccessSleep.QUALITY);
+                }
+
+                if (LocalAccount.GetInstance().getBoolean(context, SLEEP_HOURS, true) ||
+                        LocalAccount.GetInstance().getBoolean(context, SLEEP_MINUTES, true))
+                {
+                    arrayList.add(LocalStorageAccessSleep.DURATION);
+                }
+
+                return arrayList;
+            case LocalStorageAccessExercise.TABLE_NAME:
+                return getEnabledColumns(context, getAnalysisExerciseKeysAndColumns(), defaultValue);
+            default:
+                return new ArrayList<>();
+        }
+    }
+
+    /**
      * Retrieves a list of columns that are enabled based on user settings
      * @param context The current context used to grab user settings
      * @param keysAndColumns A 2D array of the keys and their associated columns
      * @param defaultValue Whether to default to true or not if the setting is not found
      * @return A list of strings that contain the names of the enabled columns
      */
-    public static List<String> getEnabledColumns(Context context, String[][] keysAndColumns, boolean defaultValue)
+    private static List<String> getEnabledColumns(Context context, String[][] keysAndColumns, boolean defaultValue)
     {
-        List<String> returnString = new LinkedList<>();
+        List<String> returnStringList = new LinkedList<>();
 
         LocalAccount localAccount = LocalAccount.GetInstance();
 
@@ -76,11 +115,11 @@ public class SettingsHelper {
             boolean isSet = localAccount.getBoolean(context, stringArray[0], defaultValue);
 
             if (isSet) {
-                returnString.add(stringArray[1]);
+                returnStringList.add(stringArray[1]);
             }
         }
 
-        return returnString;
+        return returnStringList;
     }
 
     //Module disable/enable settings
@@ -89,6 +128,35 @@ public class SettingsHelper {
     public static final String EXERCISE_MODULE = "ExerciseModuleEnable";
     public static final String DIET_MODULE = "DietModuleEnable";
     public static final String MEDICATION_MODULE = "MedicationModuleEnable";
+
+    public static String[][] getModuleSettingsAndNames()
+    {
+        return new String[][]{
+                {MOOD_MODULE, LocalStorageAccessMood.TABLE_NAME},
+                {SLEEP_MODULE, LocalStorageAccessSleep.TABLE_NAME},
+                {EXERCISE_MODULE, LocalStorageAccessExercise.TABLE_NAME},
+                {DIET_MODULE, LocalStorageAccessDiet.TABLE_NAME},
+                {MEDICATION_MODULE, LocalStorageAccessMedication.TABLE_NAME}};
+    }
+
+    /**
+     * Returns list of strings that correspond to all enabled column names
+     * @return A list of strings that includes only the names of enabled modules
+     */
+    public static List<String> getEnabledModuleNames(Context context)
+    {
+        List<String> stringList = new ArrayList<>(5);
+
+        for (String[] array : getModuleSettingsAndNames())
+        {
+            if(LocalAccount.GetInstance().getBoolean(context, array[0], true))
+            {
+                stringList.add(array[1]);
+            }
+        }
+
+        return stringList;
+    }
 
     /**
      * Returns a 2 dimensional array that has a list of all the setting keys
@@ -242,8 +310,7 @@ public class SettingsHelper {
                 {MOOD_DEP, LocalStorageAccessMood.DEP},
                 {MOOD_ELEV, LocalStorageAccessMood.ELEV},
                 {MOOD_IRRITABLE, LocalStorageAccessMood.IRR},
-                {MOOD_ANX, LocalStorageAccessMood.ANX},
-                {MOOD_NOTES, LocalStorageAccessMood.NOTE}};
+                {MOOD_ANX, LocalStorageAccessMood.ANX}};
     }
     
     //Sleep module settings
@@ -316,4 +383,8 @@ public class SettingsHelper {
                 {MED_WARNINGS, Integer.toString(R.id.DisableSwitchConsumptionWarnings)},
                 {MED_NOTES, Integer.toString(R.id.DisableSwitchMedicationNotesInput)}};
     }
+
+    //Integer value for the sleep module. Is the number of the hour 0-24 where entries before that hour
+    //count as being for the previous day. Default is 8.
+    public static final String SLEEP_INT_CUTOFF_HOUR = "SleepCutoffHour";
 }

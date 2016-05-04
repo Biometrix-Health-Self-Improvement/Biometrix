@@ -218,4 +218,30 @@ public class LocalAccount {
         setupPreferences(context);
         preferenceEditor.putBoolean(key, value).commit();
     }
+
+    /**
+     * Retrieves an int value that was stored with the passed in key. If no value has been
+     * stored yet, this returns the default
+     * @param context      The current context. Needed to pull user settings.
+     * @param key          The key of the key value pair
+     * @param defaultValue The value that is returned if no value has been stored yet
+     * @return The stored value that corresponds to the key, or the defaultValue if no value is stored
+     */
+    public int getInt(Context context, String key, int defaultValue)
+    {
+        setupPreferences(context);
+        return sharedPreferences.getInt(key, defaultValue);
+    }
+
+    /**
+     * Sets a boolean value of the passed in key to the passed in value
+     * @param context The current context which is needed to get user data
+     * @param key     The key to look up the entry for
+     * @param value   The value to store
+     */
+    public void setInt(Context context, String key, int value)
+    {
+        setupPreferences(context);
+        preferenceEditor.putInt(key, value).commit();
+    }
 }
