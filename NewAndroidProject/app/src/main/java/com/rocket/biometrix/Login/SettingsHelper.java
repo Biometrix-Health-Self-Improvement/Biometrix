@@ -273,9 +273,6 @@ public class SettingsHelper {
     public static String[][] getAnalysisExerciseKeysAndColumns() {
         return new String[][]{
                 {EXERCISE_DURATION, LocalStorageAccessExercise.MINUTES},
-                {EXERCISE_REPS_LAPS, LocalStorageAccessExercise.REPS},
-                {EXERCISE_REPS_LAPS, LocalStorageAccessExercise.LAPS},
-                {EXERCISE_WEIGHT_INTENSITY, LocalStorageAccessExercise.WEIGHT},
                 {EXERCISE_WEIGHT_INTENSITY, LocalStorageAccessExercise.INTY}};
     }
     

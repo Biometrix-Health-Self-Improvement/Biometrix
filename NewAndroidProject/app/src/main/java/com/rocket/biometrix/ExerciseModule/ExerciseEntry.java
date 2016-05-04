@@ -34,6 +34,11 @@ import com.rocket.biometrix.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -183,6 +188,73 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
     public void onDoneClick(View v) {
         //Keep in mind that the 'View' you reference here is only the 'View' for the actual done button
         //NOT the whole UI Layout you made.
+        String titleString = StringDateTimeConverter.GetStringFromEditText(onCreateView.findViewById(R.id.ex_title));
+        String notes = ((TextView)onCreateView.findViewById(R.id.exDetailsEditText)).getText().toString();
+        typeSelected = ((Spinner) onCreateView.findViewById(R.id.ex_type)).getSelectedItem().toString();
+        //Filling date and time strings for bundle's string array
+        String dateString = dateTV.getText().toString();
+        String timeString = timeTV.getText().toString();
+
+        //Cleaning date and time strings with helper class
+        dateString = StringDateTimeConverter.fixDate(dateString);
+        timeString = StringDateTimeConverter.fixTime(timeString);
+
+        String username = LocalAccount.DEFAULT_NAME;
+
+        if (LocalAccount.isLoggedIn()) {
+            username = LocalAccount.GetInstance().GetUsername();
+        }
+
+        exerciseEntryData = new String[]{null, username, null, titleString, typeSelected, minSelected, Integer.toString(intensity), notes, dateString, timeString};
+
+        //https://developer.android.com/reference/android/os/Bundle.html
+        //Put string array that has all the entries data points in it into a Bundle. This bundle is for future extensibility it is NOT for the parent class.
+        Bundle exerciseEntryBundle = new Bundle();
+        exerciseEntryBundle.putStringArray("exEntBundKey", exerciseEntryData);
+
+        String[] cols = LocalStorageAccessExercise.getColumns();
+
+        //Getting context for LSA constructor
+        Context context = onCreateView.getContext();
+
+        //Constructor for LSA Exercise
+        LocalStorageAccessExercise dbEx = new LocalStorageAccessExercise(context);
+        //Making sure I have data for each column (even if null or empty, note that this is NOT required, you can insert columns individually if you wish.) @see putNull
+        if (cols.length == exerciseEntryData.length) {
+            ContentValues rowToBeInserted = new ContentValues();
+            int dataIndex = 0;
+            for (String column : cols) {
+                //Insert column name ripped from LSA child class, and the user's entry data we gathered above
+                rowToBeInserted.put(column, exerciseEntryData[dataIndex]);
+                dataIndex++;
+            }
+            //Call insert method
+            dbEx.insertFromContentValues(rowToBeInserted, v.getContext());
+
+            if (LocalAccount.isLoggedIn())
+            {
+                int id = LocalStorageAccessExercise.GetLastID(v.getContext());
+
+                //Adds the primary key of the field to the sync table along with the value marking it
+                //needs to be added to the webdatabase
+                LocalStorageAccess.getInstance(v.getContext()).insertOrUpdateSyncTable(v.getContext(),
+                        LocalStorageAccessExercise.TABLE_NAME, id, -1, LocalStorageAccess.SYNC_NEEDS_ADDED);
+
+                rowToBeInserted.put(LocalStorageAccessExercise.LOCAL_EXERCISE_ID, id);
+                rowToBeInserted.remove(LocalStorageAccessExercise.USER_NAME);
+
+                String jsonToInsert = JsonCVHelper.convertToJSON(rowToBeInserted);
+
+                //Trys to insert the user's data
+                new DatabaseConnect(this).execute(DatabaseConnectionTypes.INSERT_TABLE_VALUES, jsonToInsert,
+                        LocalAccount.GetInstance().GetToken(),
+                        DatabaseConnectionTypes.EXERCISE_TABLE);
+            }
+
+
+
+        }
+
 /*
         //Filling a string that holds title
         String titleString = StringDateTimeConverter.GetStringFromEditText(onCreateView.findViewById(R.id.ex_title));
