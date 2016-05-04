@@ -246,8 +246,7 @@ public class SettingsHelper {
     public static final String EXERCISE_NAME = "ExerciseNameEnabled";
     public static final String EXERCISE_DURATION = "ExerciseDurationEnabled";
     public static final String EXERCISE_TYPE= "ExerciseTypeEnabled";
-    public static final String EXERCISE_REPS_LAPS = "ExerciseRepsEnabled";
-    public static final String EXERCISE_WEIGHT_INTENSITY = "ExerciseWeightEnabled";
+    public static final String EXERCISE_INTENSITY = "ExerciseIntensityEnabled";
     public static final String EXERCISE_NOTES = "ExerciseNotesEnabled";
 
     /**
@@ -260,8 +259,7 @@ public class SettingsHelper {
                 {EXERCISE_NAME, Integer.toString(R.id.DisableSwitchExerciseName)},
                 {EXERCISE_DURATION, Integer.toString(R.id.DisableSwitchExerciseDuration)},
                 {EXERCISE_TYPE, Integer.toString(R.id.DisableSwitchExerciseType) },
-                {EXERCISE_REPS_LAPS, Integer.toString(R.id.DisableSwitchExerciseRepsLaps)},
-                {EXERCISE_WEIGHT_INTENSITY, Integer.toString(R.id.DisableSwitchExerciseWeightIntensity)},
+                {EXERCISE_INTENSITY, Integer.toString(R.id.DisableSwitchExerciseIntensity)},
                 {EXERCISE_NOTES, Integer.toString(R.id.DisableSwitchExerciseNotesInput)}};
     }
 
@@ -273,7 +271,7 @@ public class SettingsHelper {
     public static String[][] getAnalysisExerciseKeysAndColumns() {
         return new String[][]{
                 {EXERCISE_DURATION, LocalStorageAccessExercise.MINUTES},
-                {EXERCISE_WEIGHT_INTENSITY, LocalStorageAccessExercise.INTY}};
+                {EXERCISE_INTENSITY, LocalStorageAccessExercise.INTY}};
     }
     
     //Mood module settings
@@ -314,7 +312,6 @@ public class SettingsHelper {
     public static final String SLEEP_HOURS = "SleepHoursEnabled";
     public static final String SLEEP_MINUTES = "SleepMinutesEnabled";
     public static final String SLEEP_QUALITY = "SleepQualityEnabled";
-    public static final String SLEEP_GEN_HEALTH = "SleepGenHealthEnabled";
     public static final String SLEEP_NOTES = "SleepNotesEnabled";
 
     /**
@@ -327,7 +324,6 @@ public class SettingsHelper {
                 {SLEEP_HOURS, Integer.toString(R.id.DisableSwitchHoursSlept)},
                 {SLEEP_MINUTES, Integer.toString(R.id.DisableSwitchMinutesSlept)},
                 {SLEEP_QUALITY, Integer.toString(R.id.DisableSwitchSleepQuality)},
-                {SLEEP_GEN_HEALTH, Integer.toString(R.id.DisableSwitchGeneralHealth)},
                 {SLEEP_NOTES, Integer.toString(R.id.DisableSwitchSleepNotesInput)}};
     }
 

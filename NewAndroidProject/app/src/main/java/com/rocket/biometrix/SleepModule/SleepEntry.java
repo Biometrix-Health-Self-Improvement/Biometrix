@@ -66,8 +66,6 @@ public class SleepEntry extends Fragment implements AsyncResponse {
     private SeekBar qualitySeekBar;     //''
     private TextView qualityNumberTextView; //''
 
-    private Spinner generalHealthSpinner;
-
     private TextView noteTextView;
 
     private View entryView;
@@ -132,7 +130,6 @@ public class SleepEntry extends Fragment implements AsyncResponse {
         sleptTimeTextView = (TextView) v.findViewById(R.id.sleepTimeSleptTextView);
         qualitySeekBar = (SeekBar) v.findViewById(R.id.sleepQualitySeekBar);
         qualityNumberTextView = (TextView) v.findViewById(R.id.sleepQualityNumberTextView);
-        generalHealthSpinner = (Spinner) v.findViewById(R.id.sleepGeneralHealthSpinner);
         noteTextView = (TextView) v.findViewById(R.id.sleepNotesEditText);
     }
 
@@ -238,27 +235,6 @@ public class SleepEntry extends Fragment implements AsyncResponse {
         //Array adapter from sleep string resources
         ArrayAdapter spinnerAdapter = ArrayAdapter.createFromResource(
                 getActivity(), R.array.sleep_gen_health_array, android.R.layout.simple_spinner_item);
-
-        generalHealthSpinner.setAdapter(spinnerAdapter);
-
-        //Listener for selected minute taps and getting the tapped minutes as strings.
-        generalHealthSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            protected Adapter initializedAdapter = null;
-
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                if (initializedAdapter != parentView.getAdapter()) {
-                    initializedAdapter = parentView.getAdapter();
-                    return;
-                }
-
-                String selected = parentView.getItemAtPosition(position).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // default to 5 min
-            }
-        });
     }
 
 
@@ -379,7 +355,6 @@ public class SleepEntry extends Fragment implements AsyncResponse {
         Integer quality = qualitySeekBar.getProgress();
 
         String notes = noteTextView.getText().toString();
-        String status = generalHealthSpinner.getSelectedItem().toString();
 
         String username = LocalAccount.DEFAULT_NAME;
 
@@ -388,7 +363,7 @@ public class SleepEntry extends Fragment implements AsyncResponse {
         }
 
         //Make string array for all of the above data
-        String[] sleepEntryData = {null, username, null, dateText, timeText, duration, quality.toString(), notes, status};
+        String[] sleepEntryData = {null, username, null, dateText, timeText, duration, quality.toString(), notes};
 
         //Retrieves column names from the class
         String[] columnNames = LocalStorageAccessSleep.getColumns();

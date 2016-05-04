@@ -118,9 +118,14 @@ public class BiometrixAnalysis
                 break;
             case LocalStorageAccessExercise.TABLE_NAME:
                 dateColumnName = LocalStorageAccessExercise.DATE;
+                if (firstColumnName.equals(LocalStorageAccessExercise.INTY))
+                {
+                    average = true;
+                }
                 break;
             case LocalStorageAccessMood.TABLE_NAME:
                 dateColumnName = LocalStorageAccessMood.DATE;
+
                 average = true;
                 break;
             case LocalStorageAccessSleep.TABLE_NAME:
@@ -147,6 +152,10 @@ public class BiometrixAnalysis
                 break;
             case LocalStorageAccessExercise.TABLE_NAME:
                 dateColumnName = LocalStorageAccessExercise.DATE;
+                if (secondColumnName.equals(LocalStorageAccessExercise.INTY))
+                {
+                    average = true;
+                }
                 break;
             case LocalStorageAccessMood.TABLE_NAME:
                 dateColumnName = LocalStorageAccessMood.DATE;
@@ -345,8 +354,15 @@ public class BiometrixAnalysis
     {
         List<Pair<Float, Integer>> returnList = new LinkedList<>();
 
-        Cursor cursor = LocalStorageAccess.selectAllEntries(context, tableName, dateName + " DESC",
+        Cursor cursor = null;
+        try {
+            cursor = LocalStorageAccess.selectAllEntries(context, tableName, dateName + " DESC",
                     new String[]{columnName, dateName}, true);
+        }
+        catch (Exception e)
+        {
+            e.getMessage();
+        }
 
         int prevDate, curDate, dayTotal, numEntriesInDay;
 

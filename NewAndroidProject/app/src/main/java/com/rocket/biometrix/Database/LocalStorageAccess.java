@@ -29,7 +29,8 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
     //Incremented to 8. Sync Table now exists, updated columns removed
     //Incremented to 9. Sync table username field changed to avoid same names on inner join
     //10. Sync table given webkey column to uniquely identify removals and updates
-    protected static final int DATABASE_VERSION = 10;
+    //11 gen health removed from sleep. Exercise module refactored
+    protected static final int DATABASE_VERSION = 11;
     protected static LocalStorageAccess m_instance = null;
 
     //Strings for the sync table creation

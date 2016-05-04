@@ -20,13 +20,12 @@ public class LocalStorageAccessSleep {
     public static final String DURATION = "Duration";
     public static final String QUALITY = "Quality";
     public static final String NOTES = "Notes";
-    public static final String HEALTH = "Health";
 
     //Exercise Add Entry Table strings
     public static final String[] columns = {LOCAL_SLEEP_ID, USER_NAME, WEB_SLEEP_ID, DATE,
-            TIME, DURATION, QUALITY, NOTES, HEALTH};
+            TIME, DURATION, QUALITY, NOTES};
 
-    public static final String[] anslysiscolumns = {DURATION, QUALITY};
+    public static final String[] intcolumns = {QUALITY};
 
     public LocalStorageAccessSleep(Context context){
     }
@@ -43,8 +42,7 @@ public class LocalStorageAccessSleep {
                 TIME + " time Not Null, " +
                 DURATION + " time Not Null, " +
                 QUALITY + " int Not Null, " +
-                NOTES + " varchar(300), " +
-                HEALTH + " varchar(20)" +");";
+                NOTES + " varchar(300)" +");";
     }
 
     public static String getTableName(){ return TABLE_NAME; }
@@ -64,12 +62,6 @@ public class LocalStorageAccessSleep {
     public static String[] getColumns()
     {
         return columns;
-    }
-
-    //Returns the columns for the table
-    public static String[] getAnalysisColumns()
-    {
-        return anslysiscolumns;
     }
 
     public static String getUIDColumn()

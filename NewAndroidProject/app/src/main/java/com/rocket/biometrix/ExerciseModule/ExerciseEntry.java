@@ -60,7 +60,6 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
     public static TextView timeTV; //Used by the DateTimePopulateTextView in the onCreate event
     public static TextView dateTV;
 
-    String minSelected; //string to save minutes exercised spinner result
     String typeSelected; //string to save type of exercise selected in the radio 'bubble' buttons
 
     Spinner typeSpinner;
@@ -132,7 +131,7 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
         typeSpinner.setAdapter(typeSpin);
 
         SeekBar inty = (SeekBar) v.findViewById(R.id.ex_intensity_seekbar);
-        inty.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+        inty.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
                                             @Override
                                             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -190,6 +189,7 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
         //NOT the whole UI Layout you made.
         String titleString = StringDateTimeConverter.GetStringFromEditText(onCreateView.findViewById(R.id.ex_title));
         String notes = ((TextView)onCreateView.findViewById(R.id.exDetailsEditText)).getText().toString();
+        String minSelected = ((TextView)onCreateView.findViewById(R.id.ex_length)).getText().toString();
         typeSelected = ((Spinner) onCreateView.findViewById(R.id.ex_type)).getSelectedItem().toString();
         //Filling date and time strings for bundle's string array
         String dateString = dateTV.getText().toString();
