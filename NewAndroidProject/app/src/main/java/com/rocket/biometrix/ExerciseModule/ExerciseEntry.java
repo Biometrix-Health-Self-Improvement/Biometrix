@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,7 +58,8 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
     String minSelected; //string to save minutes exercised spinner result
     String typeSelected; //string to save type of exercise selected in the radio 'bubble' buttons
 
-    Spinner minuteSpinner;
+    Spinner typeSpinner;
+    int intensity=0;
     boolean toasted = false; //Used to display encouraging messages ONCE in minuteSpinner.
 
 
@@ -118,63 +120,33 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
         // Inflate the layout for this fragment
         final View v = inflater.inflate(R.layout.fragment_exercise_entry, container, false);
 
+        typeSpinner  = (Spinner) v.findViewById(R.id.ex_type);
+        ArrayAdapter typeSpin = ArrayAdapter.createFromResource(
+                getActivity(),R.array.ex_type_array,android.R.layout.simple_spinner_item);
 
-        minuteSpinner = (Spinner) v.findViewById(R.id.ex_min_spinner);
-        //Array adapter from exer_strings resource
-        ArrayAdapter minSpin = ArrayAdapter.createFromResource(
-                getActivity(), R.array.ex_min_array, android.R.layout.simple_spinner_item);
+        typeSpinner.setAdapter(typeSpin);
 
-        minuteSpinner.setAdapter(minSpin);
+        SeekBar inty = (SeekBar) v.findViewById(R.id.ex_intensity_seekbar);
+        inty.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
 
-        //Listener for selected minute taps and getting the tapped minutes as strings.
-        minuteSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            protected Adapter initializedAdapter = null;
+                                            @Override
+                                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                                                intensity = progress;
+                                            }
 
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                if (initializedAdapter != parentView.getAdapter()) {
-                    initializedAdapter = parentView.getAdapter();
-                    return;
-                }
-                //Set string
-                minSelected = parentView.getItemAtPosition(position).toString();
-            }
+                                            @Override
+                                            public void onStartTrackingTouch(SeekBar seekBar) {
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // defaulted to 5 min already.
-            }
-        });
+                                            }
 
+                                            @Override
+                                            public void onStopTrackingTouch(SeekBar seekBar) {
 
-        RadioGroup rg = (RadioGroup) v.findViewById(R.id.ex_radioGroup);
-        //When a bubble is poked, update a string to match the bubble poked.
-        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.ex_rb_a:
-                        //Extract CharSequences from UI and convert them to string array
-                        final RadioButton ETa1 = (RadioButton) v.findViewById(R.id.ex_rb_a);
-                        typeSelected = ETa1.getText().toString();
-                        break;
+                                            }
+                                        }
 
-                    case R.id.ex_rb_b:
-                        final RadioButton ETa2 = (RadioButton) v.findViewById(R.id.ex_rb_b);
-                        typeSelected = ETa2.getText().toString();
-                        break;
+        );
 
-                    case R.id.ex_rb_c:
-                        final RadioButton ETa3 = (RadioButton) v.findViewById(R.id.ex_rb_c);
-                        typeSelected = ETa3.getText().toString();
-                        break;
-
-                    case R.id.ex_rb_d:
-                        final RadioButton ETa4 = (RadioButton) v.findViewById(R.id.ex_rb_d);
-                        typeSelected = ETa4.getText().toString();
-                        break;
-
-                }
-            }
-        });
 
 
         //Linking contexts likes non-null variables.
@@ -211,7 +183,7 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
     public void onDoneClick(View v) {
         //Keep in mind that the 'View' you reference here is only the 'View' for the actual done button
         //NOT the whole UI Layout you made.
-
+/*
         //Filling a string that holds title
         String titleString = StringDateTimeConverter.GetStringFromEditText(onCreateView.findViewById(R.id.ex_title));
 
@@ -294,7 +266,7 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
 
 
         }
-
+*/
     }
 
     /**
