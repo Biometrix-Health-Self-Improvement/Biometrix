@@ -24,6 +24,7 @@ import com.rocket.biometrix.Database.LocalStorageAccessDiet;
 import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.Login.LocalAccount;
+import com.rocket.biometrix.Login.SettingsHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -98,6 +99,8 @@ public class DietEntry extends Fragment implements AsyncResponse {
         popDateTime.Populate();
 
         dietView = view;
+        SettingsHelper.makeDisabledEntryViewsInvisible(dietView, LocalStorageAccessDiet.TABLE_NAME);
+
         return view;
     }
 

@@ -20,6 +20,7 @@ import com.rocket.biometrix.Database.JsonCVHelper;
 import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessMedication;
 import com.rocket.biometrix.Login.LocalAccount;
+import com.rocket.biometrix.Login.SettingsHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -97,6 +98,8 @@ public class MedicationEntry extends Fragment implements AsyncResponse{
         popDateTime.Populate();
 
         entryView = view;
+
+        SettingsHelper.makeDisabledEntryViewsInvisible(entryView, LocalStorageAccessMedication.TABLE_NAME);
 
         return view;
     }

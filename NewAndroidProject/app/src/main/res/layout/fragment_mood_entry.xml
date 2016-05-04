@@ -6,17 +6,13 @@
 
     <ScrollView
         android:id="@+id/MoodEntryScrollview"
-        style="@style/scrollview_parent_list"
-        android:layout_below="@+id/dividerUpper">
-
+        style="@style/scrollview_parent_list">
 
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:baselineAligned="false"
-        android:id="@+id/tableLayout"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true">
+        android:id="@+id/tableLayout">
 
         <TableRow
             android:layout_width="match_parent"
@@ -28,9 +24,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                 android:text="@string/date_prompt"
-                android:id="@+id/moodCreateEntryDateSelect"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentStart="true" />
+                android:id="@+id/moodCreateEntryDateSelect" />
         </TableRow>
 
         <TableRow
@@ -43,9 +37,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                 android:text="@string/time_prompt"
-                android:id="@+id/moodCreateEntryTimeSelect"
-                android:layout_below="@+id/moodCreateEntryDateSelect"
-                android:layout_alignParentStart="true" />
+                android:id="@+id/moodCreateEntryTimeSelect" />
         </TableRow>
 
         <TableRow
@@ -176,23 +168,10 @@
                 android:layout_column="2" />
         </TableRow>
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/spaceTableRow2" >
-
-            <Space
-                android:layout_height="20dp"
-                android:id="@+id/space"
-                android:layout_width="wrap_content" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/moodDetailsTableRow">
-
-        </TableRow>
+        <Space
+            android:layout_height="20dp"
+            android:id="@+id/moodSpaceAfterAnxiety"
+            android:layout_width="wrap_content" />
 
         <EditText
             android:layout_width="wrap_content"

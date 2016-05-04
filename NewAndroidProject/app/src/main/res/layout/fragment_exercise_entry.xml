@@ -2,118 +2,140 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:onClick="EntryDoneOnClick"
     tools:context="com.rocket.biometrix.ExerciseModule.ExerciseEntry">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-        android:text="@string/date_prompt"
-        android:id="@+id/ex_tv_date"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-        android:text="@string/time_prompt"
-        android:id="@+id/ex_tv_time"
-        android:layout_below="@+id/ex_tv_date"
-        android:layout_alignParentStart="true" />
 
     <ScrollView
         android:id="@+id/ExerciseEntryScrollview"
-        style="@style/scrollview_parent_list"
-        android:layout_below="@+id/ex_tv_time">
+        style="@style/scrollview_parent_list">
 
-        <RelativeLayout
+        <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:baselineAligned="false"
+            android:id="@+id/tableLayoutExercise">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Workout Name: "
-                android:layout_marginBottom="5dp"
-                android:id="@+id/ex_title_text"
-                android:layout_alignBottom="@+id/ex_title"
-                android:layout_alignParentStart="true"
-                   />
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                    android:text="@string/date_prompt"
+                    android:id="@+id/ex_tv_date" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                    android:text="@string/time_prompt"
+                    android:id="@+id/ex_tv_time"/>
+            </TableRow>
+
+            <Space
+                android:layout_height="20dp"
+                android:layout_width="wrap_content"/>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Workout Name: "
+                    android:id="@+id/ex_title_text"
+                    style="@style/exercise_col_1_style"/>
+
+                <EditText
+                    android:id="@+id/ex_title"
+                    android:inputType="textPersonName"
+                    android:layout_column="1"
+                    android:text="@string/ex_et_title"
+                    style="@style/exercise_col_2_style"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Total Minutes: "
+                    android:id="@+id/ex_length_text"
+                    style="@style/exercise_col_1_style"/>
+
+                <EditText
+                    android:id="@+id/ex_length"
+                    android:inputType="number"
+                    android:layout_column="1"
+                    android:text="@string/ex_et_title"
+                    style="@style/exercise_col_2_style"/>
+
+            </TableRow>
+
+            <Space
+                android:layout_height="20dp"
+                android:id="@+id/exerciseSpaceAfterMinutes"
+                android:layout_width="wrap_content"/>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Intensity: "
+                    android:id="@+id/ex_intensity_text"
+                    style="@style/exercise_int_1_style"/>
+
+                <SeekBar
+                    android:id="@+id/ex_intensity_seekbar"
+                    android:max="10"
+                    android:layout_column="1"
+                    style="@style/exercise_int_2_style"/>
+            </TableRow>
+
+            <Space
+                android:layout_height="20dp"
+                android:id="@+id/exerciseSpaceAfterIntensity"
+                android:layout_width="wrap_content"/>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ex_type"/>
+            </TableRow>
+
+            <Space
+                android:layout_height="20dp"
+                android:id="@+id/exerciseSpaceAfterType"
+                android:layout_width="wrap_content"/>
+
             <EditText
-                android:id="@id/ex_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:text="@string/ex_et_title"
-                android:layout_toEndOf="@id/ex_title_text"
-                />
-
-            <TextView
+                android:id="@+id/exDetailsEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Total Minutes: "
-                android:layout_marginBottom="5dp"
-                android:id="@+id/ex_length_text"
-                android:layout_alignBottom="@+id/ex_length"
-                />
-            <EditText
-                android:id="@id/ex_length"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:layout_below="@id/ex_title"
-                android:layout_toEndOf="@id/ex_length_text"
-                />
+                android:background="@color/colorBackgroundSecondary"
+                android:hint="Enter notes"
+                android:maxLines="1"
+                android:singleLine="true"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Intensity: "
-                android:layout_marginTop="15dp"
-                android:id="@+id/ex_intensity_text"
-                android:layout_below="@id/ex_length"
-                />
+            <Button
+                android:id="@+id/ex_entry_done_button"
+                style="@style/done_button"
+                android:onClick="EntryDoneOnClick"/>
 
-            <SeekBar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/ex_intensity_seekbar"
-                android:max="10"
-                android:layout_alignTop="@+id/ex_intensity_text"
-                android:layout_toEndOf="@+id/ex_intensity_text" />
-
-            <Spinner
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/ex_type"
-                android:layout_marginTop="15dp"
-                android:layout_centerVertical="true"
-                android:layout_below="@id/ex_intensity_text"
-                />
-        </RelativeLayout>
-
+        </TableLayout>
     </ScrollView>
-
-
-
-    <Button
-        android:id="@+id/ex_entry_done_button"
-        style="@style/done_button"
-        android:onClick="EntryDoneOnClick" />
-    <EditText
-        android:id="@+id/exDetailsEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/colorBackgroundSecondary"
-        android:hint="Enter notes"
-        android:maxLines="1"
-        android:layout_above="@id/ex_entry_done_button"
-        android:singleLine="true" />
 
 
 </RelativeLayout>

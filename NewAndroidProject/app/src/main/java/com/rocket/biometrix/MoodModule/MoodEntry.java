@@ -5,7 +5,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +18,9 @@ import com.rocket.biometrix.Database.DatabaseConnect;
 import com.rocket.biometrix.Database.DatabaseConnectionTypes;
 import com.rocket.biometrix.Database.JsonCVHelper;
 import com.rocket.biometrix.Database.LocalStorageAccess;
-import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.Database.LocalStorageAccessMood;
 import com.rocket.biometrix.Login.LocalAccount;
+import com.rocket.biometrix.Login.SettingsHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -107,6 +106,7 @@ public class MoodEntry extends Fragment implements AsyncResponse {
                 (getActivity(), view, R.id.moodCreateEntryDateSelect, R.id.moodCreateEntryTimeSelect);
         popDateTime.Populate();
 
+        SettingsHelper.makeDisabledEntryViewsInvisible(view, LocalStorageAccessMood.TABLE_NAME);
         return view;
     }
 

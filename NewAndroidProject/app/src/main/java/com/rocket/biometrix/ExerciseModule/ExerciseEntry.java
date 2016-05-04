@@ -27,7 +27,9 @@ import com.rocket.biometrix.Database.DatabaseConnectionTypes;
 import com.rocket.biometrix.Database.JsonCVHelper;
 import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessExercise;
+import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.Login.LocalAccount;
+import com.rocket.biometrix.Login.SettingsHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -162,6 +164,8 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
         DTPOWAH.Populate(); //Change the text
 
         onCreateView = v; //This view (the inflated UI layout view ) is saved so onDoneClick() can use it.
+        SettingsHelper.makeDisabledEntryViewsInvisible(onCreateView, LocalStorageAccessExercise.TABLE_NAME);
+
         return v;
     }
 

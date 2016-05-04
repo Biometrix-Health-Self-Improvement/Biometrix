@@ -1,6 +1,7 @@
 package com.rocket.biometrix.Login;
 
 import android.content.Context;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Switch;
 
@@ -122,6 +123,64 @@ public class SettingsHelper {
         return returnStringList;
     }
 
+    /**
+     * Makes the views that are disabled by user settings invisible
+     * @param view The parent view that has the disabled views in it
+     */
+    public static void makeDisabledEntryViewsInvisible(View view, String tableName)
+    {
+        List<Pair<String[], Integer[]>> pairList = null;
+
+        switch (tableName)
+        {
+            case LocalStorageAccessSleep.TABLE_NAME:
+                pairList = getSleepInvisibilityDependencies();
+                break;
+            case LocalStorageAccessMood.TABLE_NAME:
+                pairList = getMoodInvisibilityDependencies();
+                break;
+            case LocalStorageAccessExercise.TABLE_NAME:
+                pairList = getExerciseInvisibilityDependencies();
+                break;
+            case LocalStorageAccessDiet.TABLE_NAME:
+                pairList = getDietInvisibilityDependencies();
+                break;
+            case LocalStorageAccessMedication.TABLE_NAME:
+                pairList = getMedicationInvisibilityDependencies();
+                break;
+            default:
+                pairList = null;
+                break;
+        }
+
+        if (pairList != null)
+        {
+            LocalAccount localAccount = LocalAccount.GetInstance();
+
+            for(Pair<String[], Integer[]> pair : pairList)
+            {
+                boolean shouldDisable = true;
+
+                //If any of the dependencies are enabled, this means do not disable the views
+                for(String string : pair.first)
+                {
+                    if (localAccount.getBoolean(view.getContext(), string, true) )
+                    {
+                        shouldDisable = false;
+                    }
+                }
+
+                if (shouldDisable)
+                {
+                    for(Integer id : pair.second)
+                    {
+                        view.findViewById(id).setVisibility(View.GONE);
+                    }
+                }
+            }
+        }
+    }
+
     //Module disable/enable settings
     public static final String MOOD_MODULE = "MoodModuleEnabled";
     public static final String SLEEP_MODULE = "SleepModuleEnable";
@@ -219,6 +278,37 @@ public class SettingsHelper {
     }
 
     /**
+     * Returns a list of the strings that correspond to local account keys and the view IDs associated
+     * with those IDs. If all Keys are listed as disabled, the view should be disabled.
+     * @return A list of pairs of strings and integers
+     */
+    private static List<Pair<String[], Integer[]>> getDietInvisibilityDependencies()
+    {
+        List<Pair<String[], Integer[]>> returnList = new ArrayList<>(18);
+        returnList.add(new Pair<>(new String[] {DIET_FOOD_TYPE}, new Integer[] {R.id.Food_Name, R.id.FoodType_View}));
+        returnList.add(new Pair<>(new String[] {DIET_MEAL}, new Integer[] {R.id.Meal_View, R.id.Meal_Select}));
+        returnList.add(new Pair<>(new String[] {DIET_SERVING_SIZE}, new Integer[] {R.id.ServingSize_View, R.id.ServingSize_Select}));
+        returnList.add(new Pair<>(new String[] {DIET_CALORIES}, new Integer[] {R.id.Calories_Amt, R.id.Calories_View}));
+        returnList.add(new Pair<>(new String[] {DIET_TOTAL_FAT}, new Integer[] {R.id.TotalFat_Amt, R.id.TotalFat_View}));
+        returnList.add(new Pair<>(new String[] {DIET_SAT_FAT}, new Integer[] {R.id.SaturatedFat_Amt, R.id.SaturatedFat_View}));
+        returnList.add(new Pair<>(new String[] {DIET_TRANS_FAT}, new Integer[] {R.id.TransFat_Amt, R.id.TransFat_View}));
+        returnList.add(new Pair<>(new String[] {DIET_CHOL}, new Integer[] {R.id.Cholesterol_Amt, R.id.Cholesterol_View}));
+        returnList.add(new Pair<>(new String[] {DIET_SODIUM}, new Integer[] {R.id.Sodium_Amt, R.id.Sodium_View}));
+        returnList.add(new Pair<>(new String[] {DIET_TOTAL_CARBS}, new Integer[] {R.id.TotalCarb_Amt, R.id.TotalCarbs_View}));
+        returnList.add(new Pair<>(new String[] {DIET_FIBER}, new Integer[] {R.id.DietaryFiber_Amt, R.id.DietaryFiber_View}));
+        returnList.add(new Pair<>(new String[] {DIET_SUGARS}, new Integer[] {R.id.Sugars_Amt, R.id.Sugars_View}));
+        returnList.add(new Pair<>(new String[] {DIET_PROTEIN}, new Integer[] {R.id.Protein_Amt, R.id.Protein_View}));
+        returnList.add(new Pair<>(new String[] {DIET_VITAMINA}, new Integer[] {R.id.VitaminA_Amt, R.id.VitaminA_View}));
+        returnList.add(new Pair<>(new String[] {DIET_VITAMINB}, new Integer[] {R.id.VitaminB_Amt, R.id.VitaminB_View}));
+        returnList.add(new Pair<>(new String[] {DIET_CALCIUM}, new Integer[] {R.id.Calcium_Amt, R.id.Calcium_View}));
+        returnList.add(new Pair<>(new String[] {DIET_IRON}, new Integer[] {R.id.Iron_Amt, R.id.Iron_View}));
+        returnList.add(new Pair<>(new String[] {DIET_NOTES}, new Integer[] {R.id.dietDetailsEditText}));
+
+
+        return returnList;
+    }
+
+    /**
      * Returns a 2 dimensional array that has a list of all keys along with the column they go with
      * for every column that is analyzed
      * @return The aforementioned 2D array
@@ -264,6 +354,29 @@ public class SettingsHelper {
     }
 
     /**
+     * Returns a list of the strings that correspond to local account keys and the view IDs associated
+     * with those IDs. If all Keys are listed as disabled, the view should be disabled.
+     * @return A list of pairs of strings and integers
+     */
+    private static List<Pair<String[], Integer[]>> getExerciseInvisibilityDependencies()
+    {
+        List<Pair<String[], Integer[]>> returnList = new ArrayList<>(6);
+        returnList.add(new Pair<>(new String[] {EXERCISE_NAME}, new Integer[]{R.id.ex_title, R.id.ex_title_text}));
+        returnList.add(new Pair<>(new String[] {EXERCISE_DURATION}, new Integer[]{R.id.ex_length, R.id.ex_length_text}));
+
+        returnList.add(new Pair<>(new String[] {EXERCISE_NAME, EXERCISE_DURATION}, new Integer[]{R.id.exerciseSpaceAfterMinutes}));
+
+        returnList.add(new Pair<>(new String[] {EXERCISE_INTENSITY}, new Integer[]{R.id.ex_intensity_seekbar,
+        R.id.ex_intensity_text, R.id.exerciseSpaceAfterIntensity}));
+
+        returnList.add(new Pair<>(new String[] {EXERCISE_TYPE}, new Integer[]{R.id.ex_type, R.id.exerciseSpaceAfterType}));
+
+        returnList.add(new Pair<>(new String[] {EXERCISE_NOTES}, new Integer[]{R.id.exDetailsEditText}));
+
+        return returnList;
+    }
+
+    /**
      * Returns a 2 dimensional array that has a list of all keys along with the column they go with.
      * Returns only columns that are analyzed in analysis
      * @return The aforementioned 2D array
@@ -293,6 +406,31 @@ public class SettingsHelper {
                 {MOOD_IRRITABLE, Integer.toString(R.id.DisableSwitchIrritabilitySlider)},
                 {MOOD_ANX, Integer.toString(R.id.DisableSwitchAnxietySlider)},
                 {MOOD_NOTES, Integer.toString(R.id.DisableSwitchMoodNotesInput)}};
+    }
+
+    /**
+     * Returns a list of the strings that correspond to local account keys and the view IDs associated
+     * with those IDs. If all Keys are listed as disabled, the view should be disabled.
+     * @return A list of pairs of strings and integers
+     */
+    private static List<Pair<String[], Integer[]>> getMoodInvisibilityDependencies()
+    {
+        List<Pair<String[], Integer[]>> returnList = new ArrayList<>(6);
+        returnList.add(new Pair<>(new String[] {MOOD_DEP}, new Integer[]{R.id.moodDepressedDesc, R.id.moodDepressedLabel,
+        R.id.moodDepressedRating}));
+        returnList.add(new Pair<>(new String[] {MOOD_ANX}, new Integer[]{R.id.moodAnxietyDesc, R.id.moodAnxietyLabel,
+                R.id.moodAnxietyRating}));
+        returnList.add(new Pair<>(new String[] {MOOD_IRRITABLE}, new Integer[]{R.id.moodIrritabilityDesc, R.id.moodIrritabilityLabel,
+                R.id.moodIrritabilityRating}));
+        returnList.add(new Pair<>(new String[] {MOOD_ELEV}, new Integer[]{R.id.moodElevatedDesc, R.id.moodElevatedLabel,
+                R.id.moodElevatedRating}));
+
+        returnList.add(new Pair<>(new String[] {MOOD_DEP, MOOD_ANX, MOOD_ELEV, MOOD_IRRITABLE},
+                new Integer[]{R.id.moodSpaceAfterAnxiety}));
+
+        returnList.add(new Pair<>(new String[] {MOOD_NOTES}, new Integer[]{R.id.moodDetailsEditText}));
+
+        return returnList;
     }
 
     /**
@@ -327,6 +465,28 @@ public class SettingsHelper {
                 {SLEEP_NOTES, Integer.toString(R.id.DisableSwitchSleepNotesInput)}};
     }
 
+
+
+    /**
+     * Returns a list of the strings that correspond to local account keys and the view IDs associated
+     * with those IDs. If all Keys are listed as disabled, the view should be disabled.
+     * @return A list of pairs of strings and integers
+     */
+    private static List<Pair<String[], Integer[]>> getSleepInvisibilityDependencies()
+    {
+        List<Pair<String[], Integer[]>> returnList = new ArrayList<>(5);
+        returnList.add(new Pair<>(new String[] {SLEEP_HOURS}, new Integer[]{R.id.sleepHoursSleptTextView, R.id.sleepHoursSeekBar}));
+        returnList.add(new Pair<>(new String[] {SLEEP_MINUTES}, new Integer[]{R.id.sleepMinutesSleptTextView, R.id.sleepMinutesSeekBar}));
+        returnList.add(new Pair<>(new String[] {SLEEP_HOURS, SLEEP_MINUTES}, new Integer[]{R.id.sleepEndTimeTextView, R.id.sleepSpaceAfterMinutes,
+        R.id.sleepSpaceAfterEndTime, R.id.sleepTimeSleptTextView}));
+
+        returnList.add(new Pair<>(new String[] {SLEEP_QUALITY}, new Integer[]{R.id.sleepQualityTextView,
+                R.id.sleepQualitySeekBar, R.id.sleepQualityNumberTextView, R.id.sleepSpaceAfterQuality}));
+
+        returnList.add(new Pair<>(new String[] {SLEEP_NOTES}, new Integer[]{R.id.sleepNotesEditText}));
+
+        return returnList;
+    }
 
     //Sleep getAnalysisSleepKeysAndColumns is not implemented because it does not make sense.
     //There are only two columns and they depend on different factors for whether or not they are
@@ -375,6 +535,28 @@ public class SettingsHelper {
                 {MED_INSTRUCTIONS, Integer.toString(R.id.DisableSwitchConsumptionInstructions)},
                 {MED_WARNINGS, Integer.toString(R.id.DisableSwitchConsumptionWarnings)},
                 {MED_NOTES, Integer.toString(R.id.DisableSwitchMedicationNotesInput)}};
+    }
+
+    /**
+     * Returns a list of the strings that correspond to local account keys and the view IDs associated
+     * with those IDs. If all Keys are listed as disabled, the view should be disabled.
+     * @return A list of pairs of strings and integers
+     */
+    private static List<Pair<String[], Integer[]>> getMedicationInvisibilityDependencies()
+    {
+        List<Pair<String[], Integer[]>> returnList = new ArrayList<>(7);
+        returnList.add(new Pair<>(new String[] {MED_BRAND}, new Integer[]{R.id.MedicationEditBrandName}));
+        returnList.add(new Pair<>(new String[] {MED_PRESCRIBER}, new Integer[]{R.id.MedicationPrescriberName}));
+        returnList.add(new Pair<>(new String[] {MED_DOSE}, new Integer[]{R.id.MedicationDoseAmount}));
+        returnList.add(new Pair<>(new String[] {MED_INSTRUCTIONS}, new Integer[]{R.id.MedicationInstructionEditText}));
+        returnList.add(new Pair<>(new String[] {MED_WARNINGS}, new Integer[]{R.id.MedicationWarningsEditText}));
+
+        returnList.add(new Pair<>(new String[] {MED_BRAND, MED_PRESCRIBER, MED_DOSE, MED_INSTRUCTIONS, MED_WARNINGS},
+                new Integer[]{R.id.medicationSpaceAfterWarnings}));
+
+        returnList.add(new Pair<>(new String[] {MED_NOTES}, new Integer[]{R.id.medicationDetailsEditText}));
+
+        return returnList;
     }
 
     //Integer value for the sleep module. Is the number of the hour 0-24 where entries before that hour

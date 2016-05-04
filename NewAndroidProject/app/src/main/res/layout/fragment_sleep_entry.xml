@@ -76,7 +76,8 @@
 
             <Space
                 android:layout_width="20dp"
-                android:layout_height="20dp" />
+                android:layout_height="20dp"
+                android:id="@+id/sleepSpaceAfterMinutes"/>
 
             <TableRow
                 android:layout_width="match_parent"
@@ -108,7 +109,8 @@
 
             <Space
                 android:layout_width="20dp"
-                android:layout_height="20dp" />
+                android:layout_height="20dp"
+                android:id="@+id/sleepSpaceAfterEndTime"/>
 
             <TableRow
                 android:layout_width="match_parent"
@@ -145,7 +147,8 @@
 
             <Space
                 android:layout_width="30dp"
-                android:layout_height="30dp" />
+                android:layout_height="30dp"
+                android:id="@+id/sleepSpaceAfterQuality"/>
 
             <EditText
                 android:id="@+id/sleepNotesEditText"

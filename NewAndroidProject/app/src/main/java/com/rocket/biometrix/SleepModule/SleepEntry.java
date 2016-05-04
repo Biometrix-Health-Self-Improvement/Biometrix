@@ -29,6 +29,7 @@ import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.Login.LocalAccount;
+import com.rocket.biometrix.Login.SettingsHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -244,7 +245,6 @@ public class SleepEntry extends Fragment implements AsyncResponse {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_sleep_entry, container, false);
 
-
         //Moves this to another function to clean up onCreate
         GetViewReferences(v);
 
@@ -260,6 +260,8 @@ public class SleepEntry extends Fragment implements AsyncResponse {
         UpdateEndTimes();
 
         entryView = v;
+
+        SettingsHelper.makeDisabledEntryViewsInvisible(entryView, LocalStorageAccessSleep.TABLE_NAME);
 
         return v;
     }
