@@ -86,10 +86,9 @@ public class MoodParent extends Fragment {
 
     private void UpdatePreviousEntries(View v)
     {
+        List<String[]> moodData = LocalStorageAccessMood.getEntries(v.getContext());
         try {
-            //LocalStorageAccessMood fileAccess = new LocalStorageAccessMood(v.getContext(),null,null,1);
 
-            List<String[]> moodData = LocalStorageAccessMood.getEntries(v.getContext());
 
             displayEntriesLayout.removeAllViews();
 
@@ -108,10 +107,12 @@ public class MoodParent extends Fragment {
                 textView.setText(str);
                 displayEntriesLayout.addView(textView);
             }
-        } catch (Exception x){}
+        } catch (Exception x){        }
     }
 
     String getDescString(String intStr){
+        if (intStr == null) return "error";
+
         switch (intStr) { //get string based on rating
             case "0": //none
                 return getResources().getString(R.string.mood_rating_none);

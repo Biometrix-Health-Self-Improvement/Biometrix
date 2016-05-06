@@ -1,6 +1,5 @@
 package com.rocket.biometrix.Settings;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -8,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.rocket.biometrix.Login.SettingsHelper;
+import com.rocket.biometrix.Login.SettingsAndEntryHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -79,7 +78,7 @@ public class DietSettings extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_diet_settings, container, false);
         settingsView = view;
-        SettingsHelper.setupSwitches(view, SettingsHelper.getAllDietKeysAndRIDs(), true);
+        SettingsAndEntryHelper.setupSwitches(view, SettingsAndEntryHelper.getAllDietKeysAndRIDs(), true);
         return view;
     }
 
@@ -99,6 +98,6 @@ public class DietSettings extends Fragment {
     }
 
     public void onAcceptClick(View v){
-        SettingsHelper.storeSwitchValues(settingsView, SettingsHelper.getAllDietKeysAndRIDs());
+        SettingsAndEntryHelper.storeSwitchValues(settingsView, SettingsAndEntryHelper.getAllDietKeysAndRIDs());
     }
 }

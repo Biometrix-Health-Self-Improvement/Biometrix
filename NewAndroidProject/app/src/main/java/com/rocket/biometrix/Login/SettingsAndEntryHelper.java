@@ -1,9 +1,13 @@
 package com.rocket.biometrix.Login;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.util.Pair;
 import android.view.View;
+import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessDiet;
@@ -24,15 +28,18 @@ import java.util.List;
  * Modified by TJ on 4/30/2016
  * Changed to SettingsHelper class. Now contains key names as well as methods to set or retrieve
  * settings based on keys, or retrieve a list of keys that correspond to resource IDs
+ *
+ * 5/5/2016- Changed to SettingsAndEntryHelper class now that this contains more functionality for
+ * preparing entries
  */
-public class SettingsHelper {
+public class SettingsAndEntryHelper {
 
     /**
      * Sets the status of all switches for the passed in 2D string array based on the default value
      * and the user's settings
      * @param view The view that holds the switch that needs to be modified
      * @param keysAndIDs A 2D array containing all keys and their ID, should be retrieved from
-     *                   SettingsHelper as well
+     *                   SettingsAndEntryHelper as well
      * @param defaultValue Default to true or false based on this param
      */
     public static void setupSwitches(View view, String[][] keysAndIDs, boolean defaultValue)
@@ -50,7 +57,7 @@ public class SettingsHelper {
      * by the switches
      * @param view The view that holds the switch that needs to be modified
      * @param keysAndIDs A 2D array containing all keys and their ID, should be retrieved from
-     *                   SettingsHelper as well
+     *                   SettingsAndEntryHelper as well
      */
     public static void storeSwitchValues(View view, String[][] keysAndIDs)
     {
@@ -180,6 +187,148 @@ public class SettingsHelper {
             }
         }
     }
+
+    /**
+     * Prepares the array from the text views and other views on the table based on whether they
+     * are visible or not. If not visible it sets nulls, if visible this sets the value from the
+     * associated view
+     * @param view The parent view that has the other views on it
+     * @param tableName The name of the table
+     * @param dateString The string that is used for the date element in the array
+     * @param timeString The string that is used for the time element in the array. Can be null (due
+     *                   to diet table..) and is nothing is done with this if the call is from the
+     *                   diet table
+     * @return A string array with an element for each column
+     */
+    public static String[] prepareColumnArray(View view, String tableName, String dateString, String timeString)
+    {
+        String columnArray[] = null;
+        int dateIndex;
+        int timeIndex = -1;
+
+        switch (tableName)
+        {
+            case LocalStorageAccessSleep.TABLE_NAME:
+                columnArray = new String[LocalStorageAccessSleep.getColumns().length];
+                dateIndex = 3;
+                timeIndex = 4;
+                break;
+            case LocalStorageAccessMood.TABLE_NAME:
+                columnArray = new String[LocalStorageAccessMood.getColumns().length];
+                dateIndex = 3;
+                timeIndex = 4;
+                break;
+            case LocalStorageAccessMedication.TABLE_NAME:
+                columnArray = new String[LocalStorageAccessMedication.getColumns().length];
+                dateIndex = 3;
+                timeIndex = 4;
+                break;
+            case LocalStorageAccessDiet.TABLE_NAME:
+                columnArray = new String[LocalStorageAccessDiet.getColumns().length];
+                dateIndex = 3;
+                break;
+            case LocalStorageAccessExercise.TABLE_NAME:
+                columnArray = new String[LocalStorageAccessExercise.getColumns().length];
+                dateIndex = 8;
+                timeIndex = 9;
+                break;
+            default:
+                columnArray = new String[0];
+                return columnArray;
+        }
+
+        String username = LocalAccount.DEFAULT_NAME;
+
+        if (LocalAccount.isLoggedIn()) {
+            username = LocalAccount.GetInstance().GetUsername();
+        }
+
+        columnArray[0] = null;
+        columnArray[1] = username;
+        columnArray[2] = null;
+        columnArray[dateIndex] = dateString;
+
+        if (timeIndex != -1 && timeString != null)
+        {
+            columnArray[timeIndex] = timeString;
+        }
+
+        updateEntryStringFromVisibleViews(view, tableName, columnArray);
+
+        return columnArray;
+    }
+
+    /**
+     * Grabs the value from the view and puts it into the associated place in the array
+     * @param view The view that should have all of the views to check visibility on it.
+     * @param tableName The name of the table the entry is for
+     * @param arrayToUpdate The array of strings that needs to be updated before being entered
+     */
+    private static void updateEntryStringFromVisibleViews(View view, String tableName, String[] arrayToUpdate)
+    {
+        List<Quartet<Integer, Integer, VIEW_TYPE, String>> quartets = null;
+
+        switch (tableName)
+        {
+            case LocalStorageAccessSleep.TABLE_NAME:
+                quartets = getSleepViewDependencies();
+                break;
+            case LocalStorageAccessMood.TABLE_NAME:
+                quartets = getMoodViewDependencies();
+                break;
+            case LocalStorageAccessDiet.TABLE_NAME:
+                quartets = getDietViewDependencies();
+                break;
+            case LocalStorageAccessExercise.TABLE_NAME:
+                quartets = getExerciseViewDependencies();
+                break;
+            case LocalStorageAccessMedication.TABLE_NAME:
+                quartets = getMedicationViewDependencies();
+                break;
+        }
+
+        for(Quartet<Integer, Integer, VIEW_TYPE, String> quartet : quartets)
+        {
+            View element = view.findViewById(quartet.first);
+            //If the view is visible, update the element that corresponds to that view in the array
+            //with the default value.
+            if(element.getVisibility() == View.GONE)
+            {
+                arrayToUpdate[quartet.second] = quartet.fourth;
+            }
+            //Otherwise, grab the value as expected based on the type
+            else
+            {
+                //String foodName = ((TextView)dietView.findViewById(R.id.Food_Name)).getText().toString();
+                //String meal = ((Spinner)dietView.findViewById(R.id.Meal_Select)).getSelectedItem().toString();
+                switch (quartet.third)
+                {
+                    case TEXT_VIEW:
+                        arrayToUpdate[quartet.second] = ((TextView)element).getText().toString();
+                        break;
+                    case SEEKBAR:
+                        arrayToUpdate[quartet.second] = Integer.toString(((SeekBar) element).getProgress());
+                        break;
+                    case SPINNER:
+                        arrayToUpdate[quartet.second] = ((Spinner)element).getSelectedItem().toString();
+                        break;
+                    case SLEEP_DURATION:
+                        String duration = ((TextView)element).getText().toString();
+                        arrayToUpdate[quartet.second] = duration.substring(duration.indexOf(":") + 2).trim();
+                        break;
+                    case TEXT_VIEW_INT:
+                        arrayToUpdate[quartet.second] = ((TextView)element).getText().toString();
+                        if (arrayToUpdate[quartet.second].equals(""))
+                        {
+                            arrayToUpdate[quartet.second] = "0";
+                        }
+                        break;
+                }
+            }
+        }
+    }
+
+
 
     //Module disable/enable settings
     public static final String MOOD_MODULE = "MoodModuleEnabled";
@@ -330,7 +479,38 @@ public class SettingsHelper {
                 {DIET_CALCIUM, LocalStorageAccessDiet.CALCIUM},
                 {DIET_IRON, LocalStorageAccessDiet.IRON}};
     }
-        
+
+    /**
+     * Returns a list of quartets for the diet table. The first item is the ID of the view
+     * that should be checked for visibility. The second is the position in the entry array to place
+     * the value of element 4 in if the view is invisible. Element three is the type of view that the
+     * element corresponds to
+     * @return A list of pairs of integers
+     */
+    private static List<Quartet<Integer, Integer, VIEW_TYPE, String>> getDietViewDependencies()
+    {
+        List<Quartet<Integer, Integer, VIEW_TYPE, String>> returnList = new ArrayList<>(18);
+        returnList.add(new Quartet<>(R.id.Food_Name, 4, VIEW_TYPE.TEXT_VIEW, ""));
+        returnList.add(new Quartet<>(R.id.Meal_Select, 5, VIEW_TYPE.SPINNER, ""));
+        returnList.add(new Quartet<>(R.id.ServingSize_View, 6, VIEW_TYPE.SPINNER, ""));
+        returnList.add(new Quartet<>(R.id.Calories_Amt, 7, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
+        returnList.add(new Quartet<>(R.id.TotalFat_Amt, 8, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
+        returnList.add(new Quartet<>(R.id.SaturatedFat_Amt, 9, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
+        returnList.add(new Quartet<>(R.id.TransFat_Amt, 10, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
+        returnList.add(new Quartet<>(R.id.Cholesterol_Amt, 11, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
+        returnList.add(new Quartet<>(R.id.Sodium_Amt, 12, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
+        returnList.add(new Quartet<>(R.id.TotalCarb_Amt, 13, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
+        returnList.add(new Quartet<>(R.id.DietaryFiber_Amt, 14, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
+        returnList.add(new Quartet<>(R.id.Sugars_Amt, 15, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
+        returnList.add(new Quartet<>(R.id.Protein_Amt, 16, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
+        returnList.add(new Quartet<>(R.id.VitaminA_Amt, 17, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
+        returnList.add(new Quartet<>(R.id.VitaminB_Amt, 18, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
+        returnList.add(new Quartet<>(R.id.Calcium_Amt, 19, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
+        returnList.add(new Quartet<>(R.id.Iron_Amt, 20, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
+        returnList.add(new Quartet<>(R.id.dietDetailsEditText, 21, VIEW_TYPE.TEXT_VIEW, ""));
+
+        return returnList;
+    }
     
     //Exercise module settings
     public static final String EXERCISE_NAME = "ExerciseNameEnabled";
@@ -363,7 +543,6 @@ public class SettingsHelper {
         List<Pair<String[], Integer[]>> returnList = new ArrayList<>(6);
         returnList.add(new Pair<>(new String[] {EXERCISE_NAME}, new Integer[]{R.id.ex_title, R.id.ex_title_text}));
         returnList.add(new Pair<>(new String[] {EXERCISE_DURATION}, new Integer[]{R.id.ex_length, R.id.ex_length_text}));
-
         returnList.add(new Pair<>(new String[] {EXERCISE_NAME, EXERCISE_DURATION}, new Integer[]{R.id.exerciseSpaceAfterMinutes}));
 
         returnList.add(new Pair<>(new String[] {EXERCISE_INTENSITY}, new Integer[]{R.id.ex_intensity_seekbar,
@@ -372,6 +551,25 @@ public class SettingsHelper {
         returnList.add(new Pair<>(new String[] {EXERCISE_TYPE}, new Integer[]{R.id.ex_type, R.id.exerciseSpaceAfterType}));
 
         returnList.add(new Pair<>(new String[] {EXERCISE_NOTES}, new Integer[]{R.id.exDetailsEditText}));
+
+        return returnList;
+    }
+
+    /**
+     * Returns a list of quartets for the exercise table. The first item is the ID of the view
+     * that should be checked for visibility. The second is the position in the entry array to place
+     * the value of element 4 in if the view is invisible. Element three is the type of view that the
+     * element corresponds to
+     * @return A list of pairs of integers
+     */
+    private static List<Quartet<Integer, Integer, VIEW_TYPE, String>> getExerciseViewDependencies()
+    {
+        List<Quartet<Integer, Integer, VIEW_TYPE, String>> returnList = new ArrayList<>(5);
+        returnList.add(new Quartet<>(R.id.ex_title, 3, VIEW_TYPE.TEXT_VIEW, ""));
+        returnList.add(new Quartet<>(R.id.ex_type, 4, VIEW_TYPE.SPINNER, ""));
+        returnList.add(new Quartet<>(R.id.ex_length, 5, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
+        returnList.add(new Quartet<>(R.id.ex_intensity_seekbar, 6, VIEW_TYPE.SEEKBAR, (String)null));
+        returnList.add(new Quartet<>(R.id.exDetailsEditText, 7, VIEW_TYPE.TEXT_VIEW, ""));
 
         return returnList;
     }
@@ -434,6 +632,25 @@ public class SettingsHelper {
     }
 
     /**
+     * Returns a list of quartets for the mood table. The first item is the ID of the view
+     * that should be checked for visibility. The second is the position in the entry array to place
+     * the value of element 4 in if the view is invisible. Element three is the type of view that the
+     * element corresponds to
+     * @return A list of pairs of integers
+     */
+    private static List<Quartet<Integer, Integer, VIEW_TYPE, String>> getMoodViewDependencies()
+    {
+        List<Quartet<Integer, Integer, VIEW_TYPE, String>> returnList = new ArrayList<>(5);
+        returnList.add(new Quartet<>(R.id.moodDepressedRating, 5, VIEW_TYPE.SEEKBAR, (String)null));
+        returnList.add(new Quartet<>(R.id.moodElevatedRating, 6, VIEW_TYPE.SEEKBAR, (String)null));
+        returnList.add(new Quartet<>(R.id.moodIrritabilityRating, 7, VIEW_TYPE.SEEKBAR, (String)null));
+        returnList.add(new Quartet<>(R.id.moodAnxietyRating, 8, VIEW_TYPE.SEEKBAR, (String)null));
+        returnList.add(new Quartet<>(R.id.moodDetailsEditText, 9, VIEW_TYPE.TEXT_VIEW, ""));
+
+        return returnList;
+    }
+
+    /**
      * Returns a 2 dimensional array that has a list of all keys along with the column they go with
      * returns only columns that are analyzed in analysis
      * @return The aforementioned 2D array
@@ -465,8 +682,6 @@ public class SettingsHelper {
                 {SLEEP_NOTES, Integer.toString(R.id.DisableSwitchSleepNotesInput)}};
     }
 
-
-
     /**
      * Returns a list of the strings that correspond to local account keys and the view IDs associated
      * with those IDs. If all Keys are listed as disabled, the view should be disabled.
@@ -484,6 +699,23 @@ public class SettingsHelper {
                 R.id.sleepQualitySeekBar, R.id.sleepQualityNumberTextView, R.id.sleepSpaceAfterQuality}));
 
         returnList.add(new Pair<>(new String[] {SLEEP_NOTES}, new Integer[]{R.id.sleepNotesEditText}));
+
+        return returnList;
+    }
+
+    /**
+     * Returns a list of quartets for the sleep table. The first item is the ID of the view
+     * that should be checked for visibility. The second is the position in the entry array to place
+     * the value of element 4 in if the view is invisible. Element three is the type of view that the
+     * element corresponds to
+     * @return A list of pairs of integers
+     */
+    private static List<Quartet<Integer, Integer, VIEW_TYPE, String>> getSleepViewDependencies()
+    {
+        List<Quartet<Integer, Integer, VIEW_TYPE, String>> returnList = new ArrayList<>(3);
+        returnList.add(new Quartet<>(R.id.sleepTimeSleptTextView, 5, VIEW_TYPE.SLEEP_DURATION, (String)null));
+        returnList.add(new Quartet<>(R.id.sleepQualitySeekBar, 6, VIEW_TYPE.SEEKBAR, (String)null));
+        returnList.add(new Quartet<>(R.id.sleepNotesEditText, 7, VIEW_TYPE.TEXT_VIEW, ""));
 
         return returnList;
     }
@@ -559,7 +791,30 @@ public class SettingsHelper {
         return returnList;
     }
 
+    /**
+     * Returns a list of quartets for the exercise table. The first item is the ID of the view
+     * that should be checked for visibility. The second is the position in the entry array to place
+     * the value of element 4 in if the view is invisible. Element three is the type of view that the
+     * element corresponds to
+     * @return A list of pairs of integers
+     */
+    private static List<Quartet<Integer, Integer, VIEW_TYPE, String>> getMedicationViewDependencies()
+    {
+        List<Quartet<Integer, Integer, VIEW_TYPE, String>> returnList = new ArrayList<>(5);
+        returnList.add(new Quartet<>(R.id.MedicationEditBrandName, 5, VIEW_TYPE.TEXT_VIEW, ""));
+        returnList.add(new Quartet<>(R.id.MedicationPrescriberName, 6, VIEW_TYPE.TEXT_VIEW, ""));
+        returnList.add(new Quartet<>(R.id.MedicationDoseAmount, 7, VIEW_TYPE.TEXT_VIEW, ""));
+        returnList.add(new Quartet<>(R.id.MedicationInstructionEditText, 8, VIEW_TYPE.TEXT_VIEW, ""));
+        returnList.add(new Quartet<>(R.id.MedicationWarningsEditText, 9, VIEW_TYPE.TEXT_VIEW, ""));
+        returnList.add(new Quartet<>(R.id.medicationDetailsEditText, 10, VIEW_TYPE.TEXT_VIEW, ""));
+
+        return returnList;
+    }
+
     //Integer value for the sleep module. Is the number of the hour 0-24 where entries before that hour
     //count as being for the previous day. Default is 8.
     public static final String SLEEP_INT_CUTOFF_HOUR = "SleepCutoffHour";
+
+    public enum VIEW_TYPE {TEXT_VIEW, TEXT_VIEW_INT, SEEKBAR, SPINNER, SLEEP_DURATION};
 }
+

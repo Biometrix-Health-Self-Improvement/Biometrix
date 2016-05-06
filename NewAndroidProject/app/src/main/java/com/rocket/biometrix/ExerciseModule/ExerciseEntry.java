@@ -5,15 +5,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -27,19 +22,12 @@ import com.rocket.biometrix.Database.DatabaseConnectionTypes;
 import com.rocket.biometrix.Database.JsonCVHelper;
 import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessExercise;
-import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.Login.LocalAccount;
-import com.rocket.biometrix.Login.SettingsHelper;
+import com.rocket.biometrix.Login.SettingsAndEntryHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -62,20 +50,7 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
     public static TextView timeTV; //Used by the DateTimePopulateTextView in the onCreate event
     public static TextView dateTV;
 
-    String typeSelected; //string to save type of exercise selected in the radio 'bubble' buttons
-
     Spinner typeSpinner;
-    int intensity=0;
-    boolean toasted = false; //Used to display encouraging messages ONCE in minuteSpinner.
-
-
-    String lowestSpinnerValueThreshold = "5"; //5 minutes
-    String lowSpinnerValueThreshold = "10"; //10 minutes (idea is to encourage user to exercise more but still celebrate their 'baby' gains)
-    String lowSpinnerMessage = "Keep it up :)"; //The encouraging message
-    String highSpinnerMessage = "Nice!"; //The BEST message users strive for
-
-    String[] exerciseEntryData = {}; //String array that will store all user entered data, used in bundles and SQLite insert
-
 
     private OnFragmentInteractionListener mListener;
 
@@ -118,7 +93,6 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
 
     }
 
-
     //This is where the real inflater is, it inflate the actual UI layout of the 'entry'
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -132,29 +106,6 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
 
         typeSpinner.setAdapter(typeSpin);
 
-        SeekBar inty = (SeekBar) v.findViewById(R.id.ex_intensity_seekbar);
-        inty.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-                                            @Override
-                                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                                                intensity = progress;
-                                            }
-
-                                            @Override
-                                            public void onStartTrackingTouch(SeekBar seekBar) {
-
-                                            }
-
-                                            @Override
-                                            public void onStopTrackingTouch(SeekBar seekBar) {
-
-                                            }
-                                        }
-
-        );
-
-
-
         //Linking contexts likes non-null variables.
         timeTV = (TextView) v.findViewById(R.id.ex_tv_time);
         dateTV = (TextView) v.findViewById(R.id.ex_tv_date);
@@ -164,7 +115,7 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
         DTPOWAH.Populate(); //Change the text
 
         onCreateView = v; //This view (the inflated UI layout view ) is saved so onDoneClick() can use it.
-        SettingsHelper.makeDisabledEntryViewsInvisible(onCreateView, LocalStorageAccessExercise.TABLE_NAME);
+        SettingsAndEntryHelper.makeDisabledEntryViewsInvisible(onCreateView, LocalStorageAccessExercise.TABLE_NAME);
 
         return v;
     }
@@ -189,13 +140,6 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
     *
      */
     public void onDoneClick(View v) {
-        //Keep in mind that the 'View' you reference here is only the 'View' for the actual done button
-        //NOT the whole UI Layout you made.
-        String titleString = StringDateTimeConverter.GetStringFromEditText(onCreateView.findViewById(R.id.ex_title));
-        String notes = ((TextView)onCreateView.findViewById(R.id.exDetailsEditText)).getText().toString();
-        String minSelected = ((TextView)onCreateView.findViewById(R.id.ex_length)).getText().toString();
-        typeSelected = ((Spinner) onCreateView.findViewById(R.id.ex_type)).getSelectedItem().toString();
-        //Filling date and time strings for bundle's string array
         String dateString = dateTV.getText().toString();
         String timeString = timeTV.getText().toString();
 
@@ -203,18 +147,11 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
         dateString = StringDateTimeConverter.fixDate(dateString);
         timeString = StringDateTimeConverter.fixTime(timeString);
 
-        String username = LocalAccount.DEFAULT_NAME;
-
-        if (LocalAccount.isLoggedIn()) {
-            username = LocalAccount.GetInstance().GetUsername();
-        }
-
-        exerciseEntryData = new String[]{null, username, null, titleString, typeSelected, minSelected, Integer.toString(intensity), notes, dateString, timeString};
-
-        //https://developer.android.com/reference/android/os/Bundle.html
-        //Put string array that has all the entries data points in it into a Bundle. This bundle is for future extensibility it is NOT for the parent class.
-        Bundle exerciseEntryBundle = new Bundle();
-        exerciseEntryBundle.putStringArray("exEntBundKey", exerciseEntryData);
+        //String[] exerciseEntryData = new String[]{null, username, null, titleString, typeSelected,
+        // minSelected, Integer.toString(intensity), notes, dateString, timeString};
+        //Has the affect of the comment above
+        String[] exerciseEntryData = SettingsAndEntryHelper.prepareColumnArray(onCreateView,
+                LocalStorageAccessExercise.TABLE_NAME, dateString, timeString);
 
         String[] cols = LocalStorageAccessExercise.getColumns();
 
@@ -224,6 +161,7 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
         //Constructor for LSA Exercise
         LocalStorageAccessExercise dbEx = new LocalStorageAccessExercise(context);
         //Making sure I have data for each column (even if null or empty, note that this is NOT required, you can insert columns individually if you wish.) @see putNull
+        //I don't believe the above comment is correct.
         if (cols.length == exerciseEntryData.length) {
             ContentValues rowToBeInserted = new ContentValues();
             int dataIndex = 0;
@@ -254,95 +192,7 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
                         LocalAccount.GetInstance().GetToken(),
                         DatabaseConnectionTypes.EXERCISE_TABLE);
             }
-
-
-
         }
-
-/*
-        //Filling a string that holds title
-        String titleString = StringDateTimeConverter.GetStringFromEditText(onCreateView.findViewById(R.id.ex_title));
-
-        //Filling date and time strings for bundle's string array
-        String dateString = dateTV.getText().toString();
-        String timeString = timeTV.getText().toString();
-
-        //Cleaning date and time strings with helper class
-        dateString = StringDateTimeConverter.fixDate(dateString);
-        timeString = StringDateTimeConverter.fixTime(timeString);
-
-        //Filling reps/laps string
-        String repsString = StringDateTimeConverter.GetStringFromEditText(onCreateView.findViewById(R.id.ex_et_reps));
-
-        //Filling weight/intensity string from its editText found @content_exercise_entry.xml
-        String weightString = StringDateTimeConverter.GetStringFromEditText(onCreateView.findViewById(R.id.ex_et_weight));
-
-        //Filling notes string
-        String notesString = StringDateTimeConverter.GetStringFromEditText(onCreateView.findViewById(R.id.ex_notes));
-
-        String username = LocalAccount.DEFAULT_NAME;
-
-        if (LocalAccount.isLoggedIn() )
-        {
-            username = LocalAccount.GetInstance().GetUsername();
-        }
-
-        //Make string array to hold all the strings extracted from the user's input on this entry activity
-        //{LOCALEXERCISEID, USERNAME, WEBEXERCISEID, TITLE, TYPE, MINUTES, REPS, LAPS, WEIGHT, INTY, NOTES, DATE, TIME, UPDATED}; //No distinction between reps and laps, weight and intensity.
-        exerciseEntryData = new String[]{null, username, null, titleString, typeSelected, minSelected, repsString, repsString, weightString, weightString, notesString, dateString, timeString};
-
-        //https://developer.android.com/reference/android/os/Bundle.html
-        //Put string array that has all the entries data points in it into a Bundle. This bundle is for future extensibility it is NOT for the parent class.
-        Bundle exerciseEntryBundle = new Bundle();
-        exerciseEntryBundle.putStringArray("exEntBundKey", exerciseEntryData);
-
-
-        //Getting context for LSA constructor
-        Context context = onCreateView.getContext();
-
-        //Constructor for LSA Exercise
-        LocalStorageAccessExercise dbEx = new LocalStorageAccessExercise(context);
-
-        //You don't have to keep strings in the same order across classes, I just did to make the code easier.
-        //{TITLE, TYPE, MINUTES, REPS, LAPS, WEIGHT, INTY, NOTES, DATE, TIME};
-        String[] columnNames = dbEx.getColumns();//Pull keys from LSA Exercise
-
-        //Making sure I have data for each column (even if null or empty, note that this is NOT required, you can insert columns individually if you wish.) @see putNull
-        if (columnNames.length == exerciseEntryData.length) {
-            ContentValues rowToBeInserted = new ContentValues();
-            int dataIndex = 0;
-            for (String column : columnNames) {
-                //Insert column name ripped from LSA child class, and the user's entry data we gathered above
-                rowToBeInserted.put(column, exerciseEntryData[dataIndex]);
-                dataIndex++;
-            }
-            //Call insert method
-            dbEx.insertFromContentValues(rowToBeInserted, v.getContext());
-
-            if (LocalAccount.isLoggedIn())
-            {
-                int id = LocalStorageAccessExercise.GetLastID(v.getContext());
-
-                //Adds the primary key of the field to the sync table along with the value marking it
-                //needs to be added to the webdatabase
-                LocalStorageAccess.getInstance(v.getContext()).insertOrUpdateSyncTable(v.getContext(),
-                        LocalStorageAccessExercise.TABLE_NAME, id, -1, LocalStorageAccess.SYNC_NEEDS_ADDED);
-
-                rowToBeInserted.put(LocalStorageAccessExercise.LOCAL_EXERCISE_ID, id);
-                rowToBeInserted.remove(LocalStorageAccessExercise.USER_NAME);
-
-                String jsonToInsert = JsonCVHelper.convertToJSON(rowToBeInserted);
-
-                //Trys to insert the user's data
-                new DatabaseConnect(this).execute(DatabaseConnectionTypes.INSERT_TABLE_VALUES, jsonToInsert,
-                        LocalAccount.GetInstance().GetToken(),
-                        DatabaseConnectionTypes.EXERCISE_TABLE);
-            }
-
-
-
-        }
-*/
     }
 
     /**
