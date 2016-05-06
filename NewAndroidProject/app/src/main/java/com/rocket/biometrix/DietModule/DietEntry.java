@@ -5,7 +5,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +20,8 @@ import com.rocket.biometrix.Database.DatabaseConnectionTypes;
 import com.rocket.biometrix.Database.JsonCVHelper;
 import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessDiet;
-import com.rocket.biometrix.Database.LocalStorageAccessExercise;
-import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.Login.LocalAccount;
-import com.rocket.biometrix.Login.SettingsHelper;
+import com.rocket.biometrix.Login.SettingsAndEntryHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -99,7 +96,7 @@ public class DietEntry extends Fragment implements AsyncResponse {
         popDateTime.Populate();
 
         dietView = view;
-        SettingsHelper.makeDisabledEntryViewsInvisible(dietView, LocalStorageAccessDiet.TABLE_NAME);
+        SettingsAndEntryHelper.makeDisabledEntryViewsInvisible(dietView, LocalStorageAccessDiet.TABLE_NAME);
 
         return view;
     }
@@ -123,40 +120,13 @@ public class DietEntry extends Fragment implements AsyncResponse {
     {
         String dateText = ((TextView)dietView.findViewById(R.id.DietStartDateTextView)).getText().toString();
         dateText = StringDateTimeConverter.fixDate(dateText);
-        String foodName = ((TextView)dietView.findViewById(R.id.Food_Name)).getText().toString();
-        String meal = ((Spinner)dietView.findViewById(R.id.Meal_Select)).getSelectedItem().toString();
-        String servingSize = ((Spinner)dietView.findViewById(R.id.ServingSize_Select)).getSelectedItem().toString();
-        String calories = ((TextView)dietView.findViewById(R.id.Calories_Amt)).getText().toString();
-        String totalFat = ((TextView)dietView.findViewById(R.id.TotalFat_Amt)).getText().toString();
-        String satFat = ((TextView)dietView.findViewById(R.id.SaturatedFat_Amt)).getText().toString();
-        String transFat = ((TextView)dietView.findViewById(R.id.TransFat_Amt)).getText().toString();
-        String chol = ((TextView)dietView.findViewById(R.id.Cholesterol_Amt)).getText().toString();
-        String sodium = ((TextView)dietView.findViewById(R.id.Sodium_Amt)).getText().toString();
-        String totalCarbs = ((TextView)dietView.findViewById(R.id.TotalCarb_Amt)).getText().toString();
-        String fiber = ((TextView)dietView.findViewById(R.id.DietaryFiber_Amt)).getText().toString();
-        String sugars = ((TextView)dietView.findViewById(R.id.Sugars_Amt)).getText().toString();
-        String protein = ((TextView)dietView.findViewById(R.id.Protein_Amt)).getText().toString();
-        String vitaminA = ((TextView)dietView.findViewById(R.id.VitaminA_Amt)).getText().toString();
-        String vitaminB = ((TextView)dietView.findViewById(R.id.VitaminB_Amt)).getText().toString();
-        String calcium = ((TextView)dietView.findViewById(R.id.Calcium_Amt)).getText().toString();
-        String iron = ((TextView)dietView.findViewById(R.id.Iron_Amt)).getText().toString();
-        String notes = ((TextView)dietView.findViewById(R.id.dietDetailsEditText)).getText().toString();
 
-        String username = LocalAccount.DEFAULT_NAME;
-
-        if (LocalAccount.isLoggedIn() )
-        {
-            username = LocalAccount.GetInstance().GetUsername();
-        }
-
-        //Make string array for all of the above data
-        String[] dietEntryData = {null, username, null, dateText, foodName, meal, servingSize,
-                calories, totalFat, satFat, transFat, chol, sodium, totalCarbs, fiber, sugars,
-                protein, vitaminA, vitaminB, calcium, iron, notes};
-
-
-        //Create the object that will update the sleep table
-        //LocalStorageAccessSleep sleepSQL = new LocalStorageAccessSleep(context);
+        //String[] dietEntryData = {null, username, null, dateText, foodName, meal, servingSize,
+        //        calories, totalFat, satFat, transFat, chol, sodium, totalCarbs, fiber, sugars,
+        //        protein, vitaminA, vitaminB, calcium, iron, notes};
+        //The below has essentially the affect of the comment above
+        String[] dietEntryData = SettingsAndEntryHelper.prepareColumnArray(dietView,
+                LocalStorageAccessDiet.TABLE_NAME, dateText, null);
 
         //Retrieves column names from the class
         String[] columnNames = LocalStorageAccessDiet.getColumns();

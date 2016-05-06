@@ -1,6 +1,5 @@
 package com.rocket.biometrix.Analysis;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -9,14 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.rocket.biometrix.Database.LocalStorageAccess;
-import com.rocket.biometrix.Database.LocalStorageAccessMood;
-import com.rocket.biometrix.Database.LocalStorageAccessSleep;
-import com.rocket.biometrix.Login.SettingsHelper;
+import com.rocket.biometrix.Login.SettingsAndEntryHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -72,7 +67,7 @@ public class AnalysisFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_analysis, container, false);
         analysisView = view;
 
-        List<String> stringList = SettingsHelper.getEnabledModuleNames(view.getContext());
+        List<String> stringList = SettingsAndEntryHelper.getEnabledModuleNames(view.getContext());
         String[] moduleNames = stringList.toArray(new String[stringList.size()]);
         ArrayAdapter<String> spinnerArrayAdapterTable = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, moduleNames);
         ((Spinner)view.findViewById(R.id.analysisTableSpinner1)).setAdapter(spinnerArrayAdapterTable);
@@ -86,13 +81,14 @@ public class AnalysisFragment extends Fragment {
         ((Spinner)view.findViewById(R.id.analysisDateDiffSpinner)).setAdapter(daySpinnerAdapter);
         ((Spinner)view.findViewById(R.id.analysisDateDiffSpinner)).setSelection(7);
 
-        updateColumnSpinners();
+        updateLeftColumnSpinner();
+        updateRightColumnSpinner();
 
         //Update table spinners when selected
         ((Spinner)view.findViewById(R.id.analysisTableSpinner1)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                updateColumnSpinners();
+                updateLeftColumnSpinner();
                 updateTextView();
             }
 
@@ -105,7 +101,7 @@ public class AnalysisFragment extends Fragment {
         ((Spinner)view.findViewById(R.id.analysisTableSpinner2)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                updateColumnSpinners();
+                updateRightColumnSpinner();
                 updateTextView();
             }
 
@@ -164,20 +160,29 @@ public class AnalysisFragment extends Fragment {
     /**
      * Updates the spinners for the columns depending on which module is in the table
      */
-    private void updateColumnSpinners()
+    private void updateLeftColumnSpinner()
     {
         String tableName1 = ((Spinner) analysisView.findViewById(R.id.analysisTableSpinner1)).getSelectedItem().toString();
-        String tableName2 = ((Spinner) analysisView.findViewById(R.id.analysisTableSpinner2)).getSelectedItem().toString();
 
-        List<String> stringList = SettingsHelper.getEnabledAnalysisColumns(analysisView.getContext(), tableName1, true);
+        List<String> stringList = SettingsAndEntryHelper.getEnabledAnalysisColumns(analysisView.getContext(), tableName1, true);
         String[] columnNames1 = stringList.toArray(new String[stringList.size()]);
-        stringList = SettingsHelper.getEnabledAnalysisColumns(analysisView.getContext(), tableName2, true);
-        String[] columnNames2 = stringList.toArray(new String[stringList.size()]);
 
         ArrayAdapter<String> spinnerArrayAdapterColumn1 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, columnNames1);
-        ArrayAdapter<String> spinnerArrayAdapterColumn2 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, columnNames2);
         ((Spinner) analysisView.findViewById(R.id.analysisColumnSpinner1)).setAdapter(spinnerArrayAdapterColumn1);
-        ((Spinner) analysisView.findViewById(R.id.analysisColumnSpinner2)).setAdapter(spinnerArrayAdapterColumn2);
+    }
+
+    /**
+     * Updates the spinners for the columns depending on which module is in the table
+     */
+    private void updateRightColumnSpinner()
+    {
+        String tableName2 = ((Spinner) analysisView.findViewById(R.id.analysisTableSpinner2)).getSelectedItem().toString();
+
+        List<String> stringList = SettingsAndEntryHelper.getEnabledAnalysisColumns(analysisView.getContext(), tableName2, true);
+        String[] columnNames2 = stringList.toArray(new String[stringList.size()]);
+
+        ArrayAdapter<String> spinnerArrayAdapterColumn1 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, columnNames2);
+        ((Spinner) analysisView.findViewById(R.id.analysisColumnSpinner1)).setAdapter(spinnerArrayAdapterColumn1);
     }
 
     /**

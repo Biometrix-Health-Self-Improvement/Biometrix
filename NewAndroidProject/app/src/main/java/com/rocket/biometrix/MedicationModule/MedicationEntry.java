@@ -20,13 +20,11 @@ import com.rocket.biometrix.Database.JsonCVHelper;
 import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessMedication;
 import com.rocket.biometrix.Login.LocalAccount;
-import com.rocket.biometrix.Login.SettingsHelper;
+import com.rocket.biometrix.Login.SettingsAndEntryHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
 import org.json.JSONObject;
-
-import java.awt.font.TextAttribute;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -99,7 +97,7 @@ public class MedicationEntry extends Fragment implements AsyncResponse{
 
         entryView = view;
 
-        SettingsHelper.makeDisabledEntryViewsInvisible(entryView, LocalStorageAccessMedication.TABLE_NAME);
+        SettingsAndEntryHelper.makeDisabledEntryViewsInvisible(entryView, LocalStorageAccessMedication.TABLE_NAME);
 
         return view;
     }
@@ -123,14 +121,6 @@ public class MedicationEntry extends Fragment implements AsyncResponse{
    *
     */
     public void onDoneClick(View v) {
-
-        String brandString = StringDateTimeConverter.GetStringFromEditText(entryView.findViewById(R.id.MedicationEditBrandName));
-        String prescriberString = StringDateTimeConverter.GetStringFromEditText(entryView.findViewById(R.id.MedicationPrescriberName));
-        String dosetring = StringDateTimeConverter.GetStringFromEditText(entryView.findViewById(R.id.MedicationDoseAmount));
-        String instructionsString = StringDateTimeConverter.GetStringFromEditText(entryView.findViewById(R.id.MedicationInstructionEditText));
-        String warningsString = StringDateTimeConverter.GetStringFromEditText(entryView.findViewById(R.id.MedicationWarningsEditText));
-        String notes = StringDateTimeConverter.GetStringFromEditText(entryView.findViewById(R.id.medicationDetailsEditText));
-
         //Filling date and time strings for bundle's string array
         String dateString = ((TextView)entryView.findViewById(R.id.MedicationStartDateTextView)).getText().toString();
         String timeString = ((TextView)entryView.findViewById(R.id.MedicationStartTimeTextView)).getText().toString();
@@ -139,15 +129,12 @@ public class MedicationEntry extends Fragment implements AsyncResponse{
         dateString = StringDateTimeConverter.fixDate(dateString);
         timeString = StringDateTimeConverter.fixTime(timeString);
 
-        String username = LocalAccount.DEFAULT_NAME;
+        //String[] medEntryData = {null, username, null, dateString, timeString, brandString,
+        //        prescriberString, dosetring, instructionsString, warningsString, notes};
+        //Has the affect of the comment above
+        String[] medEntryData = SettingsAndEntryHelper.prepareColumnArray(entryView,
+                LocalStorageAccessMedication.TABLE_NAME, dateString, timeString);
 
-        if (LocalAccount.isLoggedIn()) {
-            username = LocalAccount.GetInstance().GetUsername();
-        }
-
-        //Make string array for all of the above data
-        String[] medEntryData = {null, username, null, dateString, timeString, brandString,
-                prescriberString, dosetring, instructionsString, warningsString, notes};
 
         //Retrieves column names from the class
         String[] columnNames = LocalStorageAccessMedication.getColumns();

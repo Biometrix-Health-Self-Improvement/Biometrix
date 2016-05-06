@@ -9,7 +9,7 @@ import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.Database.LocalStorageAccessMood;
 import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.Login.LocalAccount;
-import com.rocket.biometrix.Login.SettingsHelper;
+import com.rocket.biometrix.Login.SettingsAndEntryHelper;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -314,12 +314,11 @@ public class BiometrixAnalysis
     {
         Integer retVal = -1;
 
-        //Impossible to have this format with less than 3 characters (e.g. 1:2) or more than 5 (e.g
-        //10:15)
-        if (timeString.length() > 2 && timeString.length() < 6)
+
+        if (timeString.length() > 2 && timeString.length() < 10)
         {
             String hourString = timeString.substring(0, timeString.indexOf(":"));
-            String minuteString = timeString.substring(timeString.indexOf(":") + 1);
+            String minuteString = timeString.substring(timeString.indexOf(":") + 1, timeString.indexOf(":") + 2);
 
             Integer hourPart;
             Integer minPart;
@@ -329,11 +328,18 @@ public class BiometrixAnalysis
                 hourPart = Integer.parseInt(hourString);
                 minPart = Integer.parseInt(minuteString);
                 retVal = hourPart * 60 + minPart;
+
+                if (timeString.contains("PM") || timeString.contains("pm"))
+                {
+                    retVal += 720;
+                }
             }
             catch (Exception except)
             {
-                except.getMessage();
+                retVal = -1;
             }
+
+
         }
 
         return retVal;
@@ -369,7 +375,7 @@ public class BiometrixAnalysis
         //Set to an invalid date for first compare
         curDate = -1;
 
-        boolean firstDay = true;
+        boolean firstDay = true, readNonNull = false;
         numEntriesInDay = 0;
         dayTotal = 0;
 
@@ -384,46 +390,41 @@ public class BiometrixAnalysis
                 try {
                     Date enteredDate = dateFormat.parse(dateString);
 
-                    prevDate = curDate;
-                    curDate = getDateIntValue(enteredDate);
+                    if(!cursor.isNull(0)) {
+                        readNonNull = true;
+                        prevDate = curDate;
+                        curDate = getDateIntValue(enteredDate);
 
-                    //If still on the same day, add the entries together
-                    if(curDate == prevDate)
-                    {
-                        ++numEntriesInDay;
-                        dayTotal += cursor.getInt(0);
-                    }
-                    else
-                    //If not on the same day, add the last day's average as an entry for that day
-                    {
-                        if (!firstDay )
+                        //If still on the same day, add the entries together
+                        if (curDate == prevDate) {
+                            ++numEntriesInDay;
+                            dayTotal += cursor.getInt(0);
+                        } else
+                        //If not on the same day, add the last day's average as an entry for that day
                         {
-                            float entry;
+                            if (!firstDay) {
+                                float entry;
 
-                            if (average)
-                            {
-                                entry = (float) dayTotal / (float) numEntriesInDay;
+                                if (average) {
+                                    entry = (float) dayTotal / (float) numEntriesInDay;
+                                } else {
+                                    entry = (float) dayTotal;
+                                }
+
+                                returnList.add(new Pair<>(entry, prevDate));
+                            } else {
+                                firstDay = false;
                             }
-                            else
-                            {
-                                entry = (float) dayTotal;
-                            }
 
-                            returnList.add(new Pair<>(entry, prevDate));
+                            numEntriesInDay = 1;
+                            dayTotal = cursor.getInt(0);
                         }
-                        else
-                        {
-                            firstDay = false;
-                        }
-
-                        numEntriesInDay = 1;
-                        dayTotal = cursor.getInt(0);
                     }
 
                     cursor.moveToNext();
 
                     //Duplicate of above code except with current date
-                    if (cursor.isAfterLast() )
+                    if (cursor.isAfterLast() && readNonNull)
                     {
                         float entry;
 
@@ -462,7 +463,7 @@ public class BiometrixAnalysis
         //Time is needed because
         Cursor cursor = null;
         try {
-            cursor = LocalStorageAccess.selectAllEntries(context, LocalStorageAccessSleep.getTableName(),
+            cursor = LocalStorageAccess.selectAllEntries(context, LocalStorageAccessSleep.TABLE_NAME,
                     LocalStorageAccessSleep.DATE + " DESC",
                     new String[]{LocalStorageAccessSleep.DURATION, LocalStorageAccessSleep.DATE, LocalStorageAccessSleep.TIME}, true);
         }
@@ -476,7 +477,8 @@ public class BiometrixAnalysis
         //Set to an invalid date for first compare
         curDate = -1;
 
-        boolean firstDay = true;
+        //Is the entry the first one, and has an entry for this day been not null?
+        boolean firstDay = true, readNonNull = false;
         dayTotalDuration = 0;
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -492,50 +494,48 @@ public class BiometrixAnalysis
                     Date enteredDate = dateFormat.parse(dateString);
 
                     String timeString = cursor.getString(2);
-                    String durationString = cursor.getString(0);
 
-                    int timeMinutes = ConvertTimeToMinutes(timeString);
-                    int durationMinutes = ConvertTimeToMinutes(durationString);
 
-                    prevDate = curDate;
-                    curDate = getDateIntValue(enteredDate);
+                    if (!cursor.isNull(0) ) {
+                        readNonNull = true;
+                        String durationString = cursor.getString(0);
+                        int timeMinutes = ConvertTimeToMinutes(timeString);
+                        int durationMinutes = ConvertTimeToMinutes(durationString);
 
-                    //If the time of an entry starts before the user's cutoff hour (default is 8am)
-                    //the entry belongs with the previous day
-                    if (timeMinutes * 60 <
-                            LocalAccount.GetInstance().getInt(context, SettingsHelper.SLEEP_INT_CUTOFF_HOUR, 8) )
-                    {
-                        curDate = curDate -1;
-                    }
+                        prevDate = curDate;
+                        curDate = getDateIntValue(enteredDate);
 
-                    //If still on the same day, add the entries together
-                    if(curDate == prevDate)
-                    {
-                        dayTotalDuration += durationMinutes;
-                    }
-                    else
-                    //If not on the same day, add the last day's average as an entry for that day
-                    //Except on the first day
-                    {
-                        if (!firstDay )
-                        {
-                            float entryDuration;
-                            entryDuration = (float) dayTotalDuration;
-                            dayTotalDuration = 0;
-
-                            durationPairList.add(new Pair<>(entryDuration, prevDate));
-                        }
-                        else
-                        {
-                            firstDay = false;
+                        //If the time of an entry starts before the user's cutoff hour (default is 8am)
+                        //the entry belongs with the previous day
+                        if (timeMinutes <
+                                60 * LocalAccount.GetInstance().getInt(context, SettingsAndEntryHelper.SLEEP_INT_CUTOFF_HOUR, 8)) {
+                            curDate = curDate - 1;
                         }
 
-                        dayTotalDuration += durationMinutes;
+                        //If still on the same day, add the entries together
+                        if (curDate == prevDate) {
+                            dayTotalDuration += durationMinutes;
+                        } else
+                        //If not on the same day, add the last day's average as an entry for that day
+                        //Except on the first day
+                        {
+                            if (!firstDay) {
+                                float entryDuration;
+                                entryDuration = (float) dayTotalDuration;
+                                dayTotalDuration = 0;
+
+                                durationPairList.add(new Pair<>(entryDuration, prevDate));
+                            } else {
+                                firstDay = false;
+                            }
+
+                            dayTotalDuration += durationMinutes;
+                        }
                     }
 
                     cursor.moveToNext();
 
-                    if (cursor.isAfterLast() )
+                    if (cursor.isAfterLast() && readNonNull)
                     {
                         float entryDuration;
                         entryDuration = (float) dayTotalDuration;

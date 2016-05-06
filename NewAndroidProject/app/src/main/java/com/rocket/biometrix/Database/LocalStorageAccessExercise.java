@@ -33,9 +33,6 @@ public class LocalStorageAccessExercise{
             TITLE, TYPE, MINUTES, INTY, NOTES, DATE, TIME};
     //Later, we'll hopefully get to a shared preferences class that stores BMI and weight information.
 
-    //All integer fields, used for analysis
-    public static final String[] intcolumns = {MINUTES, INTY};
-
     public LocalStorageAccessExercise(Context context) {    }
 
     protected static String createTable() {
@@ -44,13 +41,13 @@ public class LocalStorageAccessExercise{
                 LOCAL_EXERCISE_ID + " integer primary key autoincrement, " +
                 USER_NAME + " varchar(50) Not Null, " +
                 WEB_EXERCISE_ID + " int Null, " +
-                TITLE + " varchar(255), " +
-                TYPE + " varchar(140), " +
-                MINUTES + " tinyint, " +
-                INTY + " tinyint, " +
-                NOTES + " varchar(255), " +
-                DATE + " date, " +
-                TIME + " varchar(50)" +");";
+                TITLE + " varchar(255) Null, " +
+                TYPE + " varchar(140) Null, " +
+                MINUTES + " tinyint Null, " +
+                INTY + " tinyint Null, " +
+                NOTES + " varchar(255) Null, " +
+                DATE + " date Not Null, " +
+                TIME + " time Not Null" +");";
     }
 
 
@@ -58,12 +55,6 @@ public class LocalStorageAccessExercise{
     public static String[] getColumns() {
         return columns;
     }
-
-    public static String[] getAnalysisColumns() {
-        return intcolumns;
-    }
-
-    public static String getTableName() {return TABLE_NAME;}
 
     /**
      * Makes a call to the base class with the needed parameters to pull out the last primary key

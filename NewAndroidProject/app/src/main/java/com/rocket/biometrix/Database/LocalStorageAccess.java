@@ -30,7 +30,8 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
     //Incremented to 9. Sync table username field changed to avoid same names on inner join
     //10. Sync table given webkey column to uniquely identify removals and updates
     //11 gen health removed from sleep. Exercise module refactored
-    protected static final int DATABASE_VERSION = 11;
+    //12 Null values refactored, //TODO update mood module on this database version as well
+    protected static final int DATABASE_VERSION = 12;
     protected static LocalStorageAccess m_instance = null;
 
     //Strings for the sync table creation
@@ -94,11 +95,11 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
      * @param db The SQLite database to operate on
      */
     private void dropTables(SQLiteDatabase db){
-        db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessExercise.getTableName());
-        db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessDiet.getTableName());
-        db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessMedication.getTableName());
-        db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessMood.getTableName());
-        db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessSleep.getTableName());
+        db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessExercise.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessDiet.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessMedication.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessMood.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + LocalStorageAccessSleep.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + SYNC_TABLE_NAME);
     }
 

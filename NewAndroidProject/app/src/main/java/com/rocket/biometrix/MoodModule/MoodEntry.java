@@ -18,9 +18,10 @@ import com.rocket.biometrix.Database.DatabaseConnect;
 import com.rocket.biometrix.Database.DatabaseConnectionTypes;
 import com.rocket.biometrix.Database.JsonCVHelper;
 import com.rocket.biometrix.Database.LocalStorageAccess;
+import com.rocket.biometrix.Database.LocalStorageAccessMedication;
 import com.rocket.biometrix.Database.LocalStorageAccessMood;
 import com.rocket.biometrix.Login.LocalAccount;
-import com.rocket.biometrix.Login.SettingsHelper;
+import com.rocket.biometrix.Login.SettingsAndEntryHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -48,8 +49,6 @@ public class MoodEntry extends Fragment implements AsyncResponse {
     private String mParam2;
 
     View view;
-    String dep="0", elev="0", irr="0", anx="0";
-
 
     private OnFragmentInteractionListener mListener;
 
@@ -106,7 +105,7 @@ public class MoodEntry extends Fragment implements AsyncResponse {
                 (getActivity(), view, R.id.moodCreateEntryDateSelect, R.id.moodCreateEntryTimeSelect);
         popDateTime.Populate();
 
-        SettingsHelper.makeDisabledEntryViewsInvisible(view, LocalStorageAccessMood.TABLE_NAME);
+        SettingsAndEntryHelper.makeDisabledEntryViewsInvisible(view, LocalStorageAccessMood.TABLE_NAME);
         return view;
     }
 
@@ -128,7 +127,7 @@ public class MoodEntry extends Fragment implements AsyncResponse {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
                 TextView desc = (TextView) view.findViewById(R.id.moodDepressedDesc);//description of rating
-                dep = setRatingLabel(desc, progress);
+                setRatingLabel(desc, progress);
             }
         });
 
@@ -144,8 +143,7 @@ public class MoodEntry extends Fragment implements AsyncResponse {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
                 TextView desc = (TextView) view.findViewById(R.id.moodElevatedDesc);//description of rating
-                elev = setRatingLabel(desc, progress);
-
+                setRatingLabel(desc, progress);
             }
         });
 
@@ -161,8 +159,7 @@ public class MoodEntry extends Fragment implements AsyncResponse {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
                 TextView desc = (TextView) view.findViewById(R.id.moodIrritabilityDesc);//description of rating
-                irr=setRatingLabel(desc, progress);
-
+                setRatingLabel(desc, progress);
             }
         });
 
@@ -180,13 +177,13 @@ public class MoodEntry extends Fragment implements AsyncResponse {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 TextView desc = (TextView) view.findViewById(R.id.moodAnxietyDesc);//description of rating
-                anx = setRatingLabel(desc, progress);
+                setRatingLabel(desc, progress);
             }
         });
 
     }
 
-    private String setRatingLabel(TextView desc, int prog){
+    private void setRatingLabel(TextView desc, int prog){
         String str = null;
         switch (prog) { //get string based on rating
             case 0: //none
@@ -206,13 +203,11 @@ public class MoodEntry extends Fragment implements AsyncResponse {
                 break;
         }
         desc.setText(str);
-        return Integer.toString(prog);
     }
 
 
     public void onDoneClick(View v) {
-        //get date, time, and notes
-        String notes = ((TextView) view.findViewById(R.id.moodDetailsEditText)).getText().toString();
+        //get date, and time
         String datetmp = ((TextView) view.findViewById(R.id.moodCreateEntryDateSelect)).getText().toString().substring(11);
 
         DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
@@ -225,19 +220,10 @@ public class MoodEntry extends Fragment implements AsyncResponse {
         String dateShort = format.format(date);
         String time = ((TextView) view.findViewById(R.id.moodCreateEntryTimeSelect)).getText().toString().substring(6);
 
-        String username = LocalAccount.DEFAULT_NAME;
-
-        if (LocalAccount.isLoggedIn()) {
-            username = LocalAccount.GetInstance().GetUsername();
-        }
-
-        //Strings in order are LOCAL_MOOD_ID, USER_NAME, WEB_MOOD_ID, DATE, TIME, DEP, ELEV, IRR, ANX, NOTE, UPDATED
-        String[] data = new String[]{null, username, null, dateShort, time, dep, elev, irr, anx, notes};
-
-        Bundle moodBundle = new Bundle();
-        moodBundle.putStringArray("moodBundleKey", data);
-
-        //LocalStorageAccessMood strg = new LocalStorageAccessMood(context, null,null,1);
+        //String[] data = new String[]{null, username, null, dateShort, time, dep, elev, irr, anx, notes};
+        //The below has the affect of the above comment
+        String[] data = SettingsAndEntryHelper.prepareColumnArray(view, LocalStorageAccessMood.TABLE_NAME,
+                dateShort, time);
 
         String[] cols = LocalStorageAccessMood.getColumns();
 
