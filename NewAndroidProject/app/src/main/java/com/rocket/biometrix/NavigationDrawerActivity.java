@@ -2,6 +2,7 @@ package com.rocket.biometrix;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -9,6 +10,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -73,13 +76,20 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
         Fragment frag;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        frag = new HomeScreen();
+        frag = new HomeScreen_Logged_In();
         transaction.replace(R.id.navigation_drawer_fragment_content, frag, "home");
         transaction.addToBackStack(null);
         transaction.commit();
 
         //Local account/settings setup
         navView = navigationView;
+        MenuItem dietItem = navView.getMenu().findItem(R.id.nav_diet_module);
+/*        SpannableString s = new SpannableString(dietItem.getTitle());
+        s.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.background_diet_color)), 0, s.length(), 0);
+        dietItem.setTitle(s);*/
+
+        //dietItem.getActionView().setBackground(new ColorDrawable(getResources().getColor(R.color.background_diet_color)));
+
         LocalAccount.setNavDrawerRef(this);
         UpdateMenuItems();
     }
@@ -157,7 +167,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        Fragment frag = new HomeScreen(); //intialize to homescreen in case something goes wrong it will not crash and just go back to home
+        Fragment frag = new HomeScreen_Logged_In(); //intialize to homescreen in case something goes wrong it will not crash and just go back to home
 
         if (id == R.id.nav_mood_module) {
             frag = new MoodParent();
@@ -167,6 +177,9 @@ public class NavigationDrawerActivity extends AppCompatActivity
             frag = new ExerciseParent();
         } else if (id == R.id.nav_diet_module) {
             frag = new DietParent();
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_diet_color));
+            setActionBarColorFromFragment(R.color.button_diet_color);
         } else if (id == R.id.nav_medication_module) {
             frag = new MedicationParent();
         } else if (id == R.id.nav_analytics) { //TODO: menu open analytics fragment
@@ -204,7 +217,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
             getSupportActionBar().setTitle(getResources().getString(title));
         } catch (Exception e){}
     }
-
+    public void setActionBarColorFromFragment(int color){
+        try {
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(color));
+        } catch (Exception e){}
+    }
     /**************************************************************************
      * Replaces the current active fragment with the fragment passed in
      * @param frag a new fragment that has been created before the function is called
@@ -223,7 +240,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
      **************************************************************************/
     public void CreateEntryOnClick(View v) {
         //Initialize to home screen in case the fragment active is not found in the following, it will not crash and just go back to home
-        Fragment newFragment = new HomeScreen();
+        Fragment newFragment = new HomeScreen_Logged_In();
 
         //if fragment exists
         if (activeFragment != null && activeFragment.isVisible()) {
@@ -235,7 +252,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 newFragment = new SleepEntry();
             } else if (activeFragment.getClass() == ExerciseParent.class){
                 newFragment = new ExerciseEntry();
-            } else if (activeFragment.getClass() == DietParent.class){
+            } else if (activeFragment.getClass() == DietParent.class) {
                 newFragment = new DietEntry();
             } else if (activeFragment.getClass() == MedicationParent.class){
                 newFragment = new MedicationEntry();
@@ -253,7 +270,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
      **************************************************************************/
     public void EntryDoneOnClick(View v) {
         //Initialize to home screen in case the fragment active is not found in the following, it will not crash and just go back to home
-        Fragment newFragment = new HomeScreen();
+        Fragment newFragment = new HomeScreen_Logged_In();
 
         //if fragment exists
         if (activeFragment != null && activeFragment.isVisible()) {
@@ -286,7 +303,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
     public void EntryAcceptOnClick(View v) {
         //Initialize to home screen in case the fragment active is not found in the following, it will not crash and just go back to home
-        Fragment newFragment = new HomeScreen();
+        Fragment newFragment = new HomeScreen_Logged_In();
 
         //if fragment exists
         if (activeFragment != null && activeFragment.isVisible()) {
@@ -331,7 +348,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
     }
 
     public void cancelButton(View v){
-        replaceFragment(new HomeScreen());
+        replaceFragment(new HomeScreen_Logged_In());
     }
 
     public void createAccountButtonClick(View v){
@@ -346,15 +363,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
     {
         if (LocalAccount.isLoggedIn())
         {
-            if (LocalAccount.isGoogleAccountSignedIn())
-            {
-                Toast.makeText(getApplicationContext(), "Please logout from the google login page", Toast.LENGTH_LONG).show();
-            }
-            else
-            {
-                LocalAccount.Logout();
-                Toast.makeText(getApplicationContext(), "Account logged out", Toast.LENGTH_LONG).show();
-            }
+            LocalAccount.Logout();
+            Toast.makeText(getApplicationContext(), "Account logged out", Toast.LENGTH_LONG).show();
         }
     }
 

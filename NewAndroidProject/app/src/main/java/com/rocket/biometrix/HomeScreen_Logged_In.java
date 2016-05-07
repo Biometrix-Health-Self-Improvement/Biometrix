@@ -17,12 +17,12 @@ import com.rocket.biometrix.Settings.ModuleSettings;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link HomeScreen.OnFragmentInteractionListener} interface
+ * {@link HomeScreen_Logged_In.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link HomeScreen#newInstance} factory method to
+ * Use the {@link HomeScreen_Logged_In#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeScreen extends Fragment {
+public class HomeScreen_Logged_In extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -32,7 +32,7 @@ public class HomeScreen extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public HomeScreen() {
+    public HomeScreen_Logged_In() {
         // Required empty public constructor
     }
     /**
@@ -41,10 +41,10 @@ public class HomeScreen extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment HomeScreen.
+     * @return A new instance of fragment HomeScreen_Logged_In.
      */
-    public static HomeScreen newInstance(String param1, String param2) {
-        HomeScreen fragment = new HomeScreen();
+    public static HomeScreen_Logged_In newInstance(String param1, String param2) {
+        HomeScreen_Logged_In fragment = new HomeScreen_Logged_In();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -74,9 +74,9 @@ public class HomeScreen extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View v = inflater.inflate(R.layout.fragment_home_screen, container, false);
+        final View v = inflater.inflate(R.layout.fragment_home_screen_logged_in, container, false);
 
-        final Button btnEdit = (Button) v.findViewById(R.id.home_edit);
+        /*final Button btnEdit = (Button) v.findViewById(R.id.home_edit);
         btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,7 +86,7 @@ public class HomeScreen extends Fragment {
                 //intent.putExtra("NavBar Fragment Stack",fraggle);
                 startActivity(intent);
             }
-        });
+        });*/
 
         return v;
     }

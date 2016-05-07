@@ -16,5 +16,9 @@
 
     <color name="black_overlay">#66000000</color>
 
+<!-- Fragment Module Background Colors -->
+    <color name="background_diet_color">#EBF9D2</color>
 
+    <!--Fragment Module Button Colors -->
+    <color name="button_diet_color">#254117</color>
 </resources>
