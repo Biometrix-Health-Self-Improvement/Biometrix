@@ -49,6 +49,7 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
     public static TextView timeTV; //Used by the DateTimePopulateTextView in the onCreate event
     public static TextView dateTV;
 
+
     boolean Editing;
 
     Spinner typeSpinner;
