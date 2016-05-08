@@ -14,9 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.rocket.biometrix.Analysis.BiometrixAnalysis;
-
-
 import com.rocket.biometrix.Analysis.AllGraph;
 import com.rocket.biometrix.Analysis.AnalysisFragment;
 import com.rocket.biometrix.Analysis.DietGraph;
@@ -80,18 +77,18 @@ public class NavigationDrawerActivity extends AppCompatActivity
         Fragment frag;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-        mEditEntryB = getIntent().getExtras();
-        if (mEditEntryB != null) {
-            //yourDataObject = getIntent().getStringExtra(KEY_EXTRA);
-            mTblSignal = mEditEntryB.getString("tablename"); //See MECR ViewAdapter, ViewHolder's list item onClick listener
-            mUidSignal = mEditEntryB.getString("uid");
-
-            frag = PopulateEntryIntercept(mTblSignal);
-
-            frag.setArguments(getIntent().getExtras());
-
-
-        } else {
+//        mEditEntryB = getIntent().getExtras();
+//        if (mEditEntryB != null) {
+//            //yourDataObject = getIntent().getStringExtra(KEY_EXTRA);
+//            mTblSignal = mEditEntryB.getString("tablename"); //See MECR ViewAdapter, ViewHolder's list item onClick listener
+//            mUidSignal = mEditEntryB.getString("uid");
+//
+////            frag = PopulateEntryIntercept(mTblSignal);
+////
+////            frag.setArguments(getIntent().getExtras());
+//
+//
+//        } else {
 
 
             frag = new HomeScreen();
@@ -103,7 +100,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
             navView = navigationView;
             LocalAccount.setNavDrawerRef(this);
             UpdateMenuItems();
-        }
+        //}
     }
 
     @Override
