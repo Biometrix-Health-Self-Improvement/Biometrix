@@ -46,11 +46,10 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
     private String mParam1;
     private String mParam2;
 
-    boolean Editing; //WHen editing entry make sure to populate
-
     public static TextView timeTV; //Used by the DateTimePopulateTextView in the onCreate event
     public static TextView dateTV;
 
+    boolean Editing;
 
     Spinner typeSpinner;
 
@@ -59,7 +58,6 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
 
     Spinner minuteSpinner;
     boolean toasted = false; //Used to display encouraging messages ONCE in minuteSpinner.
-
 
 
     String lowestSpinnerValueThreshold = "5"; //5 minutes
@@ -130,8 +128,6 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
         //Slick calls to fill date and time textviews.
         DateTimeSelectorPopulateTextView DTPOWAH = new DateTimeSelectorPopulateTextView(getActivity(), v, R.id.ex_tv_date, R.id.ex_tv_time);
         DTPOWAH.Populate(); //Change the text
-
-
 
         onCreateView = v; //This view (the inflated UI layout view ) is saved so onDoneClick() can use it.
         SettingsAndEntryHelper.makeDisabledEntryViewsInvisible(onCreateView, LocalStorageAccessExercise.TABLE_NAME);

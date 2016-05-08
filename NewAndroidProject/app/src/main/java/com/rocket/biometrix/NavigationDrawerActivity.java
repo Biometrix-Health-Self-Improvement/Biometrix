@@ -77,6 +77,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
         Fragment frag;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
+
 //        mEditEntryB = getIntent().getExtras();
 //        if (mEditEntryB != null) {
 //            //yourDataObject = getIntent().getStringExtra(KEY_EXTRA);
@@ -100,125 +101,115 @@ public class NavigationDrawerActivity extends AppCompatActivity
             navView = navigationView;
             LocalAccount.setNavDrawerRef(this);
             UpdateMenuItems();
-        //}
-    }
+            //}
+        }
 
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
+        @Override
+        public void onBackPressed () {
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
+        }
+
+        @Override
+        public boolean onCreateOptionsMenu (Menu menu){
+            // Inflate the menu; this adds items to the action bar if it is present.
+            getMenuInflater().inflate(R.menu.navigation_drawer_activity, menu);
+            return true;
+        }
+
+        /**
+         * The method called when one of the items on the help side of the nav drawer is called
+         * @param item The item that was clicked on in order to call this event
+         * @return
+         */
+        @Override
+        public boolean onOptionsItemSelected (MenuItem item){
+
+            Fragment frag = new HomeScreen();
+            switch (item.getItemId()) {
+
+                case R.id.action_help:
+
+                    return true;
+                case R.id.action_settings:
+                    Class fragClass = activeFragment.getClass();
+
+                    if (fragClass.equals(SleepParent.class) || fragClass.equals(SleepGraph.class)
+                            || fragClass.equals(SleepEntry.class)) {
+                        frag = new SleepSettings();
+                    } else if (fragClass.equals(MoodParent.class) || fragClass.equals(MoodGraph.class)
+                            || fragClass.equals(MoodEntry.class)) {
+                        frag = new MoodSettings();
+                    } else if (fragClass.equals(DietParent.class) //TODO: || fragClass.equals(DietGraph.class)
+                            || fragClass.equals(DietEntry.class)) {
+                        frag = new DietSettings();
+                    } else if (fragClass.equals(MedicationParent.class) //TODO: || fragClass.equals(MedicationGraph.class)
+                            || fragClass.equals(MedicationEntry.class)) {
+                        frag = new MedicationSettings();
+                    } else if (fragClass.equals(ExerciseParent.class) //TODO: || fragClass.equals(ExerciseGraph.class)
+                            || fragClass.equals(ExerciseEntry.class)) {
+                        frag = new ExerciseSettings();
+                    } else {
+                        frag = new ModuleSettings();
+                    }
+
+                    replaceFragment(frag);
+                    return true;
+                default:
+                    return super.onOptionsItemSelected(item);
+            }
+        }
+
+        @Override
+        public boolean onNavigationItemSelected (MenuItem item){
+            // Handle navigation view item clicks here.
+            int id = item.getItemId();
+            Fragment frag = new HomeScreen(); //intialize to homescreen in case something goes wrong it will not crash and just go back to home
+
+            if (id == R.id.nav_mood_module) {
+                frag = new MoodParent();
+            } else if (id == R.id.nav_sleep_module) {
+                frag = new SleepParent();
+            } else if (id == R.id.nav_exercise_module) {
+                frag = new ExerciseParent();
+            } else if (id == R.id.nav_diet_module) {
+                frag = new DietParent();
+            } else if (id == R.id.nav_medication_module) {
+                frag = new MedicationParent();
+            } else if (id == R.id.nav_analytics) { //TODO: menu open analytics fragment
+                frag = new AnalysisFragment();
+            } else if (id == R.id.nav_settings) {
+                frag = new ModuleSettings();
+            } else if (id == R.id.nav_login) {
+                frag = new GetLogin();
+            } else if (id == R.id.nav_create_account) {
+                frag = new CreateLogin();
+            } else if (id == R.id.nav_google_login) {
+                frag = new GoogleLogin();
+            } else if (id == R.id.nav_logout) {
+                LogoutUser();
+            } else if (id == R.id.nav_sync) {
+                Sync sync = new Sync(getApplicationContext());
+                sync.syncDatabases();
+            }
+            replaceFragment(frag);
+
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+            return true;
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.navigation_drawer_activity, menu);
-        return true;
-    }
-
-    /**
-     * The method called when one of the items on the help side of the nav drawer is called
-     * @param item The item that was clicked on in order to call this event
-     * @return
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        Fragment frag = new HomeScreen();
-        switch (item.getItemId()) {
-
-            case R.id.action_help:
-
-                return true;
-            case R.id.action_settings:
-                Class fragClass = activeFragment.getClass();
-
-                if(fragClass.equals(SleepParent.class) || fragClass.equals(SleepGraph.class)
-                        || fragClass.equals(SleepEntry.class))
-                {
-                    frag = new SleepSettings();
-                }
-                else if(fragClass.equals(MoodParent.class) || fragClass.equals(MoodGraph.class)
-                        || fragClass.equals(MoodEntry.class))
-                {
-                    frag = new MoodSettings();
-                }
-                else if(fragClass.equals(DietParent.class) //TODO: || fragClass.equals(DietGraph.class)
-                        || fragClass.equals(DietEntry.class))
-                {
-                    frag = new DietSettings();
-                }
-                else if(fragClass.equals(MedicationParent.class) //TODO: || fragClass.equals(MedicationGraph.class)
-                        || fragClass.equals(MedicationEntry.class))
-                {
-                    frag = new MedicationSettings();
-                }
-                else if(fragClass.equals(ExerciseParent.class) //TODO: || fragClass.equals(ExerciseGraph.class)
-                        || fragClass.equals(ExerciseEntry.class))
-                {
-                    frag = new ExerciseSettings();
-                }
-                else
-                {
-                    frag = new ModuleSettings();
-                }
-
-                replaceFragment(frag);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-        Fragment frag = new HomeScreen(); //intialize to homescreen in case something goes wrong it will not crash and just go back to home
-
-        if (id == R.id.nav_mood_module) {
-            frag = new MoodParent();
-        } else if (id == R.id.nav_sleep_module) {
-            frag = new SleepParent();
-        } else if (id == R.id.nav_exercise_module) {
-            frag = new ExerciseParent();
-        } else if (id == R.id.nav_diet_module) {
-            frag = new DietParent();
-        } else if (id == R.id.nav_medication_module) {
-            frag = new MedicationParent();
-        } else if (id == R.id.nav_analytics) { //TODO: menu open analytics fragment
-            frag = new AnalysisFragment();
-        } else if (id == R.id.nav_settings) {
-            frag = new ModuleSettings();
-        } else if (id == R.id.nav_login) {
-            frag = new GetLogin();
-        } else if (id == R.id.nav_create_account) {
-            frag = new CreateLogin();
-        } else if (id == R.id.nav_google_login) {
-            frag = new GoogleLogin();
-        } else if (id == R.id.nav_logout) {
-            LogoutUser();
-        } else if (id == R.id.nav_sync) {
-            Sync sync = new Sync(getApplicationContext());
-            sync.syncDatabases();
-        }
-        replaceFragment(frag);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
 
 
-    /**************************************************************************
-     * Changes the action bar text to the string passed in
-     *
-     * @param title The title the fragment wants the Action Bar to be set to
-     **************************************************************************/
+        /**************************************************************************
+         * Changes the action bar text to the string passed in
+         *
+         * @param title The title the fragment wants the Action Bar to be set to
+         **************************************************************************/
+
     public void setActionBarTitleFromFragment(int title) {
         try {
             getSupportActionBar().setTitle(getResources().getString(title));
@@ -348,12 +339,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
         ((com.rocket.biometrix.Login.GetLogin) activeFragment).okayButtonClick(v);
     }
 
-    public void onRunButtonClick(View v)
-    {
-        ((com.rocket.biometrix.Analysis.AnalysisFragment)activeFragment).onRunButtonClick(v);
+    public void onRunButtonClick(View v) {
+        ((com.rocket.biometrix.Analysis.AnalysisFragment) activeFragment).onRunButtonClick(v);
     }
 
-    public void cancelButton(View v){
+    public void cancelButton(View v) {
         replaceFragment(new HomeScreen());
     }
 
@@ -435,21 +425,24 @@ public class NavigationDrawerActivity extends AppCompatActivity
         replaceFragment(activeFragment);
     }
 
-    public  void ExerciseGraph(View v){
+
+    public void ExerciseGraph(View v) {
         activeFragment = new ExerciseGraph();
         replaceFragment(activeFragment);
     }
-    public  void DietGraph(View v){
+
+    public void DietGraph(View v) {
         activeFragment = new DietGraph();
         replaceFragment(activeFragment);
     }
-    public  void AllGraph(View v){
+
+    public void AllGraph(View v) {
         activeFragment = new AllGraph();
         replaceFragment(activeFragment);
     }
 
 
-    public Fragment PopulateEntryIntercept(String tableKey){
+    public Fragment PopulateEntryIntercept(String tableKey) {
         Fragment EntryFrag;
 
         switch (tableKey) {
@@ -462,7 +455,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
         }
 
 
-    return EntryFrag;
+        return EntryFrag;
     }
 
 }
