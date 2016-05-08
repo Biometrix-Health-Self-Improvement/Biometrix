@@ -17,8 +17,23 @@
     <color name="black_overlay">#66000000</color>
 
 <!-- Fragment Module Background Colors -->
+    <color name="background_mood_color">#F1CFFC</color>
+    <color name="background_sleep_color">#CCCCFF</color>
+    <color name="background_exercise_color">#FEDFCD</color>
     <color name="background_diet_color">#EBF9D2</color>
+    <color name="background_medication_color">#FECDCE</color>
+    <color name="background_home_color">#D3F8EF</color>
+    <color name="background_analysis_color">#FDF5CE</color>
 
-    <!--Fragment Module Button Colors -->
-    <color name="button_diet_color">#254117</color>
+
+    <!--Fragment Module ActionTopBar Colors -->
+    <color name="ActionTopBar_mood_color">#CD57F4</color>
+    <color name="ActionTopBar_sleep_color">#4D4DFF</color>
+    <color name="ActionTopBar_exercise_color">#FB8F50</color>
+    <color name="ActionTopBar_diet_color">#B8EA62</color>
+    <color name="ActionTopBar_medication_color">#FB5053</color>
+    <color name="ActionTopBar_home_color">#65E7C6</color>
+    <color name="ActionTopBar_analysis_color">#F8DC54</color>
+
+
 </resources>

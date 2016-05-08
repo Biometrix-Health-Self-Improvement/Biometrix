@@ -168,24 +168,39 @@ public class NavigationDrawerActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         Fragment frag = new HomeScreen_Logged_In(); //intialize to homescreen in case something goes wrong it will not crash and just go back to home
-
+        this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                getResources().getColor(R.color.background_home_color));
+        setActionBarColorFromFragment(R.color.ActionTopBar_home_color);
         if (id == R.id.nav_mood_module) {
             frag = new MoodParent();
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_mood_color));
+            setActionBarColorFromFragment(R.color.ActionTopBar_mood_color);
         } else if (id == R.id.nav_sleep_module) {
             frag = new SleepParent();
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_sleep_color));
+            setActionBarColorFromFragment(R.color.ActionTopBar_sleep_color);
         } else if (id == R.id.nav_exercise_module) {
             frag = new ExerciseParent();
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_exercise_color));
+            setActionBarColorFromFragment(R.color.ActionTopBar_exercise_color);
         } else if (id == R.id.nav_diet_module) {
             frag = new DietParent();
             this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
                     getResources().getColor(R.color.background_diet_color));
-            setActionBarColorFromFragment(R.color.button_diet_color);
+            setActionBarColorFromFragment(R.color.ActionTopBar_diet_color);
         } else if (id == R.id.nav_medication_module) {
             frag = new MedicationParent();
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_medication_color));
+            setActionBarColorFromFragment(R.color.ActionTopBar_medication_color);
         } else if (id == R.id.nav_analytics) { //TODO: menu open analytics fragment
             frag = new AnalysisFragment();
-        } else if (id == R.id.nav_settings) {
-            frag = new ModuleSettings();
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_analysis_color));
+            setActionBarColorFromFragment(R.color.ActionTopBar_analysis_color);
         } else if (id == R.id.nav_login) {
             frag = new GetLogin();
         } else if (id == R.id.nav_create_account){
