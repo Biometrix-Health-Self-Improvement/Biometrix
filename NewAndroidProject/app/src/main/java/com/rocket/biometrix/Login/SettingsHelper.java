@@ -4,11 +4,9 @@ import android.content.Context;
 import android.view.View;
 import android.widget.Switch;
 
-import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessDiet;
 import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.Database.LocalStorageAccessMood;
-import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.R;
 
 /**
@@ -165,8 +163,6 @@ public class SettingsHelper {
                 {EXERCISE_NAME, Integer.toString(R.id.DisableSwitchExerciseName)},
                 {EXERCISE_DURATION, Integer.toString(R.id.DisableSwitchExerciseDuration)},
                 {EXERCISE_TYPE, Integer.toString(R.id.DisableSwitchExerciseType) },
-                {EXERCISE_REPS_LAPS, Integer.toString(R.id.DisableSwitchExerciseRepsLaps)},
-                {EXERCISE_WEIGHT_INTENSITY, Integer.toString(R.id.DisableSwitchExerciseWeightIntensity)},
                 {EXERCISE_NOTES, Integer.toString(R.id.DisableSwitchExerciseNotesInput)}};
     }
 
@@ -178,9 +174,6 @@ public class SettingsHelper {
     public static String[][] getAnalysisExerciseKeysAndColumns() {
         return new String[][]{
                 {EXERCISE_DURATION, LocalStorageAccessExercise.MINUTES},
-                {EXERCISE_REPS_LAPS, LocalStorageAccessExercise.REPS},
-                {EXERCISE_REPS_LAPS, LocalStorageAccessExercise.LAPS},
-                {EXERCISE_WEIGHT_INTENSITY, LocalStorageAccessExercise.WEIGHT},
                 {EXERCISE_WEIGHT_INTENSITY, LocalStorageAccessExercise.INTY}};
     }
     
@@ -236,7 +229,7 @@ public class SettingsHelper {
                 {SLEEP_HOURS, Integer.toString(R.id.DisableSwitchHoursSlept)},
                 {SLEEP_MINUTES, Integer.toString(R.id.DisableSwitchMinutesSlept)},
                 {SLEEP_QUALITY, Integer.toString(R.id.DisableSwitchSleepQuality)},
-                {SLEEP_GEN_HEALTH, Integer.toString(R.id.DisableSwitchGeneralHealth)},
+                //{SLEEP_GEN_HEALTH, Integer.toString(R.id.DisableSwitchGeneralHealth)},
                 {SLEEP_NOTES, Integer.toString(R.id.DisableSwitchSleepNotesInput)}};
     }
 

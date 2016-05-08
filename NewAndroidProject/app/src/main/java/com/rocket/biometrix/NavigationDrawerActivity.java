@@ -55,6 +55,10 @@ public class NavigationDrawerActivity extends AppCompatActivity
     //A reference to the navigation view
     protected NavigationView navView;
 
+    public String mTblSignal;
+    public String mUidSignal;
+    Bundle mEditEntryB;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -279,7 +283,6 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 ((SleepEntry) activeFragment).onDoneClick(v);
                 newFragment = new SleepParent();
             } else if (activeFragment.getClass() == ExerciseEntry.class){
-                //TODO: Please implement Callback interface so I'm not forced to conform in a bad way
                 //TODO: let's not be a little bitch about it
                 ((ExerciseEntry) activeFragment).onDoneClick(v);
                 newFragment = new ExerciseParent();
