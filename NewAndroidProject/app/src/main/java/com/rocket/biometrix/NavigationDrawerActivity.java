@@ -18,9 +18,6 @@ import com.rocket.biometrix.Analysis.AllGraph;
 import com.rocket.biometrix.Analysis.AnalysisFragment;
 import com.rocket.biometrix.Analysis.DietGraph;
 import com.rocket.biometrix.Analysis.ExerciseGraph;
-
-import com.rocket.biometrix.Analysis.BiometrixAnalysis;
-
 import com.rocket.biometrix.Analysis.GraphBase;
 import com.rocket.biometrix.Analysis.MoodGraph;
 import com.rocket.biometrix.Analysis.SleepGraph;
@@ -85,6 +82,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
             //yourDataObject = getIntent().getStringExtra(KEY_EXTRA);
             mTblSignal = mEditEntryB.getString("tablename"); //See MECR ViewAdapter, ViewHolder's list item onClick listener
             mUidSignal = mEditEntryB.getString("uid");
+
+            frag = PopulateEntryIntercept(mTblSignal);
+
+            frag.setArguments(getIntent().getExtras());
+
 
         } else {
 
@@ -432,6 +434,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
         activeFragment = new SleepGraph();
         replaceFragment(activeFragment);
     }
+
     public  void ExerciseGraph(View v){
         activeFragment = new ExerciseGraph();
         replaceFragment(activeFragment);
@@ -444,4 +447,22 @@ public class NavigationDrawerActivity extends AppCompatActivity
         activeFragment = new AllGraph();
         replaceFragment(activeFragment);
     }
+
+
+    public Fragment PopulateEntryIntercept(String tableKey){
+        Fragment EntryFrag;
+
+        switch (tableKey) {
+            case "exercise":
+                EntryFrag = new ExerciseEntry();
+                break;
+
+            default:
+                throw new IllegalArgumentException(" " + tableKey);
+        }
+
+
+    return EntryFrag;
+    }
+
 }

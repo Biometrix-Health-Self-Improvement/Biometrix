@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,10 +46,28 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
     private String mParam1;
     private String mParam2;
 
+    boolean Editing; //WHen editing entry make sure to populate
+
     public static TextView timeTV; //Used by the DateTimePopulateTextView in the onCreate event
     public static TextView dateTV;
 
+
     Spinner typeSpinner;
+
+    String minSelected; //string to save minutes exercised spinner result
+    String typeSelected; //string to save type of exercise selected in the radio 'bubble' buttons
+
+    Spinner minuteSpinner;
+    boolean toasted = false; //Used to display encouraging messages ONCE in minuteSpinner.
+
+
+
+    String lowestSpinnerValueThreshold = "5"; //5 minutes
+    String lowSpinnerValueThreshold = "10"; //10 minutes (idea is to encourage user to exercise more but still celebrate their 'baby' gains)
+    String lowSpinnerMessage = "Keep it up :)"; //The encouraging message
+    String highSpinnerMessage = "Nice!"; //The BEST message users strive for
+
+    String[] exerciseEntryData = {}; //String array that will store all user entered data, used in bundles and SQLite insert
 
     private OnFragmentInteractionListener mListener;
 
@@ -113,6 +130,8 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
         //Slick calls to fill date and time textviews.
         DateTimeSelectorPopulateTextView DTPOWAH = new DateTimeSelectorPopulateTextView(getActivity(), v, R.id.ex_tv_date, R.id.ex_tv_time);
         DTPOWAH.Populate(); //Change the text
+
+
 
         onCreateView = v; //This view (the inflated UI layout view ) is saved so onDoneClick() can use it.
         SettingsAndEntryHelper.makeDisabledEntryViewsInvisible(onCreateView, LocalStorageAccessExercise.TABLE_NAME);
