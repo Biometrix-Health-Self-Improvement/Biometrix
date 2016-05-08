@@ -82,6 +82,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
             mTblSignal = mEditEntryB.getString("tablename"); //See MECR ViewAdapter, ViewHolder's list item onClick listener
             mUidSignal = mEditEntryB.getString("uid");
 
+            frag = PopulateEntryIntercept(mTblSignal);
+
+            frag.setArguments(getIntent().getExtras());
+
+
         } else {
 
 
@@ -384,4 +389,22 @@ public class NavigationDrawerActivity extends AppCompatActivity
         activeFragment = new SleepGraph();
         replaceFragment(activeFragment);
     }
+
+    public Fragment PopulateEntryIntercept(String tableKey){
+        Fragment EntryFrag;
+
+        switch (tableKey) {
+            case "exercise":
+                EntryFrag = new ExerciseEntry();
+                break;
+
+            default:
+                throw new IllegalArgumentException(" " + tableKey);
+        }
+
+
+    return EntryFrag;
+    }
+
+
 }
