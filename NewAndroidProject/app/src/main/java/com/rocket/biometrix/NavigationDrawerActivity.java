@@ -77,6 +77,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
         Fragment frag;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
+<<<<<<< HEAD
 //        mEditEntryB = getIntent().getExtras();
 //        if (mEditEntryB != null) {
 //            //yourDataObject = getIntent().getStringExtra(KEY_EXTRA);
@@ -89,6 +90,15 @@ public class NavigationDrawerActivity extends AppCompatActivity
 //
 //
 //        } else {
+=======
+        mEditEntryB = getIntent().getExtras();
+        if (mEditEntryB != null) {
+            //yourDataObject = getIntent().getStringExtra(KEY_EXTRA);
+            mTblSignal = mEditEntryB.getString("tablename"); //See MECR ViewAdapter, ViewHolder's list item onClick listener
+            mUidSignal = mEditEntryB.getString("uid");
+
+        } else {
+>>>>>>> parent of 9670e46... pre-pull commit -> ignore
 
 
             frag = new HomeScreen();
@@ -433,6 +443,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
         activeFragment = new SleepGraph();
         replaceFragment(activeFragment);
     }
+<<<<<<< HEAD
 
     public Fragment PopulateEntryIntercept(String tableKey){
         Fragment EntryFrag;
@@ -464,4 +475,6 @@ public class NavigationDrawerActivity extends AppCompatActivity
         replaceFragment(activeFragment);
     }
 
+=======
+>>>>>>> parent of 9670e46... pre-pull commit -> ignore
 }
