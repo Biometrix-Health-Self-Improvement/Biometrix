@@ -76,7 +76,8 @@
 
             <Space
                 android:layout_width="20dp"
-                android:layout_height="20dp" />
+                android:layout_height="20dp"
+                android:id="@+id/sleepSpaceAfterMinutes"/>
 
             <TableRow
                 android:layout_width="match_parent"
@@ -108,7 +109,8 @@
 
             <Space
                 android:layout_width="20dp"
-                android:layout_height="20dp" />
+                android:layout_height="20dp"
+                android:id="@+id/sleepSpaceAfterEndTime"/>
 
             <TableRow
                 android:layout_width="match_parent"
@@ -145,27 +147,8 @@
 
             <Space
                 android:layout_width="30dp"
-                android:layout_height="30dp" />
-
-            <LinearLayout>
-
-                <TextView
-                    android:id="@+id/textView2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/sleep_gen_health_text"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                <Spinner
-                    android:id="@+id/sleepGeneralHealthSpinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-
-            <Space
-                android:layout_width="30dp"
-                android:layout_height="30dp" />
+                android:layout_height="30dp"
+                android:id="@+id/sleepSpaceAfterQuality"/>
 
             <EditText
                 android:id="@+id/sleepNotesEditText"

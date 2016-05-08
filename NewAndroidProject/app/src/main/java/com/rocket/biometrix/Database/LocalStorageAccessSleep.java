@@ -6,8 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 
-import com.rocket.biometrix.Login.LocalAccount;
-
 public class LocalStorageAccessSleep {
 
     //Sleep table and columns
@@ -20,13 +18,10 @@ public class LocalStorageAccessSleep {
     public static final String DURATION = "Duration";
     public static final String QUALITY = "Quality";
     public static final String NOTES = "Notes";
-    public static final String HEALTH = "Health";
 
     //Exercise Add Entry Table strings
     public static final String[] columns = {LOCAL_SLEEP_ID, USER_NAME, WEB_SLEEP_ID, DATE,
-            TIME, DURATION, QUALITY, NOTES, HEALTH};
-
-    public static final String[] anslysiscolumns = {DURATION, QUALITY};
+            TIME, DURATION, QUALITY, NOTES};
 
     public LocalStorageAccessSleep(Context context){
     }
@@ -39,15 +34,12 @@ public class LocalStorageAccessSleep {
                 LOCAL_SLEEP_ID + " integer primary key autoincrement, " +
                 USER_NAME + " varchar(50) Not Null, " +
                 WEB_SLEEP_ID + " int Null, " +
-                DATE + " date, " +
+                DATE + " date Not Null, " +
                 TIME + " time Not Null, " +
-                DURATION + " time Not Null, " +
-                QUALITY + " int Not Null, " +
-                NOTES + " varchar(300), " +
-                HEALTH + " varchar(20)" +");";
+                DURATION + " time Null, " +
+                QUALITY + " int Null, " +
+                NOTES + " varchar(300)" +");";
     }
-
-    public static String getTableName(){ return TABLE_NAME; }
 
     /**
      * Makes a call to the base class with the needed parameters to pull out the last primary key
@@ -64,12 +56,6 @@ public class LocalStorageAccessSleep {
     public static String[] getColumns()
     {
         return columns;
-    }
-
-    //Returns the columns for the table
-    public static String[] getAnalysisColumns()
-    {
-        return anslysiscolumns;
     }
 
     public static String getUIDColumn()
@@ -151,5 +137,4 @@ public class LocalStorageAccessSleep {
 
         return cursor;
     }
-
 }

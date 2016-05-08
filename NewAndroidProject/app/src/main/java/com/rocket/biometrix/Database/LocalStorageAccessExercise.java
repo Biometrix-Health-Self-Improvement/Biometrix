@@ -23,9 +23,6 @@ public class LocalStorageAccessExercise{
     public static final String TITLE = "Title";//Title will help co-determine the module mode e.g. Simple mode (yay I walked to the fridge), Gainz mode (weight and reps etc.)
     public static final String TYPE = "Type";//light, cardio, etc.
     public static final String MINUTES = "Minutes";//minutes exercised
-    public static final String REPS = "Reps";//Reps or laps, data significance determined by module mode WHICH IS NOT IMPLEMENTED YET
-    public static final String LAPS = "Laps";
-    public static final String WEIGHT = "Weight";
     public static final String INTY = "Inty";
     public static final String NOTES = "Notes";
     public static final String DATE = "DateEx";
@@ -33,11 +30,8 @@ public class LocalStorageAccessExercise{
 
     // All the columns above, see getColumns() below
     public static final String[] columns = {LOCAL_EXERCISE_ID, USER_NAME, WEB_EXERCISE_ID,
-            TITLE, TYPE, MINUTES, REPS, LAPS, WEIGHT, INTY, NOTES, DATE, TIME};
+            TITLE, TYPE, MINUTES, INTY, NOTES, DATE, TIME};
     //Later, we'll hopefully get to a shared preferences class that stores BMI and weight information.
-
-    //All integer fields, used for analysis
-    public static final String[] intcolumns = {MINUTES, REPS, LAPS, WEIGHT, INTY};
 
     public LocalStorageAccessExercise(Context context) {    }
 
@@ -47,16 +41,13 @@ public class LocalStorageAccessExercise{
                 LOCAL_EXERCISE_ID + " integer primary key autoincrement, " +
                 USER_NAME + " varchar(50) Not Null, " +
                 WEB_EXERCISE_ID + " int Null, " +
-                TITLE + " varchar(255), " +
-                TYPE + " varchar(140), " +
-                MINUTES + " tinyint, " +
-                REPS + " tinyint, " +
-                LAPS + " tinyint, " +
-                WEIGHT + " smallint, " +
-                INTY + " tinyint, " +
-                NOTES + " varchar(255), " +
-                DATE + " date, " +
-                TIME + " varchar(50)" +");";
+                TITLE + " varchar(255) Null, " +
+                TYPE + " varchar(140) Null, " +
+                MINUTES + " tinyint Null, " +
+                INTY + " tinyint Null, " +
+                NOTES + " varchar(255) Null, " +
+                DATE + " date Not Null, " +
+                TIME + " time Not Null" +");";
     }
 
 
@@ -64,12 +55,6 @@ public class LocalStorageAccessExercise{
     public static String[] getColumns() {
         return columns;
     }
-
-    public static String[] getAnalysisColumns() {
-        return intcolumns;
-    }
-
-    public static String getTableName() {return TABLE_NAME;}
 
     /**
      * Makes a call to the base class with the needed parameters to pull out the last primary key
@@ -219,7 +204,7 @@ public class LocalStorageAccessExercise{
 
         SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_NAME, new String[]{DATE, TIME, TITLE, TYPE, MINUTES, REPS, LAPS, WEIGHT, INTY},
+        Cursor cursor = db.query(TABLE_NAME, new String[]{DATE, TIME, TITLE, TYPE, MINUTES, INTY},
                 DATE + " BETWEEN (date(?)) AND (date(?, '+1 month','-1 day'))", new String[]{date, date}, null, null, DATE);
 
         return cursor;

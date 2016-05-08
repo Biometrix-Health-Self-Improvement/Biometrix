@@ -8,11 +8,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +23,7 @@ import com.rocket.biometrix.Database.JsonCVHelper;
 import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.Login.LocalAccount;
+import com.rocket.biometrix.Login.SettingsAndEntryHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -54,6 +52,7 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
     public static TextView timeTV; //Used by the DateTimePopulateTextView in the onCreate event
     public static TextView dateTV;
 
+
     String minSelected; //string to save minutes exercised spinner result
     String typeSelected; //string to save type of exercise selected in the radio 'bubble' buttons
 
@@ -69,6 +68,8 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
 
     String[] exerciseEntryData = {}; //String array that will store all user entered data, used in bundles and SQLite insert
 
+
+    Spinner typeSpinner;
 
     private OnFragmentInteractionListener mListener;
 
@@ -111,7 +112,6 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
 
     }
 
-
     //This is where the real inflater is, it inflate the actual UI layout of the 'entry'
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -119,64 +119,11 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
         // Inflate the layout for this fragment
         final View v = inflater.inflate(R.layout.fragment_exercise_entry, container, false);
 
+        typeSpinner  = (Spinner) v.findViewById(R.id.ex_type);
+        ArrayAdapter typeSpin = ArrayAdapter.createFromResource(
+                getActivity(),R.array.ex_type_array,android.R.layout.simple_spinner_item);
 
-        minuteSpinner = (Spinner) v.findViewById(R.id.ex_min_spinner);
-        //Array adapter from exer_strings resource
-        ArrayAdapter minSpin = ArrayAdapter.createFromResource(
-                getActivity(), R.array.ex_min_array, android.R.layout.simple_spinner_item);
-
-        minuteSpinner.setAdapter(minSpin);
-
-        //Listener for selected minute taps and getting the tapped minutes as strings.
-        minuteSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            protected Adapter initializedAdapter = null;
-
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                if (initializedAdapter != parentView.getAdapter()) {
-                    initializedAdapter = parentView.getAdapter();
-                    return;
-                }
-                //Set string
-                minSelected = parentView.getItemAtPosition(position).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // defaulted to 5 min already.
-            }
-        });
-
-
-        RadioGroup rg = (RadioGroup) v.findViewById(R.id.ex_radioGroup);
-        //When a bubble is poked, update a string to match the bubble poked.
-        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.ex_rb_a:
-                        //Extract CharSequences from UI and convert them to string array
-                        final RadioButton ETa1 = (RadioButton) v.findViewById(R.id.ex_rb_a);
-                        typeSelected = ETa1.getText().toString();
-                        break;
-
-                    case R.id.ex_rb_b:
-                        final RadioButton ETa2 = (RadioButton) v.findViewById(R.id.ex_rb_b);
-                        typeSelected = ETa2.getText().toString();
-                        break;
-
-                    case R.id.ex_rb_c:
-                        final RadioButton ETa3 = (RadioButton) v.findViewById(R.id.ex_rb_c);
-                        typeSelected = ETa3.getText().toString();
-                        break;
-
-                    case R.id.ex_rb_d:
-                        final RadioButton ETa4 = (RadioButton) v.findViewById(R.id.ex_rb_d);
-                        typeSelected = ETa4.getText().toString();
-                        break;
-
-                }
-            }
-        });
-
+        typeSpinner.setAdapter(typeSpin);
 
         //Linking contexts likes non-null variables.
         timeTV = (TextView) v.findViewById(R.id.ex_tv_time);
@@ -189,6 +136,8 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
 
 
         onCreateView = v; //This view (the inflated UI layout view ) is saved so onDoneClick() can use it.
+        SettingsAndEntryHelper.makeDisabledEntryViewsInvisible(onCreateView, LocalStorageAccessExercise.TABLE_NAME);
+
         return v;
     }
 
@@ -212,13 +161,6 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
     *
      */
     public void onDoneClick(View v) {
-        //Keep in mind that the 'View' you reference here is only the 'View' for the actual done button
-        //NOT the whole UI Layout you made.
-
-        //Filling a string that holds title
-        String titleString = StringDateTimeConverter.GetStringFromEditText(onCreateView.findViewById(R.id.ex_title));
-
-        //Filling date and time strings for bundle's string array
         String dateString = dateTV.getText().toString();
         String timeString = timeTV.getText().toString();
 
@@ -226,47 +168,25 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
         dateString = StringDateTimeConverter.fixDate(dateString);
         timeString = StringDateTimeConverter.fixTime(timeString);
 
-        //Filling reps/laps string
-        String repsString = StringDateTimeConverter.GetStringFromEditText(onCreateView.findViewById(R.id.ex_et_reps));
+        //String[] exerciseEntryData = new String[]{null, username, null, titleString, typeSelected,
+        // minSelected, Integer.toString(intensity), notes, dateString, timeString};
+        //Has the affect of the comment above
+        String[] exerciseEntryData = SettingsAndEntryHelper.prepareColumnArray(onCreateView,
+                LocalStorageAccessExercise.TABLE_NAME, dateString, timeString);
 
-        //Filling weight/intensity string from its editText found @content_exercise_entry.xml
-        String weightString = StringDateTimeConverter.GetStringFromEditText(onCreateView.findViewById(R.id.ex_et_weight));
-
-        //Filling notes string
-        String notesString = StringDateTimeConverter.GetStringFromEditText(onCreateView.findViewById(R.id.ex_notes));
-
-        String username = LocalAccount.DEFAULT_NAME;
-
-        if (LocalAccount.isLoggedIn() )
-        {
-            username = LocalAccount.GetInstance().GetUsername();
-        }
-
-        //Make string array to hold all the strings extracted from the user's input on this entry activity
-        //{LOCALEXERCISEID, USERNAME, WEBEXERCISEID, TITLE, TYPE, MINUTES, REPS, LAPS, WEIGHT, INTY, NOTES, DATE, TIME, UPDATED}; //No distinction between reps and laps, weight and intensity.
-        exerciseEntryData = new String[]{null, username, null, titleString, typeSelected, minSelected, repsString, repsString, weightString, weightString, notesString, dateString, timeString};
-
-        //https://developer.android.com/reference/android/os/Bundle.html
-        //Put string array that has all the entries data points in it into a Bundle. This bundle is for future extensibility it is NOT for the parent class.
-        Bundle exerciseEntryBundle = new Bundle();
-        exerciseEntryBundle.putStringArray("exEntBundKey", exerciseEntryData);
-
+        String[] cols = LocalStorageAccessExercise.getColumns();
 
         //Getting context for LSA constructor
         Context context = onCreateView.getContext();
 
         //Constructor for LSA Exercise
         LocalStorageAccessExercise dbEx = new LocalStorageAccessExercise(context);
-
-        //You don't have to keep strings in the same order across classes, I just did to make the code easier.
-        //{TITLE, TYPE, MINUTES, REPS, LAPS, WEIGHT, INTY, NOTES, DATE, TIME};
-        String[] columnNames = dbEx.getColumns();//Pull keys from LSA Exercise
-
         //Making sure I have data for each column (even if null or empty, note that this is NOT required, you can insert columns individually if you wish.) @see putNull
-        if (columnNames.length == exerciseEntryData.length) {
+        //I don't believe the above comment is correct.
+        if (cols.length == exerciseEntryData.length) {
             ContentValues rowToBeInserted = new ContentValues();
             int dataIndex = 0;
-            for (String column : columnNames) {
+            for (String column : cols) {
                 //Insert column name ripped from LSA child class, and the user's entry data we gathered above
                 rowToBeInserted.put(column, exerciseEntryData[dataIndex]);
                 dataIndex++;
@@ -293,11 +213,7 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
                         LocalAccount.GetInstance().GetToken(),
                         DatabaseConnectionTypes.EXERCISE_TABLE);
             }
-
-
-
         }
-
     }
 
     /**

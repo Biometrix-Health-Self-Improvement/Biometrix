@@ -33,7 +33,7 @@ import com.rocket.biometrix.Login.CreateLogin;
 import com.rocket.biometrix.Login.GetLogin;
 import com.rocket.biometrix.Login.GoogleLogin;
 import com.rocket.biometrix.Login.LocalAccount;
-import com.rocket.biometrix.Login.SettingsHelper;
+import com.rocket.biometrix.Login.SettingsAndEntryHelper;
 import com.rocket.biometrix.MedicationModule.MedicationEntry;
 import com.rocket.biometrix.MedicationModule.MedicationParent;
 import com.rocket.biometrix.MoodModule.MoodEntry;
@@ -385,11 +385,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
     public void UpdateMenuItems() {
         Menu navMenu = navView.getMenu();
 
-        SetItemVisibility(navMenu, R.id.nav_mood_module, SettingsHelper.MOOD_MODULE);
-        SetItemVisibility(navMenu, R.id.nav_sleep_module, SettingsHelper.SLEEP_MODULE);
-        SetItemVisibility(navMenu, R.id.nav_exercise_module, SettingsHelper.EXERCISE_MODULE);
-        SetItemVisibility(navMenu, R.id.nav_diet_module, SettingsHelper.DIET_MODULE);
-        SetItemVisibility(navMenu, R.id.nav_medication_module, SettingsHelper.MEDICATION_MODULE);
+        SetItemVisibility(navMenu, R.id.nav_mood_module, SettingsAndEntryHelper.MOOD_MODULE);
+        SetItemVisibility(navMenu, R.id.nav_sleep_module, SettingsAndEntryHelper.SLEEP_MODULE);
+        SetItemVisibility(navMenu, R.id.nav_exercise_module, SettingsAndEntryHelper.EXERCISE_MODULE);
+        SetItemVisibility(navMenu, R.id.nav_diet_module, SettingsAndEntryHelper.DIET_MODULE);
+        SetItemVisibility(navMenu, R.id.nav_medication_module, SettingsAndEntryHelper.MEDICATION_MODULE);
 
         //Makes a few options invisible if the user is not logged in.
         if (!LocalAccount.isLoggedIn()) {

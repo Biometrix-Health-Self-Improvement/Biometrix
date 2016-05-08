@@ -6,10 +6,8 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Switch;
 
-import com.rocket.biometrix.Login.LocalAccount;
-import com.rocket.biometrix.Login.SettingsHelper;
+import com.rocket.biometrix.Login.SettingsAndEntryHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -79,7 +77,7 @@ public class ModuleSettings extends Fragment {
         View view = inflater.inflate(R.layout.fragment_module_settings, container, false);
         // Inflate the layout for this fragment
 
-        SettingsHelper.setupSwitches(view, SettingsHelper.getAllModuleKeysAndRIDs(), true);
+        SettingsAndEntryHelper.setupSwitches(view, SettingsAndEntryHelper.getAllModuleKeysAndRIDs(), true);
 
         return view;
     }
@@ -105,6 +103,6 @@ public class ModuleSettings extends Fragment {
      * @param v
      */
     public void onAcceptClick(View v) {
-        SettingsHelper.storeSwitchValues(getView(), SettingsHelper.getAllModuleKeysAndRIDs());
+        SettingsAndEntryHelper.storeSwitchValues(getView(), SettingsAndEntryHelper.getAllModuleKeysAndRIDs());
     }
 }

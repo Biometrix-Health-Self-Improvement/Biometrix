@@ -7,28 +7,23 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SeekBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rocket.biometrix.Common.DateTimeSelectorPopulateTextView;
-import com.rocket.biometrix.Common.StringDateTimeConverter;
 import com.rocket.biometrix.Database.AsyncResponse;
 import com.rocket.biometrix.Database.DatabaseConnect;
 import com.rocket.biometrix.Database.DatabaseConnectionTypes;
 import com.rocket.biometrix.Database.JsonCVHelper;
 import com.rocket.biometrix.Database.LocalStorageAccess;
-import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.Login.LocalAccount;
+import com.rocket.biometrix.Login.SettingsAndEntryHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -65,10 +60,6 @@ public class SleepEntry extends Fragment implements AsyncResponse {
 
     private SeekBar qualitySeekBar;     //''
     private TextView qualityNumberTextView; //''
-
-    private Spinner generalHealthSpinner;
-
-    private TextView noteTextView;
 
     private View entryView;
 
@@ -132,8 +123,6 @@ public class SleepEntry extends Fragment implements AsyncResponse {
         sleptTimeTextView = (TextView) v.findViewById(R.id.sleepTimeSleptTextView);
         qualitySeekBar = (SeekBar) v.findViewById(R.id.sleepQualitySeekBar);
         qualityNumberTextView = (TextView) v.findViewById(R.id.sleepQualityNumberTextView);
-        generalHealthSpinner = (Spinner) v.findViewById(R.id.sleepGeneralHealthSpinner);
-        noteTextView = (TextView) v.findViewById(R.id.sleepNotesEditText);
     }
 
 
@@ -238,27 +227,6 @@ public class SleepEntry extends Fragment implements AsyncResponse {
         //Array adapter from sleep string resources
         ArrayAdapter spinnerAdapter = ArrayAdapter.createFromResource(
                 getActivity(), R.array.sleep_gen_health_array, android.R.layout.simple_spinner_item);
-
-        generalHealthSpinner.setAdapter(spinnerAdapter);
-
-        //Listener for selected minute taps and getting the tapped minutes as strings.
-        generalHealthSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            protected Adapter initializedAdapter = null;
-
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                if (initializedAdapter != parentView.getAdapter()) {
-                    initializedAdapter = parentView.getAdapter();
-                    return;
-                }
-
-                String selected = parentView.getItemAtPosition(position).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // default to 5 min
-            }
-        });
     }
 
 
@@ -267,7 +235,6 @@ public class SleepEntry extends Fragment implements AsyncResponse {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_sleep_entry, container, false);
-
 
         //Moves this to another function to clean up onCreate
         GetViewReferences(v);
@@ -284,6 +251,8 @@ public class SleepEntry extends Fragment implements AsyncResponse {
         UpdateEndTimes();
 
         entryView = v;
+
+        SettingsAndEntryHelper.makeDisabledEntryViewsInvisible(entryView, LocalStorageAccessSleep.TABLE_NAME);
 
         return v;
     }
@@ -365,76 +334,57 @@ public class SleepEntry extends Fragment implements AsyncResponse {
     public void onDoneClick(View v) {
         String dateText = startDateTextView.getText().toString();
         String timeText = startTimeTextView.getText().toString();
-        String duration = sleptTimeTextView.getText().toString();
-
         dateText = dateText.substring(dateText.indexOf(",") + 1).trim();
         timeText = timeText.substring(timeText.indexOf(":") + 2).trim();
-        duration = duration.substring(duration.indexOf(":") + 2).trim();
         DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
         Date date = null;
         try{ date = format.parse(dateText); } catch (Exception e) { }
         format = new SimpleDateFormat("yyyy-MM-dd");
         dateText = format.format(date);
 
-        Integer quality = qualitySeekBar.getProgress();
-
-        String notes = noteTextView.getText().toString();
-        String status = generalHealthSpinner.getSelectedItem().toString();
-
-        String username = LocalAccount.DEFAULT_NAME;
-
-        if (LocalAccount.isLoggedIn()) {
-            username = LocalAccount.GetInstance().GetUsername();
-        }
-
-        //Make string array for all of the above data
-        String[] sleepEntryData = {null, username, null, dateText, timeText, duration, quality.toString(), notes, status};
+        //Calls a helper method to grab most of the data for this.
+        //Effectively grabs,
+        //String[] sleepEntryData = {null, username, null, dateText, timeText, duration, quality, notes};
+        String[] sleepEntryData = SettingsAndEntryHelper.prepareColumnArray(entryView, LocalStorageAccessSleep.TABLE_NAME, dateText, timeText);
 
         //Retrieves column names from the class
         String[] columnNames = LocalStorageAccessSleep.getColumns();
 
+        ContentValues rowToBeInserted = new ContentValues();
+        int dataIndex = 0;
 
-        if (columnNames.length == sleepEntryData.length) {
-            ContentValues rowToBeInserted = new ContentValues();
-            int dataIndex = 0;
-
-            for (String column : columnNames) {
-                //Insert column name ripped from LSA child class, and the user's entry data we gathered above
-                if (column != LocalStorageAccessSleep.LOCAL_SLEEP_ID) {
-                    rowToBeInserted.put(column, sleepEntryData[dataIndex]);
-                }
-                dataIndex++;
-            }
-
-            //Call insert method
-            LocalStorageAccessSleep.insertFromContentValues(rowToBeInserted, v.getContext());
-
-            //Assumes that any user who is logged in wants their data backed up.
-            //TODO: Local Account setting for turning off always backup?
-            if (LocalAccount.isLoggedIn() )
-            {
-                int id = LocalStorageAccessSleep.GetLastID(v.getContext());
-
-                //Adds the primary key of the field to the sync table along with the value marking it
-                //needs to be added to the webdatabase
-                LocalStorageAccess.getInstance(v.getContext()).insertOrUpdateSyncTable(v.getContext(),
-                        LocalStorageAccessSleep.TABLE_NAME, id, -1, LocalStorageAccess.SYNC_NEEDS_ADDED);
-
-                //Makes the change to the web database (which updates the sync table on success)
-                rowToBeInserted.put(LocalStorageAccessSleep.LOCAL_SLEEP_ID, id);
-                rowToBeInserted.remove(LocalStorageAccessSleep.USER_NAME);
-
-                String jsonToInsert = JsonCVHelper.convertToJSON(rowToBeInserted);
-
-                //Trys to insert the user's data
-                new DatabaseConnect(this).execute(DatabaseConnectionTypes.INSERT_TABLE_VALUES, jsonToInsert,
-                        LocalAccount.GetInstance().GetToken(),
-                        DatabaseConnectionTypes.SLEEP_TABLE);
-            }
-
-
+        for (String column : columnNames) {
+            //Insert column name ripped from LSA child class, and the user's entry data we gathered above
+            rowToBeInserted.put(column, sleepEntryData[dataIndex]);
+            dataIndex++;
         }
 
+        //Call insert method
+        LocalStorageAccessSleep.insertFromContentValues(rowToBeInserted, v.getContext());
+
+        //Assumes that any user who is logged in wants their data backed up.
+        //TODO: Local Account setting for turning off always backup?
+        if (LocalAccount.isLoggedIn() )
+        {
+            int id = LocalStorageAccessSleep.GetLastID(v.getContext());
+
+            //Adds the primary key of the field to the sync table along with the value marking it
+            //needs to be added to the webdatabase
+            LocalStorageAccess.getInstance(v.getContext()).insertOrUpdateSyncTable(v.getContext(),
+                    LocalStorageAccessSleep.TABLE_NAME, id, -1, LocalStorageAccess.SYNC_NEEDS_ADDED);
+
+            //Makes the change to the web database (which updates the sync table on success)
+            rowToBeInserted.put(LocalStorageAccessSleep.LOCAL_SLEEP_ID, id);
+            rowToBeInserted.remove(LocalStorageAccessSleep.USER_NAME);
+
+            String jsonToInsert = JsonCVHelper.convertToJSON(rowToBeInserted);
+
+            //Trys to insert the user's data
+            new DatabaseConnect(this).execute(DatabaseConnectionTypes.INSERT_TABLE_VALUES, jsonToInsert,
+                    LocalAccount.GetInstance().GetToken(),
+                    DatabaseConnectionTypes.SLEEP_TABLE);
+
+        }
     }
 
     public interface OnFragmentInteractionListener {

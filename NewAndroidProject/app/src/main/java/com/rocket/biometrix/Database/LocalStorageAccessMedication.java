@@ -32,7 +32,6 @@ public class LocalStorageAccessMedication {
             DATE, TIME, BRAND_NAME, PRESCRIBER, DOSE, INSTRUCTIONS, WARNINGS, NOTES};
 
 
-
     public LocalStorageAccessMedication(Context context){
     }
 
@@ -44,17 +43,15 @@ public class LocalStorageAccessMedication {
                 LOCAL_MEDICATION_ID + " integer primary key autoincrement, " +
                 USER_NAME + " varchar(50) Not Null, " +
                 WEB_MEDICATION_ID + " int Null, " +
-                DATE + " date, " +
+                DATE + " date Not Null, " +
                 TIME + " time Not Null, " +
                 BRAND_NAME + " varchar(255) null, " +
                 PRESCRIBER + " varchar(255) null, " +
                 DOSE + " varchar(255) null, " +
                 INSTRUCTIONS + " varchar(255) null, " +
                 WARNINGS + " varchar(255) null, " +
-                NOTES + " varchar(300)" +");";
+                NOTES + " varchar(255) null" +");";
     }
-
-    public static String getTableName(){ return TABLE_NAME; }
 
     /**
      * Makes a call to the base class with the needed parameters to pull out the last primary key
@@ -72,12 +69,6 @@ public class LocalStorageAccessMedication {
     {
         return columns;
     }
-
-    public static String getUIDColumn()
-    {
-        return USER_NAME;
-    }
-
 
     /**
      * Inserts into the database based on the passed in content values. If the column does not exist

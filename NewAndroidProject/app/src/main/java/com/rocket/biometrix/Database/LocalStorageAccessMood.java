@@ -31,8 +31,6 @@ public class LocalStorageAccessMood {
     public static final String[] cols = {LOCAL_MOOD_ID, USER_NAME, WEB_MOOD_ID, DATE,
             TIME, DEP, ELEV, IRR, ANX, NOTE};
 
-    public static final String[] intcols = {DEP, ELEV, IRR, ANX};
-
     private LocalStorageAccessMood(){}
 
     public static String createTable() {
@@ -50,19 +48,12 @@ public class LocalStorageAccessMood {
                 NOTE + " varchar(255)" +");";
     }
 
-    public static String getTableName() {return  TABLE_NAME;}
-
-
     public static void AddEntry(ContentValues cv, Context c){
         LocalStorageAccess.getInstance(c).safeInsert(TABLE_NAME, null, cv);
     }
 
     public static String[] getColumns(){
         return cols;
-    }
-
-    public static String[] getAnalysisColumns(){
-        return intcols;
     }
 
     /**

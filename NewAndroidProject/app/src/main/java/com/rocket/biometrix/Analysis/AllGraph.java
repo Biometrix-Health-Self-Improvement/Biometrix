@@ -76,14 +76,14 @@ public class AllGraph extends GraphBase {
             1 - hrs slept
             2 - exercise / 5
          */
-        LineGraphSeries<DataPoint> irr = new LineGraphSeries<DataPoint>(dp.get(0));
+        LineGraphSeries<DataPoint> irr = new LineGraphSeries<>(dp.get(0));
         irr.setTitle("Irritability");
 
-        LineGraphSeries<DataPoint> sleep = new LineGraphSeries<DataPoint>(dp.get(1));
+        LineGraphSeries<DataPoint> sleep = new LineGraphSeries<>(dp.get(1));
         sleep.setTitle("Hours Slept");
         sleep.setColor(Color.MAGENTA);
 
-        PointsGraphSeries<DataPoint> exercise = new PointsGraphSeries<DataPoint>(dp.get(2));
+        PointsGraphSeries<DataPoint> exercise = new PointsGraphSeries<>(dp.get(2));
         exercise.setTitle("Exercise");
         exercise.setColor(Color.GREEN);
 
@@ -108,14 +108,14 @@ public class AllGraph extends GraphBase {
             1 - hrs slept
             2 - exercise / 5
          */
-        LineGraphSeries<DataPoint> elev = new LineGraphSeries<DataPoint>(dp.get(0));
+        LineGraphSeries<DataPoint> elev = new LineGraphSeries<>(dp.get(0));
         elev.setTitle("Elevation");
 
-        LineGraphSeries<DataPoint> sleep = new LineGraphSeries<DataPoint>(dp.get(1));
+        LineGraphSeries<DataPoint> sleep = new LineGraphSeries<>(dp.get(1));
         sleep.setTitle("Hours Slept");
         sleep.setColor(Color.MAGENTA);
 
-        PointsGraphSeries<DataPoint> exercise = new PointsGraphSeries<DataPoint>(dp.get(2));
+        PointsGraphSeries<DataPoint> exercise = new PointsGraphSeries<>(dp.get(2));
         exercise.setTitle("Exercise");
         exercise.setColor(Color.GREEN);
 
@@ -139,14 +139,14 @@ public class AllGraph extends GraphBase {
             1 - hrs slept
             2 - exercise / 5
          */
-        LineGraphSeries<DataPoint> dep = new LineGraphSeries<DataPoint>(dp.get(0));
+        LineGraphSeries<DataPoint> dep = new LineGraphSeries<>(dp.get(0));
         dep.setTitle("Depression");
 
-        LineGraphSeries<DataPoint> sleep = new LineGraphSeries<DataPoint>(dp.get(1));
+        LineGraphSeries<DataPoint> sleep = new LineGraphSeries<>(dp.get(1));
         sleep.setTitle("Hours Slept");
         sleep.setColor(Color.MAGENTA);
 
-        PointsGraphSeries<DataPoint> exercise = new PointsGraphSeries<DataPoint>(dp.get(2));
+        PointsGraphSeries<DataPoint> exercise = new PointsGraphSeries<>(dp.get(2));
         exercise.setTitle("Exercise");
         exercise.setColor(Color.GREEN);
 
@@ -163,9 +163,9 @@ public class AllGraph extends GraphBase {
 
 
     public ArrayList<DataPoint[]> getDataPointArrayDep(int year, int month) {
-        ArrayList<DataPoint> mood = new ArrayList<DataPoint>();
-        ArrayList<DataPoint> sleep = new ArrayList<DataPoint>();
-        ArrayList<DataPoint> exer = new ArrayList<DataPoint>();
+        ArrayList<DataPoint> mood = new ArrayList<>();
+        ArrayList<DataPoint> sleep = new ArrayList<>();
+        ArrayList<DataPoint> exer = new ArrayList<>();
 
         Cursor cursor = LocalStorageAccessMood.getMonthEntries(v.getContext(), year, month);
         if (cursor.moveToFirst()) {

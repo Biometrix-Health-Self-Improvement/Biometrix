@@ -45,11 +45,6 @@ public class LocalStorageAccessDiet {
             TYPE, MEAL, SERVING, CALORIES, TOTALFAT, SATFAT, TRANSFAT, CHOLESTEROL, SODIUM, TOTALCARBS,
             FIBER, SUGARS, PROTEIN, VITAMINA, VITAMINB, CALCIUM, IRON, NOTE};
 
-    //All integer columns in the field. Used for analysis
-    public static final String[] intcols = {CALORIES, TOTALFAT, SATFAT, TRANSFAT,
-            CHOLESTEROL, SODIUM, TOTALCARBS, FIBER, SUGARS, PROTEIN, VITAMINA,
-            VITAMINB, CALCIUM, IRON};
-
     private LocalStorageAccessDiet(){}
 
     public static String createTable() {
@@ -59,7 +54,7 @@ public class LocalStorageAccessDiet {
                 USER_NAME + " varchar(50) Not Null, " +
                 WEB_DIET_ID + " int Null, " +
                 DATE + " date Not Null, " +
-                TYPE + " varchar(40) Not Null, " +
+                TYPE + " varchar(40) Null, " +
                 MEAL + " varchar(20) Null, " +
                 SERVING + " varchar(20) Null, " +
                 CALORIES + " int Null, " +
@@ -79,8 +74,6 @@ public class LocalStorageAccessDiet {
                 NOTE + " varchar(255)" +");";
     }
 
-    public static String getTableName() {return  TABLE_NAME;}
-
     /**
      * Makes a call to the base class with the needed parameters to pull out the last primary key
      * entered
@@ -94,10 +87,6 @@ public class LocalStorageAccessDiet {
 
     public static String[] getColumns(){
         return cols;
-    }
-
-    public static String[] getAnalysisColumns() {
-        return intcols;
     }
 
     /**

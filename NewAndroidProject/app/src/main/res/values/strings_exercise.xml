@@ -8,18 +8,11 @@
     <string name="ex_time">Minutes:</string>
     <string name="ex_prompt">How many minutes Exercised? :)</string>
     <string name="ex_ex_name">Enter Exercise Name</string>
-    <string-array name="ex_min_array">
-        <item>5</item>
-        <item>10</item>
-        <item>15</item>
-        <item>30</item>
-        <item>45</item>
-        <item>60</item>
-        <item>75</item>
-        <item>90</item>
-        <item>105</item>
-        <item>120</item>
-        <item>180</item>
+    <string-array name="ex_type_array">
+        <item>Endurance</item>
+        <item>Strength</item>
+        <item>Balance</item>
+        <item>Flexibility</item>
     </string-array>
     <string name="ex_reps">Reps/Laps: </string>
     <string name="ex_weight">Weight/Intensity: </string>

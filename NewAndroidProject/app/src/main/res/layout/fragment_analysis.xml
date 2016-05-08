@@ -4,17 +4,6 @@
             android:layout_height="match_parent"
             tools:context="com.rocket.biometrix.Analysis.AnalysisFragment">
 
-        <Button
-            style="@style/create_entry_button"
-            android:id="@+id/runAnalysisButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right|top"
-            android:text="@string/analysis_run_button"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:onClick="onRunButtonClick"/>
-
         <Button style="@style/graph"
             android:id="@+id/goToGraphAll"
             android:onClick="AllGraph" />
@@ -26,11 +15,144 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
-            android:layout_below="@+id/runAnalysisButton">
+            android:layout_below="@id/goToGraphAll">
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
+                <Space
+                    android:layout_height="20dp"
+                    android:layout_span="1"
+                    android:layout_width="wrap_content"/>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                        <Spinner
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/analysisTableSpinner1"
+                            android:layout_column="0"
+                            android:layout_weight="1"
+                            android:spinnerMode="dropdown"/>
+
+                    <Space
+                        android:layout_weight="1"/>
+
+                    <Spinner
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/analysisTableSpinner2"
+                            android:layout_column="2"
+                            android:layout_weight="1"
+                            android:spinnerMode="dropdown"/>
+                </TableRow>
+                <TableRow>
+
+                    <Spinner
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/analysisColumnSpinner1"
+                        android:layout_column="0"
+                        android:layout_weight="1"
+                        android:spinnerMode="dropdown"/>
+
+                    <Space
+                        android:layout_weight="1"/>
+
+                    <Spinner
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/analysisColumnSpinner2"
+                        android:layout_column="2"
+                        android:layout_weight="1"
+                        android:spinnerMode="dropdown"/>
+                </TableRow>
+
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <Space
+                        android:layout_weight="1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <Spinner
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/analysisDateDiffSpinner"
+                        android:layout_column="0"
+                        android:layout_weight="1"
+                        android:spinnerMode="dropdown"/>
+
+                    <Space
+                        android:layout_weight="1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <Space
+                        android:layout_weight="1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <Space
+                        android:layout_weight="1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                </TableRow>
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:text="Test text"
+                    android:gravity="center"
+                    android:id="@+id/analysisOperationTextView"
+                    android:layout_span="3"
+                    android:layout_column="2"/>
+
+                <Space
+                    android:layout_height="20dp"
+                    android:layout_span="1"
+                    android:layout_width="wrap_content"/>
+
+                <Button
+                    style="@style/create_entry_button"
+                    android:id="@+id/runAnalysisButton"
+                    android:text="@string/analysis_run_button"
+                    android:layout_span="1"
+                    android:onClick="onRunButtonClick"
+                    android:layout_column="2"/>
+
+                <Space
+                    android:layout_height="20dp"
+                    android:layout_span="1"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/analysisNumEntriesTextView"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/analysisCorrelationValueTextView"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/analysisCorrelationCommentsTextView"/>
+
+                <Button
+                    android:id="@+id/diet_entry_done_button"
+                    android:layout_span="1"
+                    style="@style/finished_button"
+                    android:onClick="EntryDoneOnClick"
+                    android:layout_column="2"/>
+
             </TableLayout>
         </ScrollView>
+
 </RelativeLayout>

@@ -79,29 +79,12 @@
 
             <TableRow>
                 <TextView
-                    android:id="@+id/DisableExerciseRepsLapsTextView"
-                    android:text="Disable Exercise Reps/Laps"
+                    android:id="@+id/DisableExerciseIntensityTextView"
+                    android:text="Disable Exercise Intensity"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
 
                 <Switch
-                    android:id="@+id/DisableSwitchExerciseRepsLaps"
-                    android:layout_width="60dp"
-                    android:layout_height="15dp"
-                    android:checked="true"/>
-            </TableRow>
-
-            <Space
-                android:layout_width="20dp"
-                android:layout_height="20dp" />
-
-            <TableRow>
-                <TextView
-                    android:id="@+id/DisableExerciseWeightIntensityTextView"
-                    android:text="Disable Exercise Weight/Intensity"
-                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
-
-                <Switch
-                    android:id="@+id/DisableSwitchExerciseWeightIntensity"
+                    android:id="@+id/DisableSwitchExerciseIntensity"
                     android:layout_width="60dp"
                     android:layout_height="15dp"
                     android:checked="true"/>

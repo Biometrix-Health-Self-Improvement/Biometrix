@@ -2,166 +2,140 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:onClick="EntryDoneOnClick"
     tools:context="com.rocket.biometrix.ExerciseModule.ExerciseEntry">
 
     <ScrollView
         android:id="@+id/ExerciseEntryScrollview"
-        style="@style/scrollview_parent_list"
-        android:layout_below="@+id/dividerUpper">
+        style="@style/scrollview_parent_list">
 
         <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:baselineAligned="false"
+            android:id="@+id/tableLayoutExercise">
 
-            <TextView
-                android:id="@+id/ex_tv_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/date_prompt"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
-
-            <Space
-                android:layout_width="10dp"
-                android:layout_height="10dp" />
-
-            <TextView
-                android:id="@+id/ex_tv_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:text="@string/time_prompt"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
-
-            <EditText
-                android:id="@+id/ex_title"
+            <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:gravity="start"
-
-                android:hint="@string/ex_ex_name"
-                android:inputType="textPersonName"
-                android:text="@string/ex_et_title"
-                android:textAlignment="center" />
-
-            <TableRow>
+                android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/ex_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:text="@string/ex_time"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                    android:text="@string/date_prompt"
+                    android:id="@+id/ex_tv_date" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                    android:text="@string/time_prompt"
+                    android:id="@+id/ex_tv_time"/>
+            </TableRow>
+
+            <Space
+                android:layout_height="20dp"
+                android:layout_width="wrap_content"/>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Workout Name: "
+                    android:id="@+id/ex_title_text"
+                    style="@style/exercise_col_1_style"/>
+
+                <EditText
+                    android:id="@+id/ex_title"
+                    android:inputType="textPersonName"
+                    android:layout_column="1"
+                    android:text="@string/ex_et_title"
+                    style="@style/exercise_col_2_style"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Total Minutes: "
+                    android:id="@+id/ex_length_text"
+                    style="@style/exercise_col_1_style"/>
+
+                <EditText
+                    android:id="@+id/ex_length"
+                    android:inputType="number"
+                    android:layout_column="1"
+                    android:text="@string/ex_et_title"
+                    style="@style/exercise_col_2_style"/>
+
+            </TableRow>
+
+            <Space
+                android:layout_height="20dp"
+                android:id="@+id/exerciseSpaceAfterMinutes"
+                android:layout_width="wrap_content"/>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Intensity: "
+                    android:id="@+id/ex_intensity_text"
+                    style="@style/exercise_int_1_style"/>
+
+                <SeekBar
+                    android:id="@+id/ex_intensity_seekbar"
+                    android:max="10"
+                    android:layout_column="1"
+                    style="@style/exercise_int_2_style"/>
+            </TableRow>
+
+            <Space
+                android:layout_height="20dp"
+                android:id="@+id/exerciseSpaceAfterIntensity"
+                android:layout_width="wrap_content"/>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
                 <Spinner
-                    android:id="@+id/ex_min_spinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:gravity="start"
-                    android:minWidth="60dp"
-                    android:prompt="@string/ex_prompt" />
+                    android:id="@+id/ex_type"/>
             </TableRow>
 
-                <RadioGroup
-                    android:id="@+id/ex_radioGroup"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:layout_gravity="start"
-                    android:orientation="horizontal">
-
-                    <RadioButton
-                        android:id="@+id/ex_rb_a"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/ex_rb_a_t" />
-
-                    <RadioButton
-                        android:id="@+id/ex_rb_b"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/ex_rb_b_t" />
-
-                    <RadioButton
-                        android:id="@+id/ex_rb_c"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/ex_rb_c_t" />
-
-                    <RadioButton
-                        android:id="@+id/ex_rb_d"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/ex_rb_d_t" />
-                </RadioGroup>
-
-            <TableRow>
-
-                <TextView
-                    android:id="@+id/ex_t_rep"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ex_reps"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                <EditText
-                    android:id="@+id/ex_et_reps"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:maxLines="1"
-                    android:singleLine="true" />
-            </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    android:id="@+id/ex_t_weight"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ex_weight"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                <EditText
-                    android:id="@+id/ex_et_weight"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:maxLines="1"
-                    android:singleLine="true" />
-            </TableRow>
             <Space
-                android:layout_width="20dp"
-                android:layout_height="20dp" />
-
-                <CheckBox
-                    android:id="@+id/ex_cb_plan"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ex_plan"
-                    android:textSize="16sp" />
-            <Space
-                android:layout_width="20dp"
-                android:layout_height="20dp" />
+                android:layout_height="20dp"
+                android:id="@+id/exerciseSpaceAfterType"
+                android:layout_width="wrap_content"/>
 
             <EditText
-                android:id="@+id/ex_notes"
+                android:id="@+id/exDetailsEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@color/colorBackgroundSecondary"
-                android:hint="@string/exerciseDetails"
+                android:hint="Enter notes"
                 android:maxLines="1"
-                android:singleLine="true" />
+                android:singleLine="true"/>
 
             <Button
                 android:id="@+id/ex_entry_done_button"
                 style="@style/done_button"
-                android:onClick="EntryDoneOnClick" />
+                android:onClick="EntryDoneOnClick"/>
 
         </TableLayout>
     </ScrollView>
+
+
 </RelativeLayout>
