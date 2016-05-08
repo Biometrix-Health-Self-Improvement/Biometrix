@@ -492,7 +492,7 @@ public class SettingsAndEntryHelper {
         List<Quartet<Integer, Integer, VIEW_TYPE, String>> returnList = new ArrayList<>(18);
         returnList.add(new Quartet<>(R.id.Food_Name, 4, VIEW_TYPE.TEXT_VIEW, ""));
         returnList.add(new Quartet<>(R.id.Meal_Select, 5, VIEW_TYPE.SPINNER, ""));
-        returnList.add(new Quartet<>(R.id.ServingSize_View, 6, VIEW_TYPE.SPINNER, ""));
+        returnList.add(new Quartet<>(R.id.ServingSize_Select, 6, VIEW_TYPE.SPINNER, ""));
         returnList.add(new Quartet<>(R.id.Calories_Amt, 7, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
         returnList.add(new Quartet<>(R.id.TotalFat_Amt, 8, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
         returnList.add(new Quartet<>(R.id.SaturatedFat_Amt, 9, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
