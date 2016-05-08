@@ -378,6 +378,17 @@ public class JsonCVHelper
                         if (!columnName.equals(unneededColumn) && !columnName.equals("UserID"))
                         {
                             String value = colJson.getString("Value");
+
+                            if (columnName.equals(LocalStorageAccessSleep.DURATION) )
+                            {
+                                value = trimDurationString(value);
+                            }
+                            else if(columnName.equals(LocalStorageAccessSleep.TIME) || columnName.equals(LocalStorageAccessExercise.TIME) ||
+                                    columnName.equals(LocalStorageAccessMedication.TIME) || columnName.equals(LocalStorageAccessMood.TIME))
+                            {
+                                value = convertTimeString(value);
+                            }
+
                             rowToBeInserted.put(columnName, value);
                         }
                     }
@@ -393,5 +404,59 @@ public class JsonCVHelper
             }
         }
 
+    }
+
+    /**
+     * Trims the duration string by removing the leading zero if it exists
+     * @param durationString String to trim
+     * @return The trimmed string
+     */
+    private static String trimDurationString(String durationString)
+    {
+        String returnString;
+
+        if (durationString.indexOf(0) == '0')
+        {
+            returnString = durationString.substring(1);
+        }
+        else
+        {
+            returnString = durationString;
+        }
+
+        return returnString;
+    }
+
+    /**
+     * Converts a time string from the format used by SQL server (on the webdatabase) to the format
+     * used by the local database (e.g. 14:00 to 2:00 PM)
+     * @param timeString The string to convert
+     * @return The converted string
+     */
+    private static String convertTimeString(String timeString)
+    {
+        String returnString;
+        String stringSuffix;
+
+        String hourPart = timeString.substring(0, 1);
+        String minutePart = timeString.substring(3, 4);
+        Integer hourInt = Integer.parseInt(hourPart);
+
+        if (hourInt > 11)
+        {
+            stringSuffix = " PM";
+        }
+        else
+        {
+            stringSuffix = " AM";
+            if (hourInt == 0)
+            {
+                hourInt += 12;
+            }
+        }
+
+        returnString = hourInt.toString() + ":" + minutePart + stringSuffix;
+
+        return returnString;
     }
 }
