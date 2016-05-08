@@ -31,6 +31,8 @@ public class LocalStorageAccessMood {
     public static final String[] cols = {LOCAL_MOOD_ID, USER_NAME, WEB_MOOD_ID, DATE,
             TIME, DEP, ELEV, IRR, ANX, NOTE};
 
+    public static final String[] intcols = {DEP, ELEV, IRR, ANX};
+
     private LocalStorageAccessMood(){}
 
     public static String createTable() {
@@ -57,6 +59,10 @@ public class LocalStorageAccessMood {
 
     public static String[] getColumns(){
         return cols;
+    }
+
+    public static String[] getAnalysisColumns(){
+        return intcols;
     }
 
     /**

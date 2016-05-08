@@ -9,6 +9,9 @@
         android:id="@+id/createDietEntryButton"
         android:onClick="CreateEntryOnClick" />
 
+    <Button style="@style/graph"
+        android:id="@+id/goToGraphDiet"
+        android:onClick="DietGraph" />
     <View
         style="@style/Divider"
         android:layout_below="@+id/createDietEntryButton"

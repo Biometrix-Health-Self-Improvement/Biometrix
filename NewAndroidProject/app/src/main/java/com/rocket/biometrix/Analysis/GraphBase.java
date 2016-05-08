@@ -10,6 +10,8 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
 import com.jjoe64.graphview.*;
 import com.jjoe64.graphview.helper.*;
 
@@ -23,6 +25,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,7 +61,7 @@ public abstract class GraphBase extends Fragment {
         // Inflate the layout for this fragment
         v = graphInflate(inflater, container);
 
-        graph = getGraph();//(GraphView) v.findViewById(R.id.graphMood);
+        graph = getGraph(); //gets the correct graph from derived class
 
         year = Calendar.getInstance().get(Calendar.YEAR);
         month = Calendar.getInstance().get(Calendar.MONTH)+1;
@@ -87,6 +90,33 @@ public abstract class GraphBase extends Fragment {
         }
         populateGraph();
     }
+
+    protected DefaultLabelFormatter setDateBounds(GraphView graph){
+        int numDays = new GregorianCalendar(year, month-1, 1).getActualMaximum(Calendar.DAY_OF_MONTH);
+
+        graph.getViewport().setMinX(1);
+        graph.getViewport().setMaxX(numDays);
+        graph.getViewport().setXAxisBoundsManual(true);
+
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMaximumFractionDigits(0);
+
+        DefaultLabelFormatter label = new DefaultLabelFormatter(nf,NumberFormat.getInstance());
+
+        graph.getGridLabelRenderer().setLabelFormatter(label);
+        return label ;
+
+    }
+
+    protected void setLegend(GraphView graph){
+        graph.getLegendRenderer().setVisible(true);
+        graph.getLegendRenderer().setTextSize(30);
+        graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+    }
+
+
+    abstract protected void setMonthYearTitle();
+
 
     abstract public void populateGraph();
 

@@ -2,36 +2,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rocket.biometrix.Analysis.SleepGraph">
+    tools:context="com.rocket.biometrix.Analysis.ExerciseGraph">
 
     <com.jjoe64.graphview.GraphView
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:id="@+id/graphSleep"
+        android:id="@+id/graphExercise"
         android:layout_marginTop="10dp"
-        android:layout_below="@+id/buttonPrevSleep" />
+        android:layout_below="@+id/buttonPrevExercise" />
 
     <Button style="@style/graph_prev_month"
-        android:id="@+id/buttonPrevSleep"
+        android:id="@+id/buttonPrevExercise"
         android:onClick="graphPrev" />
 
     <Button style="@style/graph_next_month"
-        android:id="@+id/buttonNextSleep"
+        android:id="@+id/buttonNextExercise"
         android:onClick="graphNext" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:id="@+id/monthTextViewSleep"
-        android:layout_alignBottom="@+id/buttonNextSleep"
+        android:id="@+id/monthTextViewExercise"
+        android:layout_alignBottom="@+id/buttonNextExercise"
         android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:id="@+id/yearTextViewSleep"
-        android:layout_above="@+id/monthTextViewSleep"
+        android:id="@+id/yearTextViewExercise"
+        android:layout_above="@+id/monthTextViewExercise"
         android:layout_centerHorizontal="true" />
+
 </RelativeLayout>

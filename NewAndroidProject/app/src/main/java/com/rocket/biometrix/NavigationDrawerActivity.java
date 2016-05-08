@@ -15,6 +15,12 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.rocket.biometrix.Analysis.BiometrixAnalysis;
+
+
+import com.rocket.biometrix.Analysis.AllGraph;
+import com.rocket.biometrix.Analysis.AnalysisFragment;
+import com.rocket.biometrix.Analysis.DietGraph;
+import com.rocket.biometrix.Analysis.ExerciseGraph;
 import com.rocket.biometrix.Analysis.GraphBase;
 import com.rocket.biometrix.Analysis.MoodGraph;
 import com.rocket.biometrix.Analysis.SleepGraph;
@@ -27,7 +33,7 @@ import com.rocket.biometrix.Login.CreateLogin;
 import com.rocket.biometrix.Login.GetLogin;
 import com.rocket.biometrix.Login.GoogleLogin;
 import com.rocket.biometrix.Login.LocalAccount;
-import com.rocket.biometrix.Login.SettingKeys;
+import com.rocket.biometrix.Login.SettingsHelper;
 import com.rocket.biometrix.MedicationModule.MedicationEntry;
 import com.rocket.biometrix.MedicationModule.MedicationParent;
 import com.rocket.biometrix.MoodModule.MoodEntry;
@@ -40,8 +46,6 @@ import com.rocket.biometrix.Settings.MoodSettings;
 import com.rocket.biometrix.Settings.SleepSettings;
 import com.rocket.biometrix.SleepModule.SleepEntry;
 import com.rocket.biometrix.SleepModule.SleepParent;
-
-import org.json.JSONObject;
 
 public class NavigationDrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -119,15 +123,53 @@ public class NavigationDrawerActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * The method called when one of the items on the help side of the nav drawer is called
+     * @param item The item that was clicked on in order to call this event
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Fragment frag = new HomeScreen();
         switch (item.getItemId()) {
+
             case R.id.action_help:
 
                 return true;
             case R.id.action_settings:
-                frag = new ModuleSettings();
+                Class fragClass = activeFragment.getClass();
+
+                if(fragClass.equals(SleepParent.class) || fragClass.equals(SleepGraph.class)
+                        || fragClass.equals(SleepEntry.class))
+                {
+                    frag = new SleepSettings();
+                }
+                else if(fragClass.equals(MoodParent.class) || fragClass.equals(MoodGraph.class)
+                        || fragClass.equals(MoodEntry.class))
+                {
+                    frag = new MoodSettings();
+                }
+                else if(fragClass.equals(DietParent.class) //TODO: || fragClass.equals(DietGraph.class)
+                        || fragClass.equals(DietEntry.class))
+                {
+                    frag = new DietSettings();
+                }
+                else if(fragClass.equals(MedicationParent.class) //TODO: || fragClass.equals(MedicationGraph.class)
+                        || fragClass.equals(MedicationEntry.class))
+                {
+                    frag = new MedicationSettings();
+                }
+                else if(fragClass.equals(ExerciseParent.class) //TODO: || fragClass.equals(ExerciseGraph.class)
+                        || fragClass.equals(ExerciseEntry.class))
+                {
+                    frag = new ExerciseSettings();
+                }
+                else
+                {
+                    frag = new ModuleSettings();
+                }
+
+                replaceFragment(frag);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -151,9 +193,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
         } else if (id == R.id.nav_medication_module) {
             frag = new MedicationParent();
         } else if (id == R.id.nav_analytics) { //TODO: menu open analytics fragment
-            //TODO: Actually do something with the statistical analysis. Also, might want to call this
-            //in whatever fragment we decide to open
-            JSONObject jsonObject = BiometrixAnalysis.AnalyzeAllModulesBasic(getApplicationContext());
+            frag = new AnalysisFragment();
         } else if (id == R.id.nav_settings) {
             frag = new ModuleSettings();
         } else if (id == R.id.nav_login) {
@@ -261,6 +301,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 ((MedicationEntry) activeFragment).onDoneClick(v);
                 newFragment = new MedicationParent();
             }
+            //If the active fragment is analysis, the default will be called and user will be taken
+            //back to the home page.
 
             //replaces the current fragment with the parent fragment
             replaceFragment(newFragment);
@@ -308,7 +350,12 @@ public class NavigationDrawerActivity extends AppCompatActivity
         ((com.rocket.biometrix.Login.GetLogin) activeFragment).okayButtonClick(v);
     }
 
-    public void cancelButton(View v) {
+    public void onRunButtonClick(View v)
+    {
+        ((com.rocket.biometrix.Analysis.AnalysisFragment)activeFragment).onRunButtonClick(v);
+    }
+
+    public void cancelButton(View v){
         replaceFragment(new HomeScreen());
     }
 
@@ -338,11 +385,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
     public void UpdateMenuItems() {
         Menu navMenu = navView.getMenu();
 
-        SetItemVisibility(navMenu, R.id.nav_mood_module, SettingKeys.MOOD_MODULE);
-        SetItemVisibility(navMenu, R.id.nav_sleep_module, SettingKeys.SLEEP_MODULE);
-        SetItemVisibility(navMenu, R.id.nav_exercise_module, SettingKeys.EXERCISE_MODULE);
-        SetItemVisibility(navMenu, R.id.nav_diet_module, SettingKeys.DIET_MODULE);
-        SetItemVisibility(navMenu, R.id.nav_medication_module, SettingKeys.MEDICATION_MODULE);
+        SetItemVisibility(navMenu, R.id.nav_mood_module, SettingsHelper.MOOD_MODULE);
+        SetItemVisibility(navMenu, R.id.nav_sleep_module, SettingsHelper.SLEEP_MODULE);
+        SetItemVisibility(navMenu, R.id.nav_exercise_module, SettingsHelper.EXERCISE_MODULE);
+        SetItemVisibility(navMenu, R.id.nav_diet_module, SettingsHelper.DIET_MODULE);
+        SetItemVisibility(navMenu, R.id.nav_medication_module, SettingsHelper.MEDICATION_MODULE);
 
         //Makes a few options invisible if the user is not logged in.
         if (!LocalAccount.isLoggedIn()) {
@@ -406,5 +453,18 @@ public class NavigationDrawerActivity extends AppCompatActivity
     return EntryFrag;
     }
 
+
+    public  void ExerciseGraph(View v){
+        activeFragment = new ExerciseGraph();
+        replaceFragment(activeFragment);
+    }
+    public  void DietGraph(View v){
+        activeFragment = new DietGraph();
+        replaceFragment(activeFragment);
+    }
+    public  void AllGraph(View v){
+        activeFragment = new AllGraph();
+        replaceFragment(activeFragment);
+    }
 
 }

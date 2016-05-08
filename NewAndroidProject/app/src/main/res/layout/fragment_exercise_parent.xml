@@ -9,6 +9,10 @@
         android:id="@+id/exNewEntry"
         android:onClick="CreateEntryOnClick" />
 
+    <Button style="@style/graph"
+        android:id="@+id/goToGraphEx"
+        android:onClick="ExerciseGraph" />
+
     <View
         style="@style/Divider"
         android:layout_below="@+id/exNewEntry"

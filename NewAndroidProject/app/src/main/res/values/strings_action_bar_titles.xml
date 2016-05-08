@@ -26,6 +26,8 @@
     <string name="action_bar_title_login">BioMetrix Login</string>
     <string name="action_bar_title_create_login">BioMetrix Create Login</string>
 
+    <string name="action_bar_title_analysis">Analysis</string>
+
 
 
 

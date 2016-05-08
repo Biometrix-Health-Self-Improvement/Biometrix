@@ -36,6 +36,9 @@ public class LocalStorageAccessExercise{
             TITLE, TYPE, MINUTES, REPS, LAPS, WEIGHT, INTY, NOTES, DATE, TIME};
     //Later, we'll hopefully get to a shared preferences class that stores BMI and weight information.
 
+    //All integer fields, used for analysis
+    public static final String[] intcolumns = {MINUTES, REPS, LAPS, WEIGHT, INTY};
+
     public LocalStorageAccessExercise(Context context) {    }
 
     protected static String createTable() {
@@ -59,11 +62,11 @@ public class LocalStorageAccessExercise{
 
     //Prints all column names and returns a string array with them in it.
     public static String[] getColumns() {
-        for (String s : columns) {
-            System.out.println(s);
-            Log.d("column: ", s);
-        }
         return columns;
+    }
+
+    public static String[] getAnalysisColumns() {
+        return intcolumns;
     }
 
     public static String getTableName() {return TABLE_NAME;}
@@ -205,5 +208,20 @@ public class LocalStorageAccessExercise{
     public static Cursor selectAll(Context c, boolean curUserOnly)
     {
         return LocalStorageAccess.selectAllEntries(c, TABLE_NAME, DATE + " DESC, " + TIME + " DESC", curUserOnly);
+    }
+
+    public static Cursor getMonthEntries(Context c, int year, int month)
+    {
+        String date = year + "-";
+        if(month <10)
+            date +="0";
+        date += month + "-01";
+
+        SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_NAME, new String[]{DATE, TIME, TITLE, TYPE, MINUTES, REPS, LAPS, WEIGHT, INTY},
+                DATE + " BETWEEN (date(?)) AND (date(?, '+1 month','-1 day'))", new String[]{date, date}, null, null, DATE);
+
+        return cursor;
     }
 }

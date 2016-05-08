@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.jjoe64.graphview.*;
 import com.jjoe64.graphview.helper.*;
@@ -13,10 +14,13 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.rocket.biometrix.Database.LocalStorageAccessMood;
 import com.rocket.biometrix.R;
+
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 
 
 public class MoodGraph extends GraphBase {
+
 
     @Override
     public void populateGraph(){
@@ -38,20 +42,21 @@ public class MoodGraph extends GraphBase {
         anx.setTitle("Anxiety");
         anx.setColor(Color.GREEN);
 
+
         StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
         staticLabelsFormatter.setVerticalLabels(new String[]{"None", "Mild", "Moderate", "Severe", "Very Severe"});
-        //staticLabelsFormatter.setHorizontalLabels(new String[]{"1", "10", "20", "31"});
-
+        staticLabelsFormatter.setDynamicLabelFormatter(setDateBounds(graph));
         graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
 
-        graph.addSeries(dep);
-        graph.addSeries(elev);
-        graph.addSeries(irr);
-        graph.addSeries(anx);
-
-        graph.getLegendRenderer().setVisible(true);
-        graph.getLegendRenderer().setTextSize(25);
-        graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+        graph.setTitle("Mood");
+        if(!dep.isEmpty()){
+            graph.addSeries(dep);
+            graph.addSeries(elev);
+            graph.addSeries(irr);
+            graph.addSeries(anx);
+        }
+        setLegend(graph);
+        setMonthYearTitle();
     }
 
 
@@ -71,7 +76,7 @@ public class MoodGraph extends GraphBase {
 */
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
-                int dayOfMonth = Integer.parseInt(cursor.getString(0).substring(8))-1;
+                int dayOfMonth = Integer.parseInt(cursor.getString(0).substring(8));
                 int val = Integer.parseInt(cursor.getString(2));
                 dep.add(new DataPoint(dayOfMonth, val));
                 val = Integer.parseInt(cursor.getString(3));
@@ -120,4 +125,13 @@ public class MoodGraph extends GraphBase {
     View graphInflate(LayoutInflater inflater, ViewGroup container) {
         return inflater.inflate(R.layout.fragment_mood_graph, container, false);
     }
+
+    @Override
+    protected void setMonthYearTitle() {
+        ((TextView)v.findViewById(R.id.yearTextViewMood)).setText(Integer.toString(year));
+        TextView mnth = (TextView)v.findViewById(R.id.monthTextViewMood);
+        mnth.setText(new DateFormatSymbols().getMonths()[month-1]);
+    }
+
+
 }

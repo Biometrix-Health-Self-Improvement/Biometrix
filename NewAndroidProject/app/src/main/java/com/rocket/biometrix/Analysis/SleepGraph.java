@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.LegendRenderer;
@@ -13,7 +14,10 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.R;
 
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 /**
  * Created by tannalynn on 4/9/2016.
@@ -32,16 +36,14 @@ public class SleepGraph extends GraphBase{
         qual.setTitle("Quality of Sleep");
         qual.setColor(Color.RED);
 
-        StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
-        //staticLabelsFormatter.setHorizontalLabels(new String[]{"1", "10", "20", "31"});
-        graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
+        setDateBounds(graph);
 
-        graph.addSeries(len);
-        graph.addSeries(qual);
+        if(!len.isEmpty()) graph.addSeries(len);
+        if(!qual.isEmpty()) graph.addSeries(qual);
+        graph.setTitle("Sleep");
 
-        graph.getLegendRenderer().setVisible(true);
-        graph.getLegendRenderer().setTextSize(25);
-        graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+        setLegend(graph);
+        setMonthYearTitle();
     }
 
     @Override
@@ -54,12 +56,10 @@ public class SleepGraph extends GraphBase{
 
         if(cursor.moveToFirst()){
             while(!cursor.isAfterLast()) {
-                int day = Integer.parseInt(cursor.getString(0).substring(8))-1;
-
+                int day = Integer.parseInt(cursor.getString(0).substring(8));
 
                 String hr = cursor.getString(2).substring(0, cursor.getString(2).indexOf(":"));
                 String min= cursor.getString(2).substring(cursor.getString(2).indexOf(":")+1);
-
 
                 double val = Integer.parseInt(hr) + (Integer.parseInt(min) / 60.0);
                 len.add(new DataPoint(day, val));
@@ -94,5 +94,12 @@ public class SleepGraph extends GraphBase{
     @Override
     View graphInflate(LayoutInflater inflater, ViewGroup container) {
         return inflater.inflate(R.layout.fragment_sleep_graph, container, false);
+    }
+
+    @Override
+    protected void setMonthYearTitle() {
+        ((TextView)v.findViewById(R.id.yearTextViewSleep)).setText(Integer.toString(year));
+        TextView mnth = (TextView)v.findViewById(R.id.monthTextViewSleep);
+        mnth.setText(new DateFormatSymbols().getMonths()[month-1]);
     }
 }

@@ -1,6 +1,5 @@
 package com.rocket.biometrix.Analysis;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
@@ -10,13 +9,18 @@ import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.Database.LocalStorageAccessMedication;
 import com.rocket.biometrix.Database.LocalStorageAccessMood;
 import com.rocket.biometrix.Database.LocalStorageAccessSleep;
+import com.rocket.biometrix.Login.LocalAccount;
+import com.rocket.biometrix.Login.SettingsHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
+
+import android.util.Pair;
 
 /**
  * Created by TJ on 4/6/2016.
@@ -40,6 +44,8 @@ public class BiometrixAnalysis
     public static final String MEDIAN = "Median";
     public static final String COUNT = "Count";
 
+    private static JSONObject statJsonObject = null;
+
     /**
      * Private constructor since this class should never be directly instantiated
      */
@@ -47,12 +53,11 @@ public class BiometrixAnalysis
     { }
 
     /**
-     * Performs the basic analysis on all tracked modules and returns a Json object with the statistical
-     * data encapsulated
+     * Performs the basic analysis on all tracked modules and stores a static jsonobject that has
+     * the analysis performed on it
      * @param context A context to give to the local storage methods in order to pull data
-     * @return A JsonObject containing the analyzed tables as keys and then statistical data
      */
-    public static JSONObject AnalyzeAllModulesBasic(Context context)
+    private static void AnalyzeAllModulesBasic(Context context)
     {
         JSONObject jsonObject = new JSONObject();
 
@@ -79,7 +84,7 @@ public class BiometrixAnalysis
             except.getMessage();
         }
 
-        return jsonObject;
+        statJsonObject = jsonObject;
     }
 
     /**
@@ -101,12 +106,10 @@ public class BiometrixAnalysis
                 if (cursor.moveToFirst())
                 {
                     boolean isTracked = true;
-                    String debug = cursor.getColumnName(i);
 
                     //Checks the column against the list of untracked columns to ensure it is not in there
                     for (String string : UNTRACKED_INT_COLS)
                     {
-
 
                         if (string.equals(cursor.getColumnName(i)))
                         {
@@ -212,6 +215,7 @@ public class BiometrixAnalysis
             except.getMessage();
         }
 
+        cursor.close();
 
         return jsonObject;
     }
@@ -307,6 +311,7 @@ public class BiometrixAnalysis
             except.getMessage();
         }
 
+        cursor.close();
 
         return jsonObject;
     }
@@ -345,5 +350,136 @@ public class BiometrixAnalysis
         }
 
         return retVal;
+    }
+
+
+    /**
+     * The only public method in this class, makes the calls to perform the needed analysis
+     * @param context The current context, needed for database calls
+     * @return A JSONObject containing all of the information that was gathered.
+     */
+    public static JSONObject Analyze( Context context)
+    {
+        JSONObject jsonObject = new JSONObject();
+
+        //Get basic statistic info in statJson object
+        AnalyzeAllModulesBasic(context);
+
+        List<String> tableNames = new ArrayList<>();
+        List<List<String>> columnLists = new LinkedList<>();
+
+        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.DIET_MODULE, true))
+        {
+            tableNames.add(LocalStorageAccessDiet.TABLE_NAME);
+
+            columnLists.add(getMoodAnalysisColumns(context) );
+        }
+
+        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.EXERCISE_MODULE, true))
+        {
+            tableNames.add(LocalStorageAccessExercise.TABLE_NAME);
+        }
+
+        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.MOOD_MODULE, true))
+        {
+            tableNames.add(LocalStorageAccessMood.TABLE_NAME);
+        }
+
+        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.SLEEP_MODULE, true))
+        {
+            tableNames.add(LocalStorageAccessSleep.TABLE_NAME);
+        }
+
+
+        //Free up the memory of the basic analysis portion.
+        statJsonObject = null;
+
+        return jsonObject;
+    }
+
+    /**
+     * Returns all of the columns that are used for analysis of the mood module that are enabled
+     * @param context The current context. Needed to grab user settings
+     * @return A linked list that contains the analysis columns
+     */
+    private static List<String> getDietAnalysisColumns(Context context)
+    {
+        List<String> analysisColumns = new LinkedList<>();
+
+        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.MOOD_DEP, true))
+        {
+            analysisColumns.add(LocalStorageAccessMood.DEP);
+        }
+
+        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.MOOD_ELEV, true))
+        {
+            analysisColumns.add(LocalStorageAccessMood.ELEV);
+        }
+
+        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.MOOD_IRRITABLE, true))
+        {
+            analysisColumns.add(LocalStorageAccessMood.IRR);
+        }
+
+        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.MOOD_ANX, true))
+        {
+            analysisColumns.add(LocalStorageAccessMood.ANX);
+        }
+
+        return analysisColumns;
+    }
+
+    /**
+     * Returns all of the columns that are used for analysis of the mood module that are enabled
+     * @param context The current context. Needed to grab user settings
+     * @return A linked list that contains the analysis columns
+     */
+    private static List<String> getMoodAnalysisColumns(Context context)
+    {
+        List<String> analysisColumns = new LinkedList<>();
+
+        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.MOOD_DEP, true))
+        {
+            analysisColumns.add(LocalStorageAccessMood.DEP);
+        }
+
+        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.MOOD_ELEV, true))
+        {
+            analysisColumns.add(LocalStorageAccessMood.ELEV);
+        }
+
+        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.MOOD_IRRITABLE, true))
+        {
+            analysisColumns.add(LocalStorageAccessMood.IRR);
+        }
+
+        if (LocalAccount.GetInstance().getBoolean(context, SettingsHelper.MOOD_ANX, true))
+        {
+            analysisColumns.add(LocalStorageAccessMood.ANX);
+        }
+
+        return analysisColumns;
+    }
+
+
+
+    /**
+     * Grabs a list of pairs of each value in the passed in column of the passed in table (if it is
+     * not null). This reutrns a list of integer pairs where integers on the ame day are averaged
+     * @param tableName Name of the table to pull from
+     * @param dateName Name of the date field on the table
+     * @param columnName Name of the column to pull from on the table
+     * @param context The context to use for database operations
+     * @return A list containing pairs of integers. The integers are the value, and then the
+     */
+    private List<Pair<Integer, Integer>> getColumnDatesAndValuesAverage(String tableName, String dateName,
+                                                                 String columnName, Context context)
+    {
+        List<Pair<Integer, Integer>> returnList = new LinkedList<>();
+
+        Cursor cursor = LocalStorageAccess.selectAllEntries(context, tableName, dateName + " DESC",
+                new String[]{columnName, dateName}, true);
+
+        return returnList;
     }
 }

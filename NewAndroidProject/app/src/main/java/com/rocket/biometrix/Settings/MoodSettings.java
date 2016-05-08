@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.rocket.biometrix.Login.SettingsHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
@@ -74,7 +75,10 @@ public class MoodSettings extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_mood_settings, container, false);
+        View view = inflater.inflate(R.layout.fragment_mood_settings, container, false);
+        SettingsHelper.setupSwitches(view, SettingsHelper.getAllMoodKeysAndRIDs(), true);
+
+        return view;
     }
 
     /**
@@ -93,6 +97,6 @@ public class MoodSettings extends Fragment {
     }
 
     public void onAcceptClick(View v){
-
+        SettingsHelper.storeSwitchValues(getView(), SettingsHelper.getAllMoodKeysAndRIDs());
     }
 }
