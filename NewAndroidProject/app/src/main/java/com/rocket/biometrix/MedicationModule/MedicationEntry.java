@@ -14,12 +14,9 @@ import android.widget.Toast;
 import com.rocket.biometrix.Common.DateTimeSelectorPopulateTextView;
 import com.rocket.biometrix.Common.StringDateTimeConverter;
 import com.rocket.biometrix.Database.AsyncResponse;
-import com.rocket.biometrix.Database.DatabaseConnect;
-import com.rocket.biometrix.Database.DatabaseConnectionTypes;
 import com.rocket.biometrix.Database.JsonCVHelper;
-import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessMedication;
-import com.rocket.biometrix.Login.LocalAccount;
+import com.rocket.biometrix.Database.Sync;
 import com.rocket.biometrix.Login.SettingsAndEntryHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
@@ -155,26 +152,8 @@ public class MedicationEntry extends Fragment implements AsyncResponse{
             //Call insert method
             LocalStorageAccessMedication.insertFromContentValues(rowToBeInserted, v.getContext());
 
-            if (LocalAccount.isLoggedIn() )
-            {
-                int id = LocalStorageAccessMedication.GetLastID(v.getContext());
-
-                //Adds the primary key of the field to the sync table along with the value marking it
-                //needs to be added to the webdatabase
-                LocalStorageAccess.getInstance(v.getContext()).insertOrUpdateSyncTable(v.getContext(),
-                        LocalStorageAccessMedication.TABLE_NAME, id, -1, LocalStorageAccess.SYNC_NEEDS_ADDED);
-
-                rowToBeInserted.put(LocalStorageAccessMedication.LOCAL_MEDICATION_ID, id);
-                rowToBeInserted.remove(LocalStorageAccessMedication.USER_NAME);
-
-                String jsonToInsert = JsonCVHelper.convertToJSON(rowToBeInserted);
-
-                //Trys to insert the user's data
-                new DatabaseConnect(this).execute(DatabaseConnectionTypes.INSERT_TABLE_VALUES, jsonToInsert,
-                        LocalAccount.GetInstance().GetToken(),
-                        DatabaseConnectionTypes.MEDICATION_TABLE);
-            }
-
+            Sync sync = new Sync(v.getContext());
+            sync.databaseInsertOrUpdateSyncTable(this, rowToBeInserted, LocalStorageAccessMedication.TABLE_NAME);
         }
 
     }

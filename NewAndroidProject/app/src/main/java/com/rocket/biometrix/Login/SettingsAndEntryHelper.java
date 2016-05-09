@@ -1,7 +1,6 @@
 package com.rocket.biometrix.Login;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.util.Pair;
 import android.view.View;
 import android.widget.SeekBar;
@@ -266,61 +265,61 @@ public class SettingsAndEntryHelper {
      */
     private static void updateEntryStringFromVisibleViews(View view, String tableName, String[] arrayToUpdate)
     {
-        List<Quartet<Integer, Integer, VIEW_TYPE, String>> quartets = null;
+        List<Quintet<Integer, Integer, VIEW_TYPE, String, String>> quintets = null;
 
         switch (tableName)
         {
             case LocalStorageAccessSleep.TABLE_NAME:
-                quartets = getSleepViewDependencies();
+                quintets = getSleepViewDependencies();
                 break;
             case LocalStorageAccessMood.TABLE_NAME:
-                quartets = getMoodViewDependencies();
+                quintets = getMoodViewDependencies();
                 break;
             case LocalStorageAccessDiet.TABLE_NAME:
-                quartets = getDietViewDependencies();
+                quintets = getDietViewDependencies();
                 break;
             case LocalStorageAccessExercise.TABLE_NAME:
-                quartets = getExerciseViewDependencies();
+                quintets = getExerciseViewDependencies();
                 break;
             case LocalStorageAccessMedication.TABLE_NAME:
-                quartets = getMedicationViewDependencies();
+                quintets = getMedicationViewDependencies();
                 break;
         }
 
-        for(Quartet<Integer, Integer, VIEW_TYPE, String> quartet : quartets)
+        for(Quintet<Integer, Integer, VIEW_TYPE, String, String> quintet : quintets)
         {
-            View element = view.findViewById(quartet.first);
+            View element = view.findViewById(quintet.first);
             //If the view is visible, update the element that corresponds to that view in the array
             //with the default value.
             if(element.getVisibility() == View.GONE)
             {
-                arrayToUpdate[quartet.second] = quartet.fourth;
+                arrayToUpdate[quintet.second] = quintet.fourth;
             }
             //Otherwise, grab the value as expected based on the type
             else
             {
                 //String foodName = ((TextView)dietView.findViewById(R.id.Food_Name)).getText().toString();
                 //String meal = ((Spinner)dietView.findViewById(R.id.Meal_Select)).getSelectedItem().toString();
-                switch (quartet.third)
+                switch (quintet.third)
                 {
                     case TEXT_VIEW:
-                        arrayToUpdate[quartet.second] = ((TextView)element).getText().toString();
+                        arrayToUpdate[quintet.second] = ((TextView)element).getText().toString();
                         break;
                     case SEEKBAR:
-                        arrayToUpdate[quartet.second] = Integer.toString(((SeekBar) element).getProgress());
+                        arrayToUpdate[quintet.second] = Integer.toString(((SeekBar) element).getProgress());
                         break;
                     case SPINNER:
-                        arrayToUpdate[quartet.second] = ((Spinner)element).getSelectedItem().toString();
+                        arrayToUpdate[quintet.second] = ((Spinner)element).getSelectedItem().toString();
                         break;
                     case SLEEP_DURATION:
                         String duration = ((TextView)element).getText().toString();
-                        arrayToUpdate[quartet.second] = duration.substring(duration.indexOf(":") + 2).trim();
+                        arrayToUpdate[quintet.second] = duration.substring(duration.indexOf(":") + 2).trim();
                         break;
                     case TEXT_VIEW_INT:
-                        arrayToUpdate[quartet.second] = ((TextView)element).getText().toString();
-                        if (arrayToUpdate[quartet.second].equals(""))
+                        arrayToUpdate[quintet.second] = ((TextView)element).getText().toString();
+                        if (arrayToUpdate[quintet.second].equals(""))
                         {
-                            arrayToUpdate[quartet.second] = "0";
+                            arrayToUpdate[quintet.second] = "0";
                         }
                         break;
                 }
@@ -487,27 +486,27 @@ public class SettingsAndEntryHelper {
      * element corresponds to
      * @return A list of pairs of integers
      */
-    private static List<Quartet<Integer, Integer, VIEW_TYPE, String>> getDietViewDependencies()
+    private static List<Quintet<Integer, Integer, VIEW_TYPE, String, String>> getDietViewDependencies()
     {
-        List<Quartet<Integer, Integer, VIEW_TYPE, String>> returnList = new ArrayList<>(18);
-        returnList.add(new Quartet<>(R.id.Food_Name, 4, VIEW_TYPE.TEXT_VIEW, ""));
-        returnList.add(new Quartet<>(R.id.Meal_Select, 5, VIEW_TYPE.SPINNER, ""));
-        returnList.add(new Quartet<>(R.id.ServingSize_View, 6, VIEW_TYPE.SPINNER, ""));
-        returnList.add(new Quartet<>(R.id.Calories_Amt, 7, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
-        returnList.add(new Quartet<>(R.id.TotalFat_Amt, 8, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
-        returnList.add(new Quartet<>(R.id.SaturatedFat_Amt, 9, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
-        returnList.add(new Quartet<>(R.id.TransFat_Amt, 10, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
-        returnList.add(new Quartet<>(R.id.Cholesterol_Amt, 11, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
-        returnList.add(new Quartet<>(R.id.Sodium_Amt, 12, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
-        returnList.add(new Quartet<>(R.id.TotalCarb_Amt, 13, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
-        returnList.add(new Quartet<>(R.id.DietaryFiber_Amt, 14, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
-        returnList.add(new Quartet<>(R.id.Sugars_Amt, 15, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
-        returnList.add(new Quartet<>(R.id.Protein_Amt, 16, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
-        returnList.add(new Quartet<>(R.id.VitaminA_Amt, 17, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
-        returnList.add(new Quartet<>(R.id.VitaminB_Amt, 18, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
-        returnList.add(new Quartet<>(R.id.Calcium_Amt, 19, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
-        returnList.add(new Quartet<>(R.id.Iron_Amt, 20, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
-        returnList.add(new Quartet<>(R.id.dietDetailsEditText, 21, VIEW_TYPE.TEXT_VIEW, ""));
+        List<Quintet<Integer, Integer, VIEW_TYPE, String, String>> returnList = new ArrayList<>(18);
+        returnList.add(new Quintet<>(R.id.Food_Name, 4, VIEW_TYPE.TEXT_VIEW, "", LocalStorageAccessDiet.TYPE));
+        returnList.add(new Quintet<>(R.id.Meal_Select, 5, VIEW_TYPE.SPINNER, "", LocalStorageAccessDiet.MEAL));
+        returnList.add(new Quintet<>(R.id.ServingSize_Select, 6, VIEW_TYPE.SPINNER, "", LocalStorageAccessDiet.SERVING));
+        returnList.add(new Quintet<>(R.id.Calories_Amt, 7, VIEW_TYPE.TEXT_VIEW_INT, (String)null, LocalStorageAccessDiet.CALORIES));
+        returnList.add(new Quintet<>(R.id.TotalFat_Amt, 8, VIEW_TYPE.TEXT_VIEW_INT, (String)null, LocalStorageAccessDiet.TOTALFAT));
+        returnList.add(new Quintet<>(R.id.SaturatedFat_Amt, 9, VIEW_TYPE.TEXT_VIEW_INT, (String)null, LocalStorageAccessDiet.SATFAT));
+        returnList.add(new Quintet<>(R.id.TransFat_Amt, 10, VIEW_TYPE.TEXT_VIEW_INT, (String)null, LocalStorageAccessDiet.TRANSFAT));
+        returnList.add(new Quintet<>(R.id.Cholesterol_Amt, 11, VIEW_TYPE.TEXT_VIEW_INT, (String)null, LocalStorageAccessDiet.CHOLESTEROL));
+        returnList.add(new Quintet<>(R.id.Sodium_Amt, 12, VIEW_TYPE.TEXT_VIEW_INT, (String)null, LocalStorageAccessDiet.SODIUM));
+        returnList.add(new Quintet<>(R.id.TotalCarb_Amt, 13, VIEW_TYPE.TEXT_VIEW_INT, (String)null, LocalStorageAccessDiet.TOTALCARBS));
+        returnList.add(new Quintet<>(R.id.DietaryFiber_Amt, 14, VIEW_TYPE.TEXT_VIEW_INT, (String)null, LocalStorageAccessDiet.FIBER));
+        returnList.add(new Quintet<>(R.id.Sugars_Amt, 15, VIEW_TYPE.TEXT_VIEW_INT, (String)null, LocalStorageAccessDiet.SUGARS));
+        returnList.add(new Quintet<>(R.id.Protein_Amt, 16, VIEW_TYPE.TEXT_VIEW_INT, (String)null, LocalStorageAccessDiet.PROTEIN));
+        returnList.add(new Quintet<>(R.id.VitaminA_Amt, 17, VIEW_TYPE.TEXT_VIEW_INT, (String)null, LocalStorageAccessDiet.VITAMINA));
+        returnList.add(new Quintet<>(R.id.VitaminB_Amt, 18, VIEW_TYPE.TEXT_VIEW_INT, (String)null, LocalStorageAccessDiet.VITAMINB));
+        returnList.add(new Quintet<>(R.id.Calcium_Amt, 19, VIEW_TYPE.TEXT_VIEW_INT, (String)null, LocalStorageAccessDiet.CALCIUM));
+        returnList.add(new Quintet<>(R.id.Iron_Amt, 20, VIEW_TYPE.TEXT_VIEW_INT, (String)null, LocalStorageAccessDiet.IRON));
+        returnList.add(new Quintet<>(R.id.dietDetailsEditText, 21, VIEW_TYPE.TEXT_VIEW, "", LocalStorageAccessDiet.NOTE));
 
         return returnList;
     }
@@ -562,14 +561,14 @@ public class SettingsAndEntryHelper {
      * element corresponds to
      * @return A list of pairs of integers
      */
-    private static List<Quartet<Integer, Integer, VIEW_TYPE, String>> getExerciseViewDependencies()
+    private static List<Quintet<Integer, Integer, VIEW_TYPE, String, String>> getExerciseViewDependencies()
     {
-        List<Quartet<Integer, Integer, VIEW_TYPE, String>> returnList = new ArrayList<>(5);
-        returnList.add(new Quartet<>(R.id.ex_title, 3, VIEW_TYPE.TEXT_VIEW, ""));
-        returnList.add(new Quartet<>(R.id.ex_type, 4, VIEW_TYPE.SPINNER, ""));
-        returnList.add(new Quartet<>(R.id.ex_length, 5, VIEW_TYPE.TEXT_VIEW_INT, (String)null));
-        returnList.add(new Quartet<>(R.id.ex_intensity_seekbar, 6, VIEW_TYPE.SEEKBAR, (String)null));
-        returnList.add(new Quartet<>(R.id.exDetailsEditText, 7, VIEW_TYPE.TEXT_VIEW, ""));
+        List<Quintet<Integer, Integer, VIEW_TYPE, String, String>> returnList = new ArrayList<>(5);
+        returnList.add(new Quintet<>(R.id.ex_title, 3, VIEW_TYPE.TEXT_VIEW, "", LocalStorageAccessExercise.TITLE));
+        returnList.add(new Quintet<>(R.id.ex_type, 4, VIEW_TYPE.SPINNER, "", LocalStorageAccessExercise.TYPE));
+        returnList.add(new Quintet<>(R.id.ex_length, 5, VIEW_TYPE.TEXT_VIEW_INT, (String)null, LocalStorageAccessExercise.MINUTES));
+        returnList.add(new Quintet<>(R.id.ex_intensity_seekbar, 6, VIEW_TYPE.SEEKBAR, (String)null, LocalStorageAccessExercise.INTY));
+        returnList.add(new Quintet<>(R.id.exDetailsEditText, 7, VIEW_TYPE.TEXT_VIEW, "", LocalStorageAccessExercise.NOTES));
 
         return returnList;
     }
@@ -638,14 +637,14 @@ public class SettingsAndEntryHelper {
      * element corresponds to
      * @return A list of pairs of integers
      */
-    private static List<Quartet<Integer, Integer, VIEW_TYPE, String>> getMoodViewDependencies()
+    private static List<Quintet<Integer, Integer, VIEW_TYPE, String, String>> getMoodViewDependencies()
     {
-        List<Quartet<Integer, Integer, VIEW_TYPE, String>> returnList = new ArrayList<>(5);
-        returnList.add(new Quartet<>(R.id.moodDepressedRating, 5, VIEW_TYPE.SEEKBAR, (String)null));
-        returnList.add(new Quartet<>(R.id.moodElevatedRating, 6, VIEW_TYPE.SEEKBAR, (String)null));
-        returnList.add(new Quartet<>(R.id.moodIrritabilityRating, 7, VIEW_TYPE.SEEKBAR, (String)null));
-        returnList.add(new Quartet<>(R.id.moodAnxietyRating, 8, VIEW_TYPE.SEEKBAR, (String)null));
-        returnList.add(new Quartet<>(R.id.moodDetailsEditText, 9, VIEW_TYPE.TEXT_VIEW, ""));
+        List<Quintet<Integer, Integer, VIEW_TYPE, String, String>> returnList = new ArrayList<>(5);
+        returnList.add(new Quintet<>(R.id.moodDepressedRating, 5, VIEW_TYPE.SEEKBAR, (String)null, LocalStorageAccessMood.DEP));
+        returnList.add(new Quintet<>(R.id.moodElevatedRating, 6, VIEW_TYPE.SEEKBAR, (String)null, LocalStorageAccessMood.ELEV));
+        returnList.add(new Quintet<>(R.id.moodIrritabilityRating, 7, VIEW_TYPE.SEEKBAR, (String)null, LocalStorageAccessMood.IRR));
+        returnList.add(new Quintet<>(R.id.moodAnxietyRating, 8, VIEW_TYPE.SEEKBAR, (String)null, LocalStorageAccessMood.ANX));
+        returnList.add(new Quintet<>(R.id.moodDetailsEditText, 9, VIEW_TYPE.TEXT_VIEW, "", LocalStorageAccessMood.NOTE));
 
         return returnList;
     }
@@ -710,12 +709,12 @@ public class SettingsAndEntryHelper {
      * element corresponds to
      * @return A list of pairs of integers
      */
-    private static List<Quartet<Integer, Integer, VIEW_TYPE, String>> getSleepViewDependencies()
+    private static List<Quintet<Integer, Integer, VIEW_TYPE, String, String>> getSleepViewDependencies()
     {
-        List<Quartet<Integer, Integer, VIEW_TYPE, String>> returnList = new ArrayList<>(3);
-        returnList.add(new Quartet<>(R.id.sleepTimeSleptTextView, 5, VIEW_TYPE.SLEEP_DURATION, (String)null));
-        returnList.add(new Quartet<>(R.id.sleepQualitySeekBar, 6, VIEW_TYPE.SEEKBAR, (String)null));
-        returnList.add(new Quartet<>(R.id.sleepNotesEditText, 7, VIEW_TYPE.TEXT_VIEW, ""));
+        List<Quintet<Integer, Integer, VIEW_TYPE, String, String>> returnList = new ArrayList<>(3);
+        returnList.add(new Quintet<>(R.id.sleepTimeSleptTextView, 5, VIEW_TYPE.SLEEP_DURATION, (String)null, LocalStorageAccessSleep.DURATION));
+        returnList.add(new Quintet<>(R.id.sleepQualitySeekBar, 6, VIEW_TYPE.SEEKBAR, (String)null, LocalStorageAccessSleep.QUALITY));
+        returnList.add(new Quintet<>(R.id.sleepNotesEditText, 7, VIEW_TYPE.TEXT_VIEW, "", LocalStorageAccessSleep.NOTES));
 
         return returnList;
     }
@@ -798,15 +797,15 @@ public class SettingsAndEntryHelper {
      * element corresponds to
      * @return A list of pairs of integers
      */
-    private static List<Quartet<Integer, Integer, VIEW_TYPE, String>> getMedicationViewDependencies()
+    private static List<Quintet<Integer, Integer, VIEW_TYPE, String, String>> getMedicationViewDependencies()
     {
-        List<Quartet<Integer, Integer, VIEW_TYPE, String>> returnList = new ArrayList<>(5);
-        returnList.add(new Quartet<>(R.id.MedicationEditBrandName, 5, VIEW_TYPE.TEXT_VIEW, ""));
-        returnList.add(new Quartet<>(R.id.MedicationPrescriberName, 6, VIEW_TYPE.TEXT_VIEW, ""));
-        returnList.add(new Quartet<>(R.id.MedicationDoseAmount, 7, VIEW_TYPE.TEXT_VIEW, ""));
-        returnList.add(new Quartet<>(R.id.MedicationInstructionEditText, 8, VIEW_TYPE.TEXT_VIEW, ""));
-        returnList.add(new Quartet<>(R.id.MedicationWarningsEditText, 9, VIEW_TYPE.TEXT_VIEW, ""));
-        returnList.add(new Quartet<>(R.id.medicationDetailsEditText, 10, VIEW_TYPE.TEXT_VIEW, ""));
+        List<Quintet<Integer, Integer, VIEW_TYPE, String, String>> returnList = new ArrayList<>(5);
+        returnList.add(new Quintet<>(R.id.MedicationEditBrandName, 5, VIEW_TYPE.TEXT_VIEW, "", LocalStorageAccessMedication.BRAND_NAME));
+        returnList.add(new Quintet<>(R.id.MedicationPrescriberName, 6, VIEW_TYPE.TEXT_VIEW, "", LocalStorageAccessMedication.PRESCRIBER));
+        returnList.add(new Quintet<>(R.id.MedicationDoseAmount, 7, VIEW_TYPE.TEXT_VIEW, "", LocalStorageAccessMedication.DOSE));
+        returnList.add(new Quintet<>(R.id.MedicationInstructionEditText, 8, VIEW_TYPE.TEXT_VIEW, "", LocalStorageAccessMedication.INSTRUCTIONS));
+        returnList.add(new Quintet<>(R.id.MedicationWarningsEditText, 9, VIEW_TYPE.TEXT_VIEW, "", LocalStorageAccessMedication.WARNINGS));
+        returnList.add(new Quintet<>(R.id.medicationDetailsEditText, 10, VIEW_TYPE.TEXT_VIEW, "", LocalStorageAccessMedication.NOTES));
 
         return returnList;
     }

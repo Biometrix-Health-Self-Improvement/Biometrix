@@ -1,5 +1,6 @@
 package com.rocket.biometrix.Database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.widget.Toast;
@@ -34,8 +35,6 @@ public class Sync implements AsyncResponse
     {
         if (LocalAccount.isLoggedIn())
         {
-            TestChanges();
-
             //The Json object to hold all other json objects
             //Alternate names include the One JSON to rule them all...
             JSONObject masterJson = new JSONObject();
@@ -106,31 +105,70 @@ public class Sync implements AsyncResponse
         }
     }
 
-
-    public void TestChanges()
+    /**
+     * Tries a database insertion on the web after adding the values to the sync table. If it
+     * succeeds the sync table will have the entry removed.
+     * @param responseClass The class that will handle the callback process.
+     */
+    public void databaseInsertOrUpdateSyncTable(AsyncResponse responseClass, ContentValues rowToBeInserted, String tableName)
     {
-        boolean testChanges = false;
+        //Assumes that any user who is logged in wants their data backed up.
+        //TODO: Local Account setting for turning off always backup?
+        if (LocalAccount.isLoggedIn() )
+        {
+            int id = -1;
+            String localIDName = null;
+            String usernameColumnName = null;
+            String dbConnectionType = null;
 
-        if(testChanges) {
-            LocalStorageAccess.getInstance(context).insertOrUpdateSyncTable(context, LocalStorageAccessMood.TABLE_NAME,
-                    1, 1, LocalStorageAccess.SYNC_NEEDS_UPDATED);
-            LocalStorageAccess.getInstance(context).insertOrUpdateSyncTable(context, LocalStorageAccessMood.TABLE_NAME,
-                    2, 2, LocalStorageAccess.SYNC_NEEDS_DELETED);
+            switch (tableName)
+            {
+                case LocalStorageAccessDiet.TABLE_NAME:
+                    id = LocalStorageAccessDiet.GetLastID(context);
+                    localIDName = LocalStorageAccessDiet.LOCAL_DIET_ID;
+                    usernameColumnName = LocalStorageAccessDiet.USER_NAME;
+                    dbConnectionType = DatabaseConnectionTypes.DIET_TABLE;
+                    break;
+                case LocalStorageAccessExercise.TABLE_NAME:
+                    id = LocalStorageAccessExercise.GetLastID(context);
+                    localIDName = LocalStorageAccessExercise.LOCAL_EXERCISE_ID;
+                    usernameColumnName = LocalStorageAccessExercise.USER_NAME;
+                    dbConnectionType = DatabaseConnectionTypes.EXERCISE_TABLE;
+                    break;
+                case LocalStorageAccessMedication.TABLE_NAME:
+                    id = LocalStorageAccessMedication.GetLastID(context);
+                    localIDName = LocalStorageAccessMedication.LOCAL_MEDICATION_ID;
+                    usernameColumnName = LocalStorageAccessMedication.USER_NAME;
+                    dbConnectionType = DatabaseConnectionTypes.MEDICATION_TABLE;
+                    break;
+                case LocalStorageAccessMood.TABLE_NAME:
+                    id = LocalStorageAccessMood.GetLastID(context);
+                    localIDName = LocalStorageAccessMood.LOCAL_MOOD_ID;
+                    usernameColumnName = LocalStorageAccessMood.USER_NAME;
+                    dbConnectionType = DatabaseConnectionTypes.MOOD_TABLE;
+                    break;
+                case LocalStorageAccessSleep.TABLE_NAME:
+                    id = LocalStorageAccessSleep.GetLastID(context);
+                    localIDName = LocalStorageAccessSleep.LOCAL_SLEEP_ID;
+                    usernameColumnName = LocalStorageAccessSleep.USER_NAME;
+                    dbConnectionType = DatabaseConnectionTypes.SLEEP_TABLE;
+                    break;
+            }
 
-            LocalStorageAccess.getInstance(context).insertOrUpdateSyncTable(context, LocalStorageAccessDiet.TABLE_NAME,
-                    1, 1, LocalStorageAccess.SYNC_NEEDS_UPDATED);
-            LocalStorageAccess.getInstance(context).insertOrUpdateSyncTable(context, LocalStorageAccessDiet.TABLE_NAME,
-                    2, 2, LocalStorageAccess.SYNC_NEEDS_DELETED);
 
-            LocalStorageAccess.getInstance(context).insertOrUpdateSyncTable(context, LocalStorageAccessExercise.TABLE_NAME,
-                    1, 1, LocalStorageAccess.SYNC_NEEDS_UPDATED);
-            LocalStorageAccess.getInstance(context).insertOrUpdateSyncTable(context, LocalStorageAccessExercise.TABLE_NAME,
-                    2, 2, LocalStorageAccess.SYNC_NEEDS_DELETED);
+            //Adds the primary key of the field to the sync table along with the value marking it
+            //needs to be added to the webdatabase
+            LocalStorageAccess.getInstance(context).insertOrUpdateSyncTable(context,
+                    tableName, id, -1, LocalStorageAccess.SYNC_NEEDS_ADDED);
 
-            LocalStorageAccess.getInstance(context).insertOrUpdateSyncTable(context, LocalStorageAccessMedication.TABLE_NAME,
-                    1, 1, LocalStorageAccess.SYNC_NEEDS_UPDATED);
-            LocalStorageAccess.getInstance(context).insertOrUpdateSyncTable(context, LocalStorageAccessMedication.TABLE_NAME,
-                    2, 2, LocalStorageAccess.SYNC_NEEDS_DELETED);
+            //Makes the change to the web database (which updates the sync table on success)
+            rowToBeInserted.put(localIDName, id);
+            rowToBeInserted.remove(usernameColumnName);
+
+            String jsonToInsert = JsonCVHelper.convertToJSON(rowToBeInserted);
+
+            new DatabaseConnect(responseClass).execute(DatabaseConnectionTypes.INSERT_TABLE_VALUES, jsonToInsert,
+                    LocalAccount.GetInstance().GetToken(), dbConnectionType);
         }
     }
 
