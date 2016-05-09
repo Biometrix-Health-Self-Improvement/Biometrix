@@ -56,16 +56,22 @@ public class SleepGraph extends GraphBase{
 
         if(cursor.moveToFirst()){
             while(!cursor.isAfterLast()) {
-                int day = Integer.parseInt(cursor.getString(0).substring(8));
+                int day=0;
+                if(tryParseInt(cursor.getString(0).substring(8))) {
+                    day = Integer.parseInt(cursor.getString(0).substring(8));
 
-                String hr = cursor.getString(2).substring(0, cursor.getString(2).indexOf(":"));
-                String min= cursor.getString(2).substring(cursor.getString(2).indexOf(":")+1);
+                    String hr = cursor.getString(2).substring(0, cursor.getString(2).indexOf(":"));
+                    String min = cursor.getString(2).substring(cursor.getString(2).indexOf(":") + 1);
 
-                double val = Integer.parseInt(hr) + (Integer.parseInt(min) / 60.0);
-                len.add(new DataPoint(day, val));
-                val = Integer.parseInt(cursor.getString(3));
-                qual.add(new DataPoint(day, val));
-
+                    if(tryParseInt(hr) && tryParseInt(min)) {
+                        double val = Integer.parseInt(hr) + (Integer.parseInt(min) / 60.0);
+                        len.add(new DataPoint(day, val));
+                    }
+                    if(tryParseInt(cursor.getString(3))) {
+                        double val = Integer.parseInt(cursor.getString(3));
+                        qual.add(new DataPoint(day, val));
+                    }
+                }
                 cursor.moveToNext();
             }
         }
