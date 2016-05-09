@@ -6,6 +6,9 @@
             android:id="@+id/nav_home"
             android:title="Home" />
         <item
+            android:id="@+id/nav_home_logged_in"
+            android:title="Home Logged In" />
+        <item
             android:id="@+id/nav_mood_module"
             android:title="Mood Tracker" />
         <item
