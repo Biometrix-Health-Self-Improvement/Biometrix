@@ -253,14 +253,7 @@ public class SleepEntry extends Fragment implements AsyncResponse {
         SettingsAndEntryHelper.makeDisabledEntryViewsInvisible(entryView, LocalStorageAccessSleep.TABLE_NAME);
         if (uid != null)
         {
-            try {
-                SettingsAndEntryHelper.repopulateEntryPage(entryView, tablename, Integer.parseInt(uid));
-            }
-            catch (Exception e)
-            {
-                e.getMessage();
-            }
-
+            SettingsAndEntryHelper.repopulateEntryPage(entryView, tablename, Integer.parseInt(uid));
         }
         return v;
     }
