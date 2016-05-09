@@ -108,7 +108,6 @@ public class NavigationDrawerActivity extends AppCompatActivity
             LocalAccount.setNavDrawerRef(this);
             UpdateMenuItems();
 
-
     }
 
     @Override

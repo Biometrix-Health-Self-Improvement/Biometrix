@@ -35,13 +35,12 @@ import org.json.JSONObject;
  */
 public class ExerciseEntry extends Fragment implements AsyncResponse{
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String TABLENAME_PARAM = "tablename";
+    private static final String ROWID_PARAM = "uid";
 
+    private String uid;
+    private String tablename; //unused
     View onCreateView; //Saves inflated UI view inside onCreateView()
-
-    private String mParam1;
-    private String mParam2;
 
     public static TextView timeTV; //Used by the DateTimePopulateTextView in the onCreate event
     public static TextView dateTV;
@@ -75,15 +74,14 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+
      * @return A new instance of fragment ExerciseEntry.
      */
-    public static ExerciseEntry newInstance(String param1, String param2) {
+    public static ExerciseEntry newInstance(String tablename, String uid) {
         ExerciseEntry fragment = new ExerciseEntry();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(TABLENAME_PARAM, tablename);
+        args.putString(ROWID_PARAM, uid);
         fragment.setArguments(args);
         return fragment;
     }
@@ -92,8 +90,12 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            uid = getArguments().getString(TABLENAME_PARAM);
+            tablename = getArguments().getString(ROWID_PARAM);
+        }
+        else
+        {
+            uid = null;
         }
         try {
             NavigationDrawerActivity nav = (NavigationDrawerActivity) getActivity();
@@ -130,6 +132,10 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
         onCreateView = v; //This view (the inflated UI layout view ) is saved so onDoneClick() can use it.
         SettingsAndEntryHelper.makeDisabledEntryViewsInvisible(onCreateView, LocalStorageAccessExercise.TABLE_NAME);
 
+        if (uid != null)
+        {
+            SettingsAndEntryHelper.repopulateEntryPage(onCreateView, tablename, Integer.parseInt(uid));
+        }
         return v;
     }
 

@@ -1,6 +1,8 @@
 package com.rocket.biometrix.Login;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.SeekBar;
@@ -255,6 +257,101 @@ public class SettingsAndEntryHelper {
         updateEntryStringFromVisibleViews(view, tableName, columnArray);
 
         return columnArray;
+    }
+
+    /**
+     * Repopulates the text views/spinners/sliders with the values that are stored in the local
+     * database for that
+     * @param view The parent view that houses all of the spinners/sliders/text views
+     * @param tableName The name of the table that is being queried
+     * @param id The ID number to grab from the local database
+     */
+    public static void repopulateEntryPage(View view, String tableName, Integer id)
+    {
+        List<Quintet<Integer, Integer, VIEW_TYPE, String, String>> quintets = null;
+        Cursor cursor = null;
+
+        switch (tableName)
+        {
+            case LocalStorageAccessSleep.TABLE_NAME:
+                quintets = getSleepViewDependencies();
+                cursor = LocalStorageAccess.selectEntryByID(view.getContext(), LocalStorageAccessSleep.TABLE_NAME,
+                        LocalStorageAccessSleep.LOCAL_SLEEP_ID, id);
+                break;
+            case LocalStorageAccessMood.TABLE_NAME:
+                quintets = getMoodViewDependencies();
+                cursor = LocalStorageAccess.selectEntryByID(view.getContext(), LocalStorageAccessMood.TABLE_NAME,
+                        LocalStorageAccessMood.LOCAL_MOOD_ID, id);
+                break;
+            case LocalStorageAccessDiet.TABLE_NAME:
+                quintets = getDietViewDependencies();
+                cursor = LocalStorageAccess.selectEntryByID(view.getContext(), LocalStorageAccessDiet.TABLE_NAME,
+                        LocalStorageAccessDiet.LOCAL_DIET_ID, id);
+                break;
+            case LocalStorageAccessExercise.TABLE_NAME:
+                quintets = getExerciseViewDependencies();
+                cursor = LocalStorageAccess.selectEntryByID(view.getContext(), LocalStorageAccessExercise.TABLE_NAME,
+                        LocalStorageAccessExercise.LOCAL_EXERCISE_ID, id);
+                break;
+            case LocalStorageAccessMedication.TABLE_NAME:
+                quintets = getMedicationViewDependencies();
+                cursor = LocalStorageAccess.selectEntryByID(view.getContext(), LocalStorageAccessMedication.TABLE_NAME,
+                        LocalStorageAccessMedication.LOCAL_MEDICATION_ID, id);
+                break;
+        }
+
+        if(cursor != null)
+        {
+            if (cursor.moveToFirst())
+            {
+                for (Quintet<Integer, Integer, VIEW_TYPE, String, String> quintet : quintets)
+                {
+                    View element = view.findViewById(quintet.first);
+
+                    int colIndex = cursor.getColumnIndex(quintet.fifth);
+
+                    if (!cursor.isNull(colIndex) )
+                    {
+                        switch (quintet.third)
+                        {
+                            case TEXT_VIEW:
+                                ((TextView)element).setText(cursor.getString(colIndex));
+                                break;
+                            case SEEKBAR:
+                                ((SeekBar)element).setProgress(cursor.getInt(colIndex));
+                                break;
+                            case SPINNER:
+                                try {
+                                    Spinner spinnerRef = ((Spinner)element);
+                                    spinnerRef.setSelection(0);
+                                    int position = 1;
+
+                                    while (!spinnerRef.getSelectedItem().equals(cursor.getString(colIndex)) )
+                                    {
+                                        spinnerRef.setSelection(position);
+                                        position++;
+                                    }
+                                }
+                                catch(Exception e)
+                                {
+                                    Log.d("SpinnerException", e.getMessage());
+                                }
+
+                                break;
+                            case SLEEP_DURATION:
+
+                                break;
+                            case TEXT_VIEW_INT:
+                                ((TextView)element).setText(cursor.getString(colIndex));
+                                break;
+                        }
+                    }
+
+                }
+            }
+
+            cursor.close();
+        }
     }
 
     /**
