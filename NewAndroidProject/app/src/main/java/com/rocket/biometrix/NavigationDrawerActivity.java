@@ -31,7 +31,6 @@ import com.rocket.biometrix.DietModule.DietParent;
 import com.rocket.biometrix.ExerciseModule.ExerciseEntry;
 import com.rocket.biometrix.ExerciseModule.ExerciseParent;
 import com.rocket.biometrix.Login.CreateLogin;
-import com.rocket.biometrix.Login.GoogleLogin;
 import com.rocket.biometrix.Login.LocalAccount;
 import com.rocket.biometrix.Login.SettingsAndEntryHelper;
 import com.rocket.biometrix.MedicationModule.MedicationEntry;
@@ -89,21 +88,12 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
         frag = new HomeScreen();
 
-        //TODO: Get first loaded page to be correct color
-/*        Class fragHome = activeFragment.getClass();
-        if(fragHome.equals(HomeScreen.class)) {
-            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
-                    getResources().getColor(R.color.background_home_color));
-            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_home_color));
-        }*/
-
         transaction.replace(R.id.navigation_drawer_fragment_content, frag, "home");
         transaction.addToBackStack(null);
         transaction.commit();
         this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
                 getResources().getColor(R.color.background_home_color));
         setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_home_color));
-
         if (mEditEntryB != null) {
             //yourDataObject = getIntent().getStringExtra(KEY_EXTRA);
             mTblSignal = mEditEntryB.getString("tablename"); //See MECR ViewAdapter, ViewHolder's list item onClick listener
@@ -209,7 +199,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
             case R.id.action_logout:
                 LogoutUser();
-                frag = new HomeScreen();
+                replaceFragment(new HomeScreen());
                 return true;
 
             default:
@@ -223,10 +213,14 @@ public class NavigationDrawerActivity extends AppCompatActivity
         int id = item.getItemId();
         Fragment frag = new HomeScreen(); //intialize to homescreen in case something goes wrong it will not crash and just go back to home
 
-        if(id == R.id.nav_home_logged_in) {
+/*        if(id == R.id.nav_home_logged_in) {
             frag = new HomeScreen_Logged_In();
-        } else if (id == R.id.nav_home){
-            frag = new HomeScreen();
+        } else */
+        if (id == R.id.nav_home){
+            if(LocalAccount.isLoggedIn())
+                frag = new HomeScreen_Logged_In();
+            else
+                frag = new HomeScreen();
         } else if (id == R.id.nav_mood_module) {
             frag = new MoodParent();
         } else if (id == R.id.nav_sleep_module) {
@@ -237,12 +231,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
             frag = new DietParent();
         } else if (id == R.id.nav_medication_module) {
             frag = new MedicationParent();
-        } else if (id == R.id.nav_analytics) { //TODO: menu open analytics fragment
+        } else if (id == R.id.nav_analytics) {
             frag = new AnalysisFragment();
-        } else if (id == R.id.nav_create_account){
-            frag = new CreateLogin();
-        } else if (id == R.id.nav_google_login){
-            frag = new GoogleLogin();
         } else if(id == R.id.nav_sync)
         {
             Sync sync = new Sync(getApplicationContext());
@@ -533,13 +523,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
         if(!LocalAccount.isLoggedIn() )
         {
             navMenu.findItem(R.id.nav_sync).setVisible(false);
-            navMenu.findItem(R.id.nav_logout).setVisible(false);
             navMenu.findItem(R.id.nav_analytics).setVisible(false);
         }
         else
         {
             navMenu.findItem(R.id.nav_sync).setVisible(true);
-            navMenu.findItem(R.id.nav_logout).setVisible(true);
             navMenu.findItem(R.id.nav_analytics).setVisible(true);
         }
 
