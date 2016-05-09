@@ -3,6 +3,8 @@ package com.rocket.biometrix.Database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.widget.Toast;
 
 import com.rocket.biometrix.Login.LocalAccount;
@@ -33,7 +35,11 @@ public class Sync implements AsyncResponse
      */
     public void syncDatabases()
     {
-        if (LocalAccount.isLoggedIn())
+        if (!isNetworkAvailable(context) )
+        {
+            Toast.makeText(context, "No wifi available", Toast.LENGTH_LONG).show();
+        }
+        else if (LocalAccount.isLoggedIn())
         {
             //The Json object to hold all other json objects
             //Alternate names include the One JSON to rule them all...
@@ -116,6 +122,7 @@ public class Sync implements AsyncResponse
     {
         //Assumes that any user who is logged in wants their data backed up.
         //TODO: Local Account setting for turning off always backup?
+
         if (LocalAccount.isLoggedIn() )
         {
             int id = -1;
@@ -169,8 +176,14 @@ public class Sync implements AsyncResponse
 
             String jsonToInsert = JsonCVHelper.convertToJSON(rowToBeInserted);
 
-            new DatabaseConnect(responseClass).execute(DatabaseConnectionTypes.INSERT_TABLE_VALUES, jsonToInsert,
-                    LocalAccount.GetInstance().GetToken(), dbConnectionType);
+            if (!isNetworkAvailable(context) )
+            {
+                Toast.makeText(context, "No wifi available", Toast.LENGTH_LONG).show();
+            }
+            else {
+                new DatabaseConnect(responseClass).execute(DatabaseConnectionTypes.INSERT_TABLE_VALUES, jsonToInsert,
+                        LocalAccount.GetInstance().GetToken(), dbConnectionType);
+            }
         }
     }
 
@@ -227,8 +240,14 @@ public class Sync implements AsyncResponse
 
             String jsonToInsert = JsonCVHelper.convertToJSON(rowToBeUpdated);
 
-            new DatabaseConnect(responseClass).execute(DatabaseConnectionTypes.UPDATE_TABLE_VALUES, jsonToInsert,
-                    LocalAccount.GetInstance().GetToken(), dbConnectionType);
+            if (!isNetworkAvailable(context) )
+            {
+                Toast.makeText(context, "No wifi available", Toast.LENGTH_LONG).show();
+            }
+            else {
+                new DatabaseConnect(responseClass).execute(DatabaseConnectionTypes.UPDATE_TABLE_VALUES, jsonToInsert,
+                        LocalAccount.GetInstance().GetToken(), dbConnectionType);
+            }
         }
     }
 
@@ -282,8 +301,14 @@ public class Sync implements AsyncResponse
 
             String jsonToInsert = JsonCVHelper.convertToJSON(contentValues);
 
-            new DatabaseConnect(responseClass).execute(DatabaseConnectionTypes.DELETE_TABLE_VALUES, jsonToInsert,
-                    LocalAccount.GetInstance().GetToken(), dbConnectionType);
+            if (!isNetworkAvailable(context) )
+            {
+                Toast.makeText(context, "No wifi available", Toast.LENGTH_LONG).show();
+            }
+            else {
+                new DatabaseConnect(responseClass).execute(DatabaseConnectionTypes.DELETE_TABLE_VALUES, jsonToInsert,
+                        LocalAccount.GetInstance().GetToken(), dbConnectionType);
+            }
         }
     }
 
@@ -444,5 +469,30 @@ public class Sync implements AsyncResponse
             JsonCVHelper.processSyncJsonReturn(masterJson, context);
             Toast.makeText(context, "Database sync complete", Toast.LENGTH_LONG).show();
         }
+    }
+
+    /**
+     * A check for network availability? Taken from here
+     * http://stackoverflow.com/questions/5474089/how-to-check-currently-internet-connection-is-available-or-not-in-android
+     * TODO: Make use of this if it works. Currently untested...
+     * @param context Current context
+     * @return True if available, false otherwise
+     */
+    public static boolean isNetworkAvailable(Context context)
+    {
+        boolean connected = false;
+        ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        //connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            //we are connected to a network
+            connected = true;
+        }
+        else
+        {
+            connected = false;
+        }
+
+        return connected;
     }
 }
