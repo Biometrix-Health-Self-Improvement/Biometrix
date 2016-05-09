@@ -1,6 +1,5 @@
 package com.rocket.biometrix;
 
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.graphics.drawable.ColorDrawable;
@@ -11,14 +10,10 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.menu.ActionMenuItem;
 import android.support.v7.widget.Toolbar;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ActionMenuView;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
@@ -36,7 +31,6 @@ import com.rocket.biometrix.DietModule.DietParent;
 import com.rocket.biometrix.ExerciseModule.ExerciseEntry;
 import com.rocket.biometrix.ExerciseModule.ExerciseParent;
 import com.rocket.biometrix.Login.CreateLogin;
-import com.rocket.biometrix.Login.GetLogin;
 import com.rocket.biometrix.Login.GoogleLogin;
 import com.rocket.biometrix.Login.LocalAccount;
 import com.rocket.biometrix.Login.SettingsAndEntryHelper;
@@ -486,6 +480,10 @@ public class NavigationDrawerActivity extends AppCompatActivity
         ((com.rocket.biometrix.HomeScreen)activeFragment).okayButtonClick(v);
     }
 
+    public  void googleSignIn(View v){
+        ((com.rocket.biometrix.HomeScreen)activeFragment).googleSignIn(v);
+    }
+
     public void onRunButtonClick(View v)
     {
         ((com.rocket.biometrix.Analysis.AnalysisFragment)activeFragment).onRunButtonClick(v);
@@ -524,8 +522,6 @@ public class NavigationDrawerActivity extends AppCompatActivity
     public void UpdateMenuItems()
     {
         Menu navMenu = navView.getMenu();
-
-
 
         SetItemVisibility(navMenu, R.id.nav_mood_module, SettingsAndEntryHelper.MOOD_MODULE);
         SetItemVisibility(navMenu, R.id.nav_sleep_module, SettingsAndEntryHelper.SLEEP_MODULE);
