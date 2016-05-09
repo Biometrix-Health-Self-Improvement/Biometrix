@@ -2,6 +2,10 @@ package com.rocket.biometrix.SleepModule;
 
 import android.app.Fragment;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RectShape;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Space;
 import android.widget.TextView;
 
 import com.rocket.biometrix.Database.LocalStorageAccess;
@@ -134,11 +139,16 @@ public class SleepParent extends Fragment {
 
             button.setText(dispString);
             button.setTransformationMethod(null);
+            button.setBackground(getResources().getDrawable(R.drawable.sleep_past_entry_button));
 
+            //button.setBackgroundColor(getResources().getColor(R.color.ActionTopBar_sleep_color));
 
             button.setOnClickListener(buttonListener);
             button.setTag(sleepCursor.getInt(sleepCursor.getColumnIndex(LocalStorageAccessSleep.LOCAL_SLEEP_ID)));
             displayEntriesLayout.addView(button);
+            Space space = new Space(v.getContext());
+            space.setMinimumHeight(7);
+            displayEntriesLayout.addView(space );
         }
 
         sleepCursor.close();

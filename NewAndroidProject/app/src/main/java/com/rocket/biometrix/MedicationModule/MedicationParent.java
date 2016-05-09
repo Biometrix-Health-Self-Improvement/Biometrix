@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Space;
 
 import com.rocket.biometrix.Database.LocalStorageAccessMedication;
 import com.rocket.biometrix.NavigationDrawerActivity;
@@ -141,7 +142,12 @@ public class MedicationParent extends Fragment {
 
             button.setOnClickListener(buttonListener);
             button.setTag(medicationCursor.getInt(medicationCursor.getColumnIndex(LocalStorageAccessMedication.LOCAL_MEDICATION_ID)));
+            button.setBackground(getResources().getDrawable(R.drawable.medication_past_entry_button));
             displayEntriesLayout.addView(button);
+
+            Space space = new Space(v.getContext());
+            space.setMinimumHeight(7);
+            displayEntriesLayout.addView(space );
         }
 
         medicationCursor.close();

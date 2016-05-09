@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Space;
 import android.widget.TextView;
 
 import com.rocket.biometrix.Database.LocalStorageAccessExercise;
@@ -136,7 +137,12 @@ public class ExerciseParent extends Fragment {
 
             button.setOnClickListener(buttonListener);
             button.setTag(exerciseCursor.getInt(exerciseCursor.getColumnIndex(LocalStorageAccessExercise.LOCAL_EXERCISE_ID)));
+            button.setBackground(getResources().getDrawable(R.drawable.exercise_past_entry_button));
             displayEntriesLayout.addView(button);
+
+            Space space = new Space(v.getContext());
+            space.setMinimumHeight(7);
+            displayEntriesLayout.addView(space );
         }
 
         exerciseCursor.close();

@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Space;
 import android.widget.TextView;
 
 import com.rocket.biometrix.Database.LocalStorageAccessMedication;
@@ -128,7 +129,12 @@ public class MoodParent extends Fragment {
 
             button.setOnClickListener(buttonListener);
             button.setTag(moodCursor.getInt(moodCursor.getColumnIndex(LocalStorageAccessMood.LOCAL_MOOD_ID)));
+            button.setBackground(getResources().getDrawable(R.drawable.mood_past_entry_button));
             displayEntriesLayout.addView(button);
+
+            Space space = new Space(v.getContext());
+            space.setMinimumHeight(7);
+            displayEntriesLayout.addView(space );
         }
 
         moodCursor.close();
