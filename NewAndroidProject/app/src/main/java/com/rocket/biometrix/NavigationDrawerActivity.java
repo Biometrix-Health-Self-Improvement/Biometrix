@@ -77,22 +77,29 @@ public class NavigationDrawerActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //Local account/settings setup
+        navView = navigationView;
+        LocalAccount.setNavDrawerRef(this);
+        UpdateMenuItems();
+
         Fragment frag;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-                mEditEntryB = getIntent().getExtras();
+        mEditEntryB = getIntent().getExtras();
+
         if (mEditEntryB != null) {
             //yourDataObject = getIntent().getStringExtra(KEY_EXTRA);
             mTblSignal = mEditEntryB.getString("tablename"); //See MECR ViewAdapter, ViewHolder's list item onClick listener
             mUidSignal = mEditEntryB.getString("uid");
 
+            if (mTblSignal != null){
             frag = PopulateEntryIntercept(mTblSignal);
 
             frag.setArguments(getIntent().getExtras());
 
             transaction.replace(R.id.navigation_drawer_fragment_content, frag, mTblSignal);
             transaction.addToBackStack(null);
-            transaction.commit();
+            transaction.commit();}
 
 
         } else {
@@ -102,11 +109,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
             transaction.addToBackStack(null);
             transaction.commit();
         }
-
-            //Local account/settings setup
-            navView = navigationView;
-            LocalAccount.setNavDrawerRef(this);
-            UpdateMenuItems();
+        
+        //Local account/settings setup
+        navView = navigationView;
+        LocalAccount.setNavDrawerRef(this);
+        UpdateMenuItems();
 
     }
 

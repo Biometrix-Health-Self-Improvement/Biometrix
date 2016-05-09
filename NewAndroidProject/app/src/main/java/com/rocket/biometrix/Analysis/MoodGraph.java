@@ -43,10 +43,10 @@ public class MoodGraph extends GraphBase {
         anx.setColor(Color.GREEN);
 
 
-        StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
-        staticLabelsFormatter.setVerticalLabels(new String[]{"None", "Mild", "Moderate", "Severe", "Very Severe"});
-        staticLabelsFormatter.setDynamicLabelFormatter(setDateBounds(graph));
-        graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
+        //StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
+        //staticLabelsFormatter.setVerticalLabels(new String[]{"None", "Mild", "Moderate", "Severe", "Very Severe"});
+        //staticLabelsFormatter.setDynamicLabelFormatter();
+       // graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
 
         graph.setTitle("Mood");
         if(!dep.isEmpty()){
@@ -57,6 +57,7 @@ public class MoodGraph extends GraphBase {
         }
         setLegend(graph);
         setMonthYearTitle();
+        setDateBounds(graph);
     }
 
 
