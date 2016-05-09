@@ -14,10 +14,10 @@
     <color name="colorButtonText">#ffffff</color>
     <color name="black_overlay">#66000000</color>
 
-<!-- Forgot Password Text Appearance -->
-    <color name="forgot_password_text">#FF0000</color>
-    <color name="forgot_password_highlight">#FFFFFF</color>
-    <color name="forgot_password_link">#0000FF</color>
+<!-- Linked Text Appearance -->
+    <color name="linked_initial_text">#FF0000</color>
+    <color name="linked_text_highlight">#FFFFFF</color>
+    <color name="linked_text_link">#0000FF</color>
 
 <!-- Fragment Module Background Colors -->
     <color name="background_mood_color">#F1CFFC</color>

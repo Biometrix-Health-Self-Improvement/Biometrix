@@ -6,30 +6,33 @@
     tools:context="com.rocket.biometrix.HomeScreen">
 
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/HomeScreenLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="top|left|bottom|center|right">
+        android:layout_gravity="top|left|bottom|center|right"
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/HomeScreenLogoImage"
             android:layout_width="match_parent"
             android:layout_height="230dp"
-            android:src="@mipmap/ic_biologo"
             android:layout_gravity="top"
             android:padding="0dp"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_biologo" />
 
         <EditText
             android:id="@+id/HomeScreenUserNameEditText"
             android:layout_width="330dp"
             android:layout_height="45dp"
-            android:inputType="text"
             android:layout_gravity="center"
-            android:hint="Enter User Name"
             android:background="@drawable/edit_text_style"
+            android:hint="Enter User Name"
+            android:inputType="text"
             android:paddingStart="4dp">
+
         </EditText>
+
         <Space
             android:layout_width="0dp"
             android:layout_height="3dp" />
@@ -38,10 +41,10 @@
             android:id="@+id/HomeScreenPasswordEditText"
             android:layout_width="330dp"
             android:layout_height="45dp"
-            android:inputType="textPassword"
             android:layout_gravity="center"
-            android:hint="Enter Password"
             android:background="@drawable/edit_text_style"
+            android:hint="Enter Password"
+            android:inputType="textPassword"
             android:paddingStart="4dp"
             android:password="true">
 
@@ -53,14 +56,14 @@
 
         <ImageView
             android:id="@+id/HomeScreenLocalLogin"
-            android:src="@mipmap/ic_locallogin"
-            android:layout_height="60dp"
             android:layout_width="200dp"
-            android:scaleType="centerCrop"
-            android:adjustViewBounds="true"
-            android:padding="0dp"
+            android:layout_height="60dp"
             android:layout_gravity="center"
-            android:clickable="true" />
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:padding="0dp"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_locallogin" />
 
         <Space
             android:layout_width="0dp"
@@ -68,28 +71,49 @@
 
         <ImageView
             android:id="@+id/HomeScreenGoogleLogin"
-            android:src="@mipmap/ic_googlelogin"
-            android:layout_height="60dp"
             android:layout_width="250dp"
-            android:scaleType="centerCrop"
-            android:padding="0dp"
+            android:layout_height="60dp"
             android:layout_gravity="center"
-            android:clickable="true" />
+            android:clickable="true"
+            android:padding="0dp"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_googlelogin" />
+
         <Space
             android:layout_width="0dp"
             android:layout_height="15dp" />
 
-        <TextView
-            android:id="@+id/HomeScreenForgotLoginClickableText"
-            android:text="@string/forgot_password"
-            android:textAlignment="center"
-            android:textColor="@color/forgot_password_text"
-            android:textColorHighlight="@color/forgot_password_highlight"
-            android:textColorLink="@color/forgot_password_link"
-            android:layout_width="150dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="top|center"
-            android:clickable="true" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
+            <TextView
+                android:id="@+id/HomeScreenForgotLoginClickableText"
+                android:layout_width="200dp"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:text="@string/forgot_password"
+                android:textSize="18dp"
+                android:textAlignment="center"
+                android:textColor="@color/linked_initial_text"
+                android:textColorHighlight="@color/linked_text_highlight"
+                android:textColorLink="@color/linked_text_link"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:id="@+id/HomeScreenCreateLoginClickableText"
+                android:layout_width="175dp"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:text="@string/create_login"
+                android:textSize="18dp"
+                android:textAlignment="center"
+                android:textColor="@color/linked_initial_text"
+                android:textColorHighlight="@color/linked_text_highlight"
+                android:textColorLink="@color/linked_text_link"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true" />
+        </RelativeLayout>
     </LinearLayout>
 </FrameLayout>
