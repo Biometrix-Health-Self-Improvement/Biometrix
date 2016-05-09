@@ -114,6 +114,14 @@ public abstract class GraphBase extends Fragment {
         graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
     }
 
+    protected boolean tryParseInt(String value) {
+        try {
+            Integer.parseInt(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
 
     abstract protected void setMonthYearTitle();
 
