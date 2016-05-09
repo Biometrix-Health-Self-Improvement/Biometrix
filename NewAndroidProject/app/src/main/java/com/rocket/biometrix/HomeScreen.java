@@ -1,18 +1,24 @@
 package com.rocket.biometrix;
 
-import android.app.ActionBar;
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Toast;
 
+import com.rocket.biometrix.Database.AsyncResponse;
+import com.rocket.biometrix.Database.DatabaseConnect;
+import com.rocket.biometrix.Database.DatabaseConnectionTypes;
+import com.rocket.biometrix.Database.JsonCVHelper;
+import com.rocket.biometrix.Login.LocalAccount;
 import com.rocket.biometrix.Settings.ModuleSettings;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 /**
@@ -23,7 +29,7 @@ import com.rocket.biometrix.Settings.ModuleSettings;
  * Use the {@link HomeScreen#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeScreen extends Fragment {
+public class HomeScreen extends Fragment implements AsyncResponse {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -32,6 +38,9 @@ public class HomeScreen extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private View homeScreenView;
+    private String username;
 
     private OnFragmentInteractionListener mListener;
 
@@ -79,7 +88,7 @@ public class HomeScreen extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View v = inflater.inflate(R.layout.fragment_home_screen, container, false);
-
+        homeScreenView = v;
         return v;
     }
 
@@ -109,5 +118,69 @@ public class HomeScreen extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
+    }
+
+    /**
+     * Calls the database to check the login for the user
+     * @param view
+     */
+    public void okayButtonClick(View view)
+    {
+        String password;
+
+        EditText usernameEdit =  (EditText) homeScreenView.findViewById(R.id.HomeScreenUserNameEditText);
+        username = usernameEdit.getText().toString();
+
+        EditText passwordEdit = (EditText) homeScreenView.findViewById(R.id.HomeScreenPasswordEditText);
+        password = passwordEdit.getText().toString();
+
+        if (username.equals("") || password.equals("") )
+        {
+            Toast.makeText(homeScreenView.getContext(), "Username or password is blank", Toast.LENGTH_LONG).show();
+        }
+        else
+        {
+            new DatabaseConnect(this).execute(DatabaseConnectionTypes.LOGIN_CHECK,username, password);
+        }
+    }
+
+    @Override
+    /**
+     * Retrieves the results of the call to the webserver
+     */
+    public void processFinish(String result)
+    {
+        String returnResult = result;
+
+        JSONObject jsonObject;
+
+        jsonObject = JsonCVHelper.processServerJsonString(returnResult, homeScreenView.getContext(), "Login Failed");
+
+        if (jsonObject != null)
+        {
+            try
+            {
+                //If the json object passes back a token then it was a login
+                if (jsonObject.has("Token"))
+                {
+                    Toast.makeText(homeScreenView.getContext(), "Login Successful!", Toast.LENGTH_LONG).show();
+
+                    //Logs the user in with their login token.
+                    LocalAccount.Login(username, jsonObject.getString("Token"));
+
+                    NavigationDrawerActivity nav = (NavigationDrawerActivity) getActivity();
+                    nav.returnToLoggedInHomePage();
+                } else
+                //Assume it was a password reset
+                {
+                    Toast.makeText(homeScreenView.getContext(), "Check your email (and your spam folder) for your reset link", Toast.LENGTH_LONG).show();
+                }
+            }
+            catch (JSONException jsonExcept)
+            {
+                Toast.makeText(homeScreenView.getContext(), "Something went wrong with the server's return", Toast.LENGTH_LONG).show();
+            }
+        }
+
     }
 }

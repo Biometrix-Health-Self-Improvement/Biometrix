@@ -106,6 +106,9 @@ public class NavigationDrawerActivity extends AppCompatActivity
         transaction.replace(R.id.navigation_drawer_fragment_content, frag, "home");
         transaction.addToBackStack(null);
         transaction.commit();
+        this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                getResources().getColor(R.color.background_home_color));
+        setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_home_color));
 
         if (mEditEntryB != null) {
             //yourDataObject = getIntent().getStringExtra(KEY_EXTRA);
@@ -236,44 +239,20 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
         if(id == R.id.nav_home_logged_in) {
             frag = new HomeScreen_Logged_In();
-            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
-                    getResources().getColor(R.color.background_home_color));
-            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_home_color));
         } else if (id == R.id.nav_home){
             frag = new HomeScreen();
-            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
-                    getResources().getColor(R.color.background_home_color));
-            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_home_color));
         } else if (id == R.id.nav_mood_module) {
             frag = new MoodParent();
-            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
-                    getResources().getColor(R.color.background_mood_color));
-            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_mood_color));
         } else if (id == R.id.nav_sleep_module) {
             frag = new SleepParent();
-            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
-                    getResources().getColor(R.color.background_sleep_color));
-            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_sleep_color));
         } else if (id == R.id.nav_exercise_module) {
             frag = new ExerciseParent();
-            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
-                    getResources().getColor(R.color.background_exercise_color));
-            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_exercise_color));
         } else if (id == R.id.nav_diet_module) {
             frag = new DietParent();
-            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
-                    getResources().getColor(R.color.background_diet_color));
-            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_diet_color));
         } else if (id == R.id.nav_medication_module) {
             frag = new MedicationParent();
-            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
-                    getResources().getColor(R.color.background_medication_color));
-            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_medication_color));
         } else if (id == R.id.nav_analytics) { //TODO: menu open analytics fragment
             frag = new AnalysisFragment();
-            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
-                    getResources().getColor(R.color.background_analysis_color));
-            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_analysis_color));
         } else if (id == R.id.nav_login) {
             frag = new GetLogin();
         } else if (id == R.id.nav_create_account){
@@ -321,6 +300,51 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 frag.getClass() == HomeScreen_Logged_In.class)
         {
             supportInvalidateOptionsMenu();
+        }
+
+        Class fragClass = frag.getClass();
+
+        if (fragClass == HomeScreen.class || fragClass == HomeScreen_Logged_In.class) //TODO ad other reset/create login pages
+        {
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_home_color));
+            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_home_color));
+        }
+        else if (fragClass == MoodParent.class || fragClass == MoodEntry.class)
+        {
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_mood_color));
+            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_mood_color));
+        }
+        else if (fragClass == SleepParent.class || fragClass == SleepEntry.class)
+        {
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_sleep_color));
+            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_sleep_color));
+        }
+        else if (fragClass == ExerciseParent.class || fragClass == ExerciseEntry.class)
+        {
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_exercise_color));
+            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_exercise_color));
+        }
+        else if(fragClass == DietParent.class || fragClass == DietEntry.class)
+        {
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_diet_color));
+            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_diet_color));
+        }
+        else if(fragClass == MedicationParent.class || fragClass == MedicationEntry.class)
+        {
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_medication_color));
+            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_medication_color));
+        }
+        else if(fragClass == AnalysisFragment.class)
+        {
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_analysis_color));
+            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_analysis_color));
         }
     }
 
@@ -469,7 +493,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
         ((com.rocket.biometrix.Login.GetLogin)activeFragment).resetPasswordClick();
     }
     public  void passwordSignIn(View v){
-        ((com.rocket.biometrix.Login.GetLogin)activeFragment).okayButtonClick(v);
+        ((com.rocket.biometrix.HomeScreen)activeFragment).okayButtonClick(v);
     }
 
     public void onRunButtonClick(View v)
@@ -483,6 +507,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
     public void createAccountButtonClick(View v){
         ((CreateLogin)activeFragment).createAccount();
+    }
+
+    public void returnToLoggedInHomePage()
+    {
+        replaceFragment(new HomeScreen_Logged_In());
     }
 
     /**
