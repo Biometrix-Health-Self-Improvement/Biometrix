@@ -281,6 +281,40 @@ public class NavigationDrawerActivity extends AppCompatActivity
     }
 
     /**************************************************************************
+     *  Manages onClick events for each modules CreateEntry button.
+     *  The current fragment is retrieved and identified and replaces with its create entry fragment
+     *  Duplicate of above code with a set arguments call with the bundle
+     * @param v
+     * @param bundle A bundle of arguments to pass to the next fragment
+     **************************************************************************/
+    public void CreateEntryOnClickWithBundle(View v, Bundle bundle) {
+        //Initialize to home screen in case the fragment active is not found in the following, it will not crash and just go back to home
+        Fragment newFragment = new HomeScreen();
+
+        //if fragment exists
+        if (activeFragment != null && activeFragment.isVisible()) {
+
+            //Determines which module parent activity is active and then replaces it with its child Entry fragment
+            if(activeFragment.getClass() == MoodParent.class) {
+                newFragment = new MoodEntry();
+            } else if (activeFragment.getClass() == SleepParent.class){
+                newFragment = new SleepEntry();
+            } else if (activeFragment.getClass() == ExerciseParent.class){
+                newFragment = new ExerciseEntry();
+            } else if (activeFragment.getClass() == DietParent.class){
+                newFragment = new DietEntry();
+            } else if (activeFragment.getClass() == MedicationParent.class){
+                newFragment = new MedicationEntry();
+            }
+
+            newFragment.setArguments(bundle);
+
+            //replaces the current fragment with the entry fragment
+            replaceFragment(newFragment);
+        }
+    }
+
+    /**************************************************************************
      *  Manages onClick events for each modules Entry done button.
      *  The current fragment is retrieved and identified and replaces with its parent fragment
      * @param v

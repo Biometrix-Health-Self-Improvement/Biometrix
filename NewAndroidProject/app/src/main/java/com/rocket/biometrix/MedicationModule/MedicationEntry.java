@@ -66,8 +66,8 @@ public class MedicationEntry extends Fragment implements AsyncResponse{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            uid = getArguments().getString(TABLENAME_PARAM);
-            tablename = getArguments().getString(ROWID_PARAM);
+            tablename = getArguments().getString(TABLENAME_PARAM);
+            uid = getArguments().getString(ROWID_PARAM);
         }
         else
         {
@@ -175,7 +175,7 @@ public class MedicationEntry extends Fragment implements AsyncResponse{
         Context context = entryView.getContext();
 
         JSONObject jsonObject;
-        jsonObject = JsonCVHelper.processServerJsonString(result, context, "Could not create exercise entry on web database");
+        jsonObject = JsonCVHelper.processServerJsonString(result, context, "Could not create medication entry on web database");
 
         if (jsonObject != null)
         {

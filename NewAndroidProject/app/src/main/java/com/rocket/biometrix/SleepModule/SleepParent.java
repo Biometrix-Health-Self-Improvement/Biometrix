@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
@@ -28,7 +30,6 @@ public class SleepParent extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     private LinearLayout displayEntriesLayout;
-
 
     private String mParam1;
     private String mParam2;
@@ -63,7 +64,6 @@ public class SleepParent extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
 
         try{
             NavigationDrawerActivity nav = (NavigationDrawerActivity) getActivity();
@@ -102,22 +102,43 @@ public class SleepParent extends Fragment {
 
         displayEntriesLayout.removeAllViews();
 
+        View.OnClickListener buttonListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavigationDrawerActivity nav = (NavigationDrawerActivity) getActivity();
+                Bundle bundle = new Bundle();
+                bundle.putString("uid", v.getTag().toString());
+                bundle.putString("tablename", LocalStorageAccessSleep.TABLE_NAME);
+                nav.CreateEntryOnClickWithBundle(v, bundle);
+            }
+        };
+
         while (sleepCursor.moveToNext())
         {
 
-            TextView textView = new TextView(v.getContext());
+            Button button = new Button(v.getContext());
 
             //Creates the string that will be displayed.
             StringBuilder dispString = new StringBuilder();
 
             dispString.append(sleepCursor.getString(sleepCursor.getColumnIndex(LocalStorageAccessSleep.DATE)));
+            dispString.append(" at ");
+            dispString.append(sleepCursor.getString(sleepCursor.getColumnIndex(LocalStorageAccessSleep.TIME)));
             dispString.append(" for ");
             dispString.append(sleepCursor.getString(sleepCursor.getColumnIndex(LocalStorageAccessSleep.DURATION)));
             dispString.append(". Quality: ");
             dispString.append(sleepCursor.getString(sleepCursor.getColumnIndex(LocalStorageAccessSleep.QUALITY)));
+            dispString.append(". Notes: ");
+            dispString.append(sleepCursor.getString(sleepCursor.getColumnIndex(LocalStorageAccessSleep.NOTES)));
 
-            textView.setText(dispString);
-            displayEntriesLayout.addView(textView);
+
+            button.setText(dispString);
+            button.setTransformationMethod(null);
+
+
+            button.setOnClickListener(buttonListener);
+            button.setTag(sleepCursor.getInt(sleepCursor.getColumnIndex(LocalStorageAccessSleep.LOCAL_SLEEP_ID)));
+            displayEntriesLayout.addView(button);
         }
 
         sleepCursor.close();

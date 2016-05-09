@@ -92,8 +92,8 @@ public class SleepEntry extends Fragment implements AsyncResponse {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            uid = getArguments().getString(TABLENAME_PARAM);
-            tablename = getArguments().getString(ROWID_PARAM);
+            tablename = getArguments().getString(TABLENAME_PARAM);
+            uid = getArguments().getString(ROWID_PARAM);
         }
         else
         {
@@ -253,7 +253,14 @@ public class SleepEntry extends Fragment implements AsyncResponse {
         SettingsAndEntryHelper.makeDisabledEntryViewsInvisible(entryView, LocalStorageAccessSleep.TABLE_NAME);
         if (uid != null)
         {
-            SettingsAndEntryHelper.repopulateEntryPage(entryView, tablename, Integer.parseInt(uid));
+            try {
+                SettingsAndEntryHelper.repopulateEntryPage(entryView, tablename, Integer.parseInt(uid));
+            }
+            catch (Exception e)
+            {
+                e.getMessage();
+            }
+
         }
         return v;
     }

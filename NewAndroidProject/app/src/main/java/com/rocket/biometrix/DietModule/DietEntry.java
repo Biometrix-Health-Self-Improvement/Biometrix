@@ -66,8 +66,8 @@ public class DietEntry extends Fragment implements AsyncResponse {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            uid = getArguments().getString(TABLENAME_PARAM);
-            tablename = getArguments().getString(ROWID_PARAM);
+            tablename = getArguments().getString(TABLENAME_PARAM);
+            uid = getArguments().getString(ROWID_PARAM);
         }
         else
         {
