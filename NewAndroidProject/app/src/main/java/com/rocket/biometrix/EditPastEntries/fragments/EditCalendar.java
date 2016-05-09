@@ -2,10 +2,8 @@ package com.rocket.biometrix.EditPastEntries.fragments;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +11,17 @@ import android.widget.CalendarView;
 import android.widget.Toast;
 
 import com.rocket.biometrix.Common.StringDateTimeConverter;
+import com.rocket.biometrix.Database.LocalStorageAccess;
+import com.rocket.biometrix.Database.LocalStorageAccessDiet;
 import com.rocket.biometrix.Database.LocalStorageAccessExercise;
+import com.rocket.biometrix.Database.LocalStorageAccessMedication;
+import com.rocket.biometrix.Database.LocalStorageAccessMood;
+import com.rocket.biometrix.Database.LocalStorageAccessSleep;
+import com.rocket.biometrix.EditPastEntries.CursorPair;
 import com.rocket.biometrix.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -118,18 +125,36 @@ public class EditCalendar extends Fragment {
                 String dateSelectedFormatted = StringDateTimeConverter.convertCalDateString(dateSelected);
 
 
-                //Retrieve cursor(s)
-                Cursor datesExercise = LocalStorageAccessExercise.selectByDate(dateSelectedFormatted,getActivity());
-                int count = datesExercise.getCount();
-               String EX_CURSn = DatabaseUtils.dumpCursorToString(datesExercise);
-                Log.v("EX_CURS", DatabaseUtils.dumpCursorToString(datesExercise));
+                //Retrieve cursor(s) CONNECTED TO ENTRYCANDIESFRAGEMENT (horrible design)
+                Cursor datesExercise = LocalStorageAccessExercise.selectByDate(dateSelectedFormatted, getActivity());
+
+                Cursor datesSleep = LocalStorageAccess.selectByDate(dateSelectedFormatted,
+                        LocalStorageAccessSleep.TABLE_NAME, LocalStorageAccessSleep.DATE);
+
+                Cursor datesMood = LocalStorageAccess.selectByDate(dateSelectedFormatted, LocalStorageAccessMood.TABLE_NAME, LocalStorageAccessMood.DATE);
+                //~Please understand, we were under harsh time constraints.
+                Cursor datesMedz = LocalStorageAccess.selectByDate(dateSelectedFormatted, LocalStorageAccessMedication.TABLE_NAME, LocalStorageAccessMedication.DATE);
+                //~God forgives, but he never forgets. The codebase has rotted. Each line a step further from the light, another sin.
+                Cursor datesDiet = LocalStorageAccess.selectByDate(dateSelectedFormatted, LocalStorageAccessDiet.TABLE_NAME, LocalStorageAccessDiet.DATE);
+                //~Now I understand why someone would abandon a world they created.
+
+
+
+
 
                 //getActivity() for the context.
                 Toast.makeText(getActivity(), dateSelectedFormatted, Toast.LENGTH_LONG).show();
 
                 if (mListener != null) {
-                    mListener.onFragDateSelect("exercise", datesExercise);
-                    //other tables go here
+                    List<CursorPair> cpInjecting = new ArrayList<CursorPair>();
+                    cpInjecting.add(new CursorPair("exercise", datesExercise));
+                    cpInjecting.add(new CursorPair("sleep", datesSleep));
+                    cpInjecting.add(new CursorPair("mood", datesMood));
+                    cpInjecting.add(new CursorPair("medication", datesMedz));
+                    cpInjecting.add(new CursorPair("diet", datesDiet));
+                    //~I've left Angels to inherit this codebase. They will soon learn of betrayal.
+
+                    mListener.onFragDateSelect(cpInjecting);
                 }
             }
 
@@ -154,8 +179,8 @@ public class EditCalendar extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        //Pass String and Cursor to an activity (fills up EPA dictionary)
+        //Pass List of module's "entries"
         //Return 1 if failed.
-        int onFragDateSelect(String table, Cursor datesQuery);
+        int onFragDateSelect(List<CursorPair> modules);
     }
 }

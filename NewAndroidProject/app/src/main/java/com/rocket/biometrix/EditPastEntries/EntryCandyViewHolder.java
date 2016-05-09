@@ -19,6 +19,8 @@ public class EntryCandyViewHolder extends RecyclerView.ViewHolder {
     public TextView time;
     public TextView misc;
 
+    public String _UID;
+
     public LinearLayout recLayout;
 
     public EntryCandyViewHolder(View itemView) {

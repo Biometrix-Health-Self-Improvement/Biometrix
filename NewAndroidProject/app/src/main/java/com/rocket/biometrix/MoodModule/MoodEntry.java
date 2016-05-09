@@ -14,13 +14,9 @@ import android.widget.Toast;
 
 import com.rocket.biometrix.Common.DateTimeSelectorPopulateTextView;
 import com.rocket.biometrix.Database.AsyncResponse;
-import com.rocket.biometrix.Database.DatabaseConnect;
-import com.rocket.biometrix.Database.DatabaseConnectionTypes;
 import com.rocket.biometrix.Database.JsonCVHelper;
-import com.rocket.biometrix.Database.LocalStorageAccess;
-import com.rocket.biometrix.Database.LocalStorageAccessMedication;
 import com.rocket.biometrix.Database.LocalStorageAccessMood;
-import com.rocket.biometrix.Login.LocalAccount;
+import com.rocket.biometrix.Database.Sync;
 import com.rocket.biometrix.Login.SettingsAndEntryHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
@@ -42,11 +38,11 @@ import java.util.Locale;
  */
 public class MoodEntry extends Fragment implements AsyncResponse {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String TABLENAME_PARAM = "tablename";
+    private static final String ROWID_PARAM = "uid";
 
-    private String mParam1;
-    private String mParam2;
+    private String uid;
+    private String tablename; //unused
 
     View view;
 
@@ -60,15 +56,13 @@ public class MoodEntry extends Fragment implements AsyncResponse {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment MoodEntry.
      */
-    public static MoodEntry newInstance(String param1, String param2) {
+    public static MoodEntry newInstance(String tablename, String uid) {
         MoodEntry fragment = new MoodEntry();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(TABLENAME_PARAM, tablename);
+        args.putString(ROWID_PARAM, uid);
         fragment.setArguments(args);
         return fragment;
     }
@@ -77,8 +71,12 @@ public class MoodEntry extends Fragment implements AsyncResponse {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            tablename = getArguments().getString(TABLENAME_PARAM);
+            uid = getArguments().getString(ROWID_PARAM);
+        }
+        else
+        {
+            uid = null;
         }
 
         try{
@@ -99,13 +97,17 @@ public class MoodEntry extends Fragment implements AsyncResponse {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_mood_entry, container, false);
 
-        setRatingBarListener(view);
+        //setRatingBarListener(view);
 
         DateTimeSelectorPopulateTextView popDateTime = new DateTimeSelectorPopulateTextView
                 (getActivity(), view, R.id.moodCreateEntryDateSelect, R.id.moodCreateEntryTimeSelect);
         popDateTime.Populate();
 
         SettingsAndEntryHelper.makeDisabledEntryViewsInvisible(view, LocalStorageAccessMood.TABLE_NAME);
+        if (uid != null)
+        {
+            SettingsAndEntryHelper.repopulateEntryPage(view, tablename, Integer.parseInt(uid));
+        }
         return view;
     }
 
@@ -115,6 +117,7 @@ public class MoodEntry extends Fragment implements AsyncResponse {
      * @param view the view the rating bar is in
      **************************************************************************/
     private void setRatingBarListener(final View view) {
+        /*
         //Depression
         SeekBar rating = (SeekBar)view.findViewById(R.id.moodDepressedRating);//the rating bar
         rating.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -179,7 +182,7 @@ public class MoodEntry extends Fragment implements AsyncResponse {
                 TextView desc = (TextView) view.findViewById(R.id.moodAnxietyDesc);//description of rating
                 setRatingLabel(desc, progress);
             }
-        });
+        });*/
 
     }
 
@@ -234,26 +237,8 @@ public class MoodEntry extends Fragment implements AsyncResponse {
         }
         LocalStorageAccessMood.AddEntry(row, v.getContext());
 
-        if (LocalAccount.isLoggedIn())
-        {
-            int id = LocalStorageAccessMood.GetLastID(v.getContext());
-
-            //Adds the primary key of the field to the sync table along with the value marking it
-            //needs to be added to the webdatabase
-            LocalStorageAccess.getInstance(v.getContext()).insertOrUpdateSyncTable(v.getContext(),
-                    LocalStorageAccessMood.TABLE_NAME, id, -1, LocalStorageAccess.SYNC_NEEDS_ADDED);
-
-            row.put(LocalStorageAccessMood.LOCAL_MOOD_ID, id);
-            row.remove(LocalStorageAccessMood.USER_NAME);
-
-            String jsonToInsert = JsonCVHelper.convertToJSON(row);
-
-            //Trys to insert the user's data
-            new DatabaseConnect(this).execute(DatabaseConnectionTypes.INSERT_TABLE_VALUES, jsonToInsert,
-                    LocalAccount.GetInstance().GetToken(),
-                    DatabaseConnectionTypes.MOOD_TABLE);
-        }
-
+        Sync sync = new Sync(v.getContext());
+        sync.databaseInsertOrUpdateSyncTable(this, row, LocalStorageAccessMood.TABLE_NAME);
     }
 
 

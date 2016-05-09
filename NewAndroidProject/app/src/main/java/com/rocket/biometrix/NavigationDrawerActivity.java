@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.graphics.drawable.ColorDrawable;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ActionMenuView;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 
@@ -61,6 +63,10 @@ public class NavigationDrawerActivity extends AppCompatActivity
     //A reference to the navigation view
     protected NavigationView navView;
 
+    public String mTblSignal;
+    public String mUidSignal;
+    Bundle mEditEntryB;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,8 +83,16 @@ public class NavigationDrawerActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //Local account/settings setup
+        navView = navigationView;
+        LocalAccount.setNavDrawerRef(this);
+        UpdateMenuItems();
+
         Fragment frag;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        mEditEntryB = getIntent().getExtras();
+
         frag = new HomeScreen();
 
         //TODO: Get first loaded page to be correct color
@@ -93,12 +107,32 @@ public class NavigationDrawerActivity extends AppCompatActivity
         transaction.addToBackStack(null);
         transaction.commit();
 
+        if (mEditEntryB != null) {
+            //yourDataObject = getIntent().getStringExtra(KEY_EXTRA);
+            mTblSignal = mEditEntryB.getString("tablename"); //See MECR ViewAdapter, ViewHolder's list item onClick listener
+            mUidSignal = mEditEntryB.getString("uid");
+
+            if (mTblSignal != null){
+
+                FragmentTransaction transactionEE = getFragmentManager().beginTransaction();
+            frag = PopulateEntryIntercept(mTblSignal);
+
+            frag.setArguments(getIntent().getExtras());
+
+            transactionEE.replace(R.id.navigation_drawer_fragment_content, frag, mTblSignal);
+            transactionEE.addToBackStack(mTblSignal);
+            transactionEE.commit();
+            mTblSignal = null;}
+
+        }
+        
         //Local account/settings setup
         navView = navigationView;
         MenuItem dietItem = navView.getMenu().findItem(R.id.nav_diet_module);
 
         LocalAccount.setNavDrawerRef(this);
         UpdateMenuItems();
+
     }
 
     @Override
@@ -321,6 +355,40 @@ public class NavigationDrawerActivity extends AppCompatActivity
     }
 
     /**************************************************************************
+     *  Manages onClick events for each modules CreateEntry button.
+     *  The current fragment is retrieved and identified and replaces with its create entry fragment
+     *  Duplicate of above code with a set arguments call with the bundle
+     * @param v
+     * @param bundle A bundle of arguments to pass to the next fragment
+     **************************************************************************/
+    public void CreateEntryOnClickWithBundle(View v, Bundle bundle) {
+        //Initialize to home screen in case the fragment active is not found in the following, it will not crash and just go back to home
+        Fragment newFragment = new HomeScreen();
+
+        //if fragment exists
+        if (activeFragment != null && activeFragment.isVisible()) {
+
+            //Determines which module parent activity is active and then replaces it with its child Entry fragment
+            if(activeFragment.getClass() == MoodParent.class) {
+                newFragment = new MoodEntry();
+            } else if (activeFragment.getClass() == SleepParent.class){
+                newFragment = new SleepEntry();
+            } else if (activeFragment.getClass() == ExerciseParent.class){
+                newFragment = new ExerciseEntry();
+            } else if (activeFragment.getClass() == DietParent.class){
+                newFragment = new DietEntry();
+            } else if (activeFragment.getClass() == MedicationParent.class){
+                newFragment = new MedicationEntry();
+            }
+
+            newFragment.setArguments(bundle);
+
+            //replaces the current fragment with the entry fragment
+            replaceFragment(newFragment);
+        }
+    }
+
+    /**************************************************************************
      *  Manages onClick events for each modules Entry done button.
      *  The current fragment is retrieved and identified and replaces with its parent fragment
      * @param v
@@ -353,6 +421,13 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
             //replaces the current fragment with the parent fragment
             replaceFragment(newFragment);
+
+            //Try to hide keyboard if open?
+            View view = this.getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
         }
     }
 
@@ -498,5 +573,34 @@ public class NavigationDrawerActivity extends AppCompatActivity
     public  void AllGraph(View v){
         activeFragment = new AllGraph();
         replaceFragment(activeFragment);
+    }
+
+
+    public Fragment PopulateEntryIntercept(String tableKey) {
+        Fragment EntryFrag;
+
+        switch (tableKey) {
+            case "exercise":
+                EntryFrag = new ExerciseEntry();
+                break;
+            case "sleep":
+                EntryFrag = new SleepEntry();
+                break;
+            case "diet":
+                EntryFrag = new DietEntry();
+                break;
+            case "mood":
+                EntryFrag = new MoodEntry();
+                break;
+            case "medication":
+                EntryFrag = new MedicationEntry();
+                break;
+
+            default:
+                throw new IllegalArgumentException(" " + tableKey);
+        }
+
+
+        return EntryFrag;
     }
 }

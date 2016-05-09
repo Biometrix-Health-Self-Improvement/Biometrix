@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,12 +16,9 @@ import android.widget.Toast;
 import com.rocket.biometrix.Common.DateTimeSelectorPopulateTextView;
 import com.rocket.biometrix.Common.StringDateTimeConverter;
 import com.rocket.biometrix.Database.AsyncResponse;
-import com.rocket.biometrix.Database.DatabaseConnect;
-import com.rocket.biometrix.Database.DatabaseConnectionTypes;
 import com.rocket.biometrix.Database.JsonCVHelper;
-import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessExercise;
-import com.rocket.biometrix.Login.LocalAccount;
+import com.rocket.biometrix.Database.Sync;
 import com.rocket.biometrix.Login.SettingsAndEntryHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
@@ -39,18 +35,34 @@ import org.json.JSONObject;
  */
 public class ExerciseEntry extends Fragment implements AsyncResponse{
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String TABLENAME_PARAM = "tablename";
+    private static final String ROWID_PARAM = "uid";
 
+    private String uid;
+    private String tablename; //unused
     View onCreateView; //Saves inflated UI view inside onCreateView()
-
-    private String mParam1;
-    private String mParam2;
 
     public static TextView timeTV; //Used by the DateTimePopulateTextView in the onCreate event
     public static TextView dateTV;
 
+
+    boolean Editing;
+
     Spinner typeSpinner;
+
+    String minSelected; //string to save minutes exercised spinner result
+    String typeSelected; //string to save type of exercise selected in the radio 'bubble' buttons
+
+    Spinner minuteSpinner;
+    boolean toasted = false; //Used to display encouraging messages ONCE in minuteSpinner.
+
+
+    String lowestSpinnerValueThreshold = "5"; //5 minutes
+    String lowSpinnerValueThreshold = "10"; //10 minutes (idea is to encourage user to exercise more but still celebrate their 'baby' gains)
+    String lowSpinnerMessage = "Keep it up :)"; //The encouraging message
+    String highSpinnerMessage = "Nice!"; //The BEST message users strive for
+
+    String[] exerciseEntryData = {}; //String array that will store all user entered data, used in bundles and SQLite insert
 
     private OnFragmentInteractionListener mListener;
 
@@ -62,15 +74,14 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+
      * @return A new instance of fragment ExerciseEntry.
      */
-    public static ExerciseEntry newInstance(String param1, String param2) {
+    public static ExerciseEntry newInstance(String tablename, String uid) {
         ExerciseEntry fragment = new ExerciseEntry();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(TABLENAME_PARAM, tablename);
+        args.putString(ROWID_PARAM, uid);
         fragment.setArguments(args);
         return fragment;
     }
@@ -79,8 +90,12 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            tablename = getArguments().getString(TABLENAME_PARAM);
+            uid = getArguments().getString(ROWID_PARAM);
+        }
+        else
+        {
+            uid = null;
         }
         try {
             NavigationDrawerActivity nav = (NavigationDrawerActivity) getActivity();
@@ -117,6 +132,10 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
         onCreateView = v; //This view (the inflated UI layout view ) is saved so onDoneClick() can use it.
         SettingsAndEntryHelper.makeDisabledEntryViewsInvisible(onCreateView, LocalStorageAccessExercise.TABLE_NAME);
 
+        if (uid != null)
+        {
+            SettingsAndEntryHelper.repopulateEntryPage(onCreateView, tablename, Integer.parseInt(uid));
+        }
         return v;
     }
 
@@ -173,25 +192,8 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
             //Call insert method
             dbEx.insertFromContentValues(rowToBeInserted, v.getContext());
 
-            if (LocalAccount.isLoggedIn())
-            {
-                int id = LocalStorageAccessExercise.GetLastID(v.getContext());
-
-                //Adds the primary key of the field to the sync table along with the value marking it
-                //needs to be added to the webdatabase
-                LocalStorageAccess.getInstance(v.getContext()).insertOrUpdateSyncTable(v.getContext(),
-                        LocalStorageAccessExercise.TABLE_NAME, id, -1, LocalStorageAccess.SYNC_NEEDS_ADDED);
-
-                rowToBeInserted.put(LocalStorageAccessExercise.LOCAL_EXERCISE_ID, id);
-                rowToBeInserted.remove(LocalStorageAccessExercise.USER_NAME);
-
-                String jsonToInsert = JsonCVHelper.convertToJSON(rowToBeInserted);
-
-                //Trys to insert the user's data
-                new DatabaseConnect(this).execute(DatabaseConnectionTypes.INSERT_TABLE_VALUES, jsonToInsert,
-                        LocalAccount.GetInstance().GetToken(),
-                        DatabaseConnectionTypes.EXERCISE_TABLE);
-            }
+            Sync sync = new Sync(v.getContext());
+            sync.databaseInsertOrUpdateSyncTable(this, rowToBeInserted, LocalStorageAccessExercise.TABLE_NAME);
         }
     }
 

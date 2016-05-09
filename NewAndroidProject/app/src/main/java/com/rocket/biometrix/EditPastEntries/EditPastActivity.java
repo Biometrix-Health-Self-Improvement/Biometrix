@@ -1,6 +1,5 @@
 package com.rocket.biometrix.EditPastEntries;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +15,7 @@ public class EditPastActivity extends AppCompatActivity
         implements EditCalendar.OnFragmentInteractionListener, EntryCandiesFragment.OnListFragmentInteractionListener {
 
        List<CursorPair> mCursorList = new ArrayList<CursorPair>();
+    //Bool flip is unused NOW; but necessary for custom touch events later.
         boolean mNewDateTouched; //if true, cal fragment's focused date was changed and RV needs to be updated.
         EntryCandiesFragment ECF;
 
@@ -64,8 +64,6 @@ public class EditPastActivity extends AppCompatActivity
     }//end onCreate()
 
 
-
-
     //RV Fragment
     @Override
     public boolean isListCurrent() {
@@ -76,26 +74,29 @@ public class EditPastActivity extends AppCompatActivity
     @Override
     public List<CursorPair> getCursorList() {
 
+
         mNewDateTouched = false;
 
         List<CursorPair> stackCursorList = new ArrayList<CursorPair>(mCursorList);
-
-        mCursorList.clear();
+        mCursorList.clear(); //Hack to remove stale cursors from last Cal fragment callback
 
         return stackCursorList;
     }
 
     //Cal Fragment
+    //TODO: For multiple tables to work; this needs to be refactored to accept a list of CursorPairs genned from calendar
     @Override
-    public int onFragDateSelect(String table, Cursor datesQuery) {
+    public int onFragDateSelect(List<CursorPair> injected) {
         int errno = 0;
 
         //TODO: Error Checking
-        mCursorList.add(new CursorPair(table,datesQuery));
+        mCursorList = injected;
+        //IE here do a quick count() check on the list of cursor pairs then mCursorList = CP parameter
         mNewDateTouched = true;
 
         //Callback to RV adapter
         ECF.updateCandies();
+
 
         return errno;
     }
