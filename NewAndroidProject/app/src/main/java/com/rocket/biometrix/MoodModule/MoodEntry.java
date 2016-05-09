@@ -95,7 +95,7 @@ public class MoodEntry extends Fragment implements AsyncResponse {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_mood_entry, container, false);
 
-        setRatingBarListener(view);
+        //setRatingBarListener(view);
 
         DateTimeSelectorPopulateTextView popDateTime = new DateTimeSelectorPopulateTextView
                 (getActivity(), view, R.id.moodCreateEntryDateSelect, R.id.moodCreateEntryTimeSelect);
@@ -111,6 +111,7 @@ public class MoodEntry extends Fragment implements AsyncResponse {
      * @param view the view the rating bar is in
      **************************************************************************/
     private void setRatingBarListener(final View view) {
+        /*
         //Depression
         SeekBar rating = (SeekBar)view.findViewById(R.id.moodDepressedRating);//the rating bar
         rating.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -175,7 +176,7 @@ public class MoodEntry extends Fragment implements AsyncResponse {
                 TextView desc = (TextView) view.findViewById(R.id.moodAnxietyDesc);//description of rating
                 setRatingLabel(desc, progress);
             }
-        });
+        });*/
 
     }
 

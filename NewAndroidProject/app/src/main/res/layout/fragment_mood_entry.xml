@@ -60,7 +60,7 @@
             <TextView
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Depressed: "
+                android:text="Depression: "
                 android:id="@+id/moodDepressedLabel"
                 style="@style/mood_rating_col_1_style" />
 
@@ -68,105 +68,196 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/moodDepressedRating"
                 android:layout_column="1"
-                android:max="4"
+                android:max="10"
                 style="@style/mood_rating_col_2_style"
                 android:indeterminate="false" />
 
             <TextView
-                style="@style/mood_rating_col_3_style"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="@string/mood_rating_none"
-                android:id="@+id/moodDepressedDesc"
-                android:layout_column="2"
-                android:singleLine="true" />
+                 style="@style/mood_rating_col_3_style"
+                 android:layout_height="wrap_content"
+                 android:textAppearance="?android:attr/textAppearanceSmall"
 
+                 android:id="@+id/moodDepressedDesc"
+                 android:layout_column="2"
+                 android:singleLine="true" />
+
+         </TableRow>
+
+         <TableRow
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:id="@+id/moodElevatedTableRow">
+
+             <TextView
+                 style="@style/mood_rating_col_1_style"
+                 android:layout_height="wrap_content"
+                 android:textAppearance="?android:attr/textAppearanceMedium"
+                 android:text="Elevation:"
+                 android:id="@+id/moodElevatedLabel" />
+
+             <SeekBar
+                 android:layout_height="wrap_content"
+                 android:id="@+id/moodElevatedRating"
+                 android:layout_column="1"
+                 android:max="10"
+                 style="@style/mood_rating_col_2_style" />
+
+              <TextView
+                  style="@style/mood_rating_col_3_style"
+                  android:layout_height="wrap_content"
+                  android:textAppearance="?android:attr/textAppearanceSmall"
+
+                  android:id="@+id/moodElevatedDesc"
+                  android:layout_column="2" />
+         </TableRow>
+
+         <TableRow
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:id="@+id/moodIrritabilityTableRow">
+
+             <TextView
+                 style="@style/mood_rating_col_1_style"
+                 android:layout_height="wrap_content"
+                 android:textAppearance="?android:attr/textAppearanceMedium"
+                 android:text="Irritability:"
+                 android:id="@+id/moodIrritabilityLabel" />
+
+             <SeekBar
+                 android:layout_height="wrap_content"
+                 android:id="@+id/moodIrritabilityRating"
+                 android:layout_column="1"
+                 android:max="10"
+                 style="@style/mood_rating_col_2_style" />
+
+               <TextView
+                    style="@style/mood_rating_col_3_style"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:id="@+id/moodIrritabilityDesc"
+                    android:layout_column="2" />
+           </TableRow>
+
+           <TableRow
+               android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:id="@+id/moodAnxietyTableRow">
+
+
+           <TextView
+               style="@style/mood_rating_col_1_style"
+               android:layout_height="wrap_content"
+               android:textAppearance="?android:attr/textAppearanceMedium"
+               android:text="Anxiety:"
+               android:id="@+id/moodAnxietyLabel" />
+
+           <SeekBar
+               style="@style/mood_rating_col_2_style"
+               android:layout_height="wrap_content"
+               android:id="@+id/moodAnxietyRating"
+               android:layout_column="1"
+               android:max="10" />
+
+               <TextView
+                   style="@style/mood_rating_col_3_style"
+                   android:layout_height="wrap_content"
+                   android:textAppearance="?android:attr/textAppearanceSmall"
+                   android:id="@+id/moodAnxietyDesc"
+                   android:layout_column="2" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/moodSadTableRow">
+
+
+                <TextView
+                    style="@style/mood_rating_col_1_style"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Sadness:"
+                    android:id="@+id/moodSadLabel" />
+
+                <SeekBar
+                    style="@style/mood_rating_col_2_style"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/moodSadRating"
+                    android:layout_column="1"
+                    android:max="10" />
+                <!--
+                            <TextView
+                                style="@style/mood_rating_col_3_style"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:text="@string/mood_rating_none"
+                                android:id="@+id/moodSadDesc"
+                                android:layout_column="2" />
+                                -->
+                    </TableRow>
+
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/moodHapppyTableRow">
+
+
+                        <TextView
+                            style="@style/mood_rating_col_1_style"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="Happiness:"
+                            android:id="@+id/moodHappyLabel" />
+
+                        <SeekBar
+                            style="@style/mood_rating_col_2_style"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/moodHappyRating"
+                            android:layout_column="1"
+                            android:max="10" />
+                        <!--
+                                    <TextView
+                                        style="@style/mood_rating_col_3_style"
+                                        android:layout_height="wrap_content"
+                                        android:textAppearance="?android:attr/textAppearanceSmall"
+                                        android:text="@string/mood_rating_none"
+                                        android:id="@+id/moodHappyDesc"
+                                        android:layout_column="2" />
+                                        -->
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/moodAngerTableRow">
+
+
+                        <TextView
+                            style="@style/mood_rating_col_1_style"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="Anger:"
+                            android:id="@+id/moodAngerLabel" />
+
+                        <SeekBar
+                            style="@style/mood_rating_col_2_style"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/moodAngerRating"
+                            android:layout_column="1"
+                            android:max="10" />
+            <!--
+                        <TextView
+                            style="@style/mood_rating_col_3_style"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:text="@string/mood_rating_none"
+                            android:id="@+id/moodAngerDesc"
+                            android:layout_column="2" />
+
+            -->
         </TableRow>
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/moodElevatedTableRow">
-
-            <TextView
-                style="@style/mood_rating_col_1_style"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Elevated:"
-                android:id="@+id/moodElevatedLabel" />
-
-            <SeekBar
-                android:layout_height="wrap_content"
-                android:id="@+id/moodElevatedRating"
-                android:layout_column="1"
-                android:max="4"
-                style="@style/mood_rating_col_2_style" />
-
-            <TextView
-                style="@style/mood_rating_col_3_style"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="@string/mood_rating_none"
-                android:id="@+id/moodElevatedDesc"
-                android:layout_column="2" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/moodIrritabilityTableRow">
-
-            <TextView
-                style="@style/mood_rating_col_1_style"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Irritability:"
-                android:id="@+id/moodIrritabilityLabel" />
-
-            <SeekBar
-                android:layout_height="wrap_content"
-                android:id="@+id/moodIrritabilityRating"
-                android:layout_column="1"
-                android:max="4"
-                style="@style/mood_rating_col_2_style" />
-
-            <TextView
-                style="@style/mood_rating_col_3_style"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="@string/mood_rating_none"
-                android:id="@+id/moodIrritabilityDesc"
-                android:layout_column="2" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/moodAnxietyTableRow">
-
-
-            <TextView
-                style="@style/mood_rating_col_1_style"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Anxiety:"
-                android:id="@+id/moodAnxietyLabel" />
-
-            <SeekBar
-                style="@style/mood_rating_col_2_style"
-                android:layout_height="wrap_content"
-                android:id="@+id/moodAnxietyRating"
-                android:layout_column="1"
-                android:max="4" />
-
-            <TextView
-                style="@style/mood_rating_col_3_style"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="@string/mood_rating_none"
-                android:id="@+id/moodAnxietyDesc"
-                android:layout_column="2" />
-        </TableRow>
 
         <Space
             android:layout_height="20dp"
