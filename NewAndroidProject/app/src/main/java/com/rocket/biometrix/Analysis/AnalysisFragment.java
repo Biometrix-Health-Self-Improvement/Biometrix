@@ -182,7 +182,7 @@ public class AnalysisFragment extends Fragment {
         String[] columnNames2 = stringList.toArray(new String[stringList.size()]);
 
         ArrayAdapter<String> spinnerArrayAdapterColumn1 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, columnNames2);
-        ((Spinner) analysisView.findViewById(R.id.analysisColumnSpinner1)).setAdapter(spinnerArrayAdapterColumn1);
+        ((Spinner) analysisView.findViewById(R.id.analysisColumnSpinner2)).setAdapter(spinnerArrayAdapterColumn1);
     }
 
     /**
