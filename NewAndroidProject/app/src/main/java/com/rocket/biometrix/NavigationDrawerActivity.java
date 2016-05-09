@@ -87,27 +87,28 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
         mEditEntryB = getIntent().getExtras();
 
+        frag = new HomeScreen();
+        transaction.replace(R.id.navigation_drawer_fragment_content, frag, "home");
+        transaction.addToBackStack(null);
+        transaction.commit();
+
         if (mEditEntryB != null) {
             //yourDataObject = getIntent().getStringExtra(KEY_EXTRA);
             mTblSignal = mEditEntryB.getString("tablename"); //See MECR ViewAdapter, ViewHolder's list item onClick listener
             mUidSignal = mEditEntryB.getString("uid");
 
             if (mTblSignal != null){
+
+                FragmentTransaction transactionEE = getFragmentManager().beginTransaction();
             frag = PopulateEntryIntercept(mTblSignal);
 
             frag.setArguments(getIntent().getExtras());
 
-            transaction.replace(R.id.navigation_drawer_fragment_content, frag, mTblSignal);
-            transaction.addToBackStack(null);
-            transaction.commit();}
+            transactionEE.replace(R.id.navigation_drawer_fragment_content, frag, mTblSignal);
+            transactionEE.addToBackStack(mTblSignal);
+            transactionEE.commit();
+            mTblSignal = null;}
 
-
-        } else {
-
-            frag = new HomeScreen();
-            transaction.replace(R.id.navigation_drawer_fragment_content, frag, "home");
-            transaction.addToBackStack(null);
-            transaction.commit();
         }
         
         //Local account/settings setup
