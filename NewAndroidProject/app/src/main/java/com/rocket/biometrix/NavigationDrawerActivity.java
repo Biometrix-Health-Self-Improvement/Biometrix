@@ -80,12 +80,15 @@ public class NavigationDrawerActivity extends AppCompatActivity
         Fragment frag;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         frag = new HomeScreen();
+
+        //TODO: Get first loaded page to be correct color
 /*        Class fragHome = activeFragment.getClass();
         if(fragHome.equals(HomeScreen.class)) {
             this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
                     getResources().getColor(R.color.background_home_color));
             setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_home_color));
         }*/
+
         transaction.replace(R.id.navigation_drawer_fragment_content, frag, "home");
         transaction.addToBackStack(null);
         transaction.commit();
@@ -93,11 +96,6 @@ public class NavigationDrawerActivity extends AppCompatActivity
         //Local account/settings setup
         navView = navigationView;
         MenuItem dietItem = navView.getMenu().findItem(R.id.nav_diet_module);
-/*        SpannableString s = new SpannableString(dietItem.getTitle());
-        s.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.background_diet_color)), 0, s.length(), 0);
-        dietItem.setTitle(s);*/
-
-        //dietItem.getActionView().setBackground(new ColorDrawable(getResources().getColor(R.color.background_diet_color)));
 
         LocalAccount.setNavDrawerRef(this);
         UpdateMenuItems();

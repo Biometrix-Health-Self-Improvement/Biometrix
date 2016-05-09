@@ -38,5 +38,8 @@
     <color name="ActionTopBar_home_color">#E42217</color>
     <color name="ActionTopBar_analysis_color">#A77A3F</color>
 
+    <!--Fragment ModuleActionTopBar Text Colors -->
+    <color name="ActionTopBar_Title">#000000</color>
+    <color name="ActionTopBar_Subtitle">#000000</color>
 
 </resources>
