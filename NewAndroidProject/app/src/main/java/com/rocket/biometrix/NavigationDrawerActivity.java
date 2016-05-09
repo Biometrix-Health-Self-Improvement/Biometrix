@@ -78,28 +78,35 @@ public class NavigationDrawerActivity extends AppCompatActivity
         Fragment frag;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-        //        mEditEntryB = getIntent().getExtras();
-//        if (mEditEntryB != null) {
-//            //yourDataObject = getIntent().getStringExtra(KEY_EXTRA);
-//            mTblSignal = mEditEntryB.getString("tablename"); //See MECR ViewAdapter, ViewHolder's list item onClick listener
-//            mUidSignal = mEditEntryB.getString("uid");
-//
-////            frag = PopulateEntryIntercept(mTblSignal);
-////
-////            frag.setArguments(getIntent().getExtras());
-//
-//
-//        } else {
+                mEditEntryB = getIntent().getExtras();
+        if (mEditEntryB != null) {
+            //yourDataObject = getIntent().getStringExtra(KEY_EXTRA);
+            mTblSignal = mEditEntryB.getString("tablename"); //See MECR ViewAdapter, ViewHolder's list item onClick listener
+            mUidSignal = mEditEntryB.getString("uid");
 
-        frag = new HomeScreen();
-        transaction.replace(R.id.navigation_drawer_fragment_content, frag, "home");
-        transaction.addToBackStack(null);
-        transaction.commit();
+            frag = PopulateEntryIntercept(mTblSignal);
 
-        //Local account/settings setup
-        navView = navigationView;
-        LocalAccount.setNavDrawerRef(this);
-        UpdateMenuItems();
+            frag.setArguments(getIntent().getExtras());
+
+            transaction.replace(R.id.navigation_drawer_fragment_content, frag, mTblSignal);
+            transaction.addToBackStack(null);
+            transaction.commit();
+
+
+        } else {
+
+            frag = new HomeScreen();
+            transaction.replace(R.id.navigation_drawer_fragment_content, frag, "home");
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
+
+            //Local account/settings setup
+            navView = navigationView;
+            LocalAccount.setNavDrawerRef(this);
+            UpdateMenuItems();
+
+
     }
 
     @Override
@@ -457,6 +464,18 @@ public class NavigationDrawerActivity extends AppCompatActivity
         switch (tableKey) {
             case "exercise":
                 EntryFrag = new ExerciseEntry();
+                break;
+            case "sleep":
+                EntryFrag = new SleepEntry();
+                break;
+            case "diet":
+                EntryFrag = new DietEntry();
+                break;
+            case "mood":
+                EntryFrag = new MoodEntry();
+                break;
+            case "medication":
+                EntryFrag = new MedicationEntry();
                 break;
 
             default:
