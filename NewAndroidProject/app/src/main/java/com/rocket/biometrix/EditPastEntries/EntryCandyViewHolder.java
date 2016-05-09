@@ -2,7 +2,8 @@ package com.rocket.biometrix.EditPastEntries;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.rocket.biometrix.R;
@@ -22,7 +23,9 @@ public class EntryCandyViewHolder extends RecyclerView.ViewHolder {
     public String _UID;
     public String type;
 
-    public LinearLayout recLayout;
+    public GridLayout recLayout;
+
+    public ImageView eyeCon;
 
     public EntryCandyViewHolder(View itemView) {
         super(itemView);
@@ -32,7 +35,7 @@ public class EntryCandyViewHolder extends RecyclerView.ViewHolder {
         this.misc = (TextView)(itemView.findViewById(R.id.candy_misc));
         this.time = (TextView)(itemView.findViewById(R.id.candy_time));
 
-        this.recLayout = (LinearLayout) (itemView.findViewById(R.id.candy_linearl));
+        this.recLayout = (GridLayout) (itemView.findViewById(R.id.candy_linearl));
 
         itemView.setClickable(true);
 

@@ -88,7 +88,7 @@ public class EntryCandiesFragment extends Fragment {
 
             updateCandies();
 
-            //TODO: Lp HOOK in item deco {mRecyclerView.addItemDecoration()}
+            //TODO: Lp HOOK in item deco {mRecyclerView.addItemDecoration()} add seperators
             //mRecyclerView.addItemDecoration();
 
             mRecyclerView.setAdapter(new MyEntryCandiesRecyclerViewAdapter(context,candyItemslist));

@@ -37,7 +37,7 @@ public class MyEntryCandiesRecyclerViewAdapter extends RecyclerView.Adapter<Entr
     public EntryCandyViewHolder onCreateViewHolder(final ViewGroup viewGroup, int viewType) {
 
         //Give layout of 'a' candy to the holder
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_entrycandies, null);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_entrycandies, null); //second param was null
         final EntryCandyViewHolder holder = new EntryCandyViewHolder(v);
 
             holder.recLayout.setOnClickListener(new View.OnClickListener() {

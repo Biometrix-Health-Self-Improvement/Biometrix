@@ -10,10 +10,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/ex_CV"
-        android:layout_gravity="left|top"
-        android:layout_margin="5dp"
+        android:layout_gravity="left|bottom"
         android:theme="@style/AppTheme"
         android:touchscreenBlocksFocus="false"
-        />
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="5dp"/>
 
 </FrameLayout>
