@@ -4,11 +4,11 @@
     android:layout_height="match_parent"
     tools:context="com.rocket.biometrix.Analysis.AllGraph">
 
-    <Button style="@style/graph_prev_month"
+    <Button style="@style/allgraph_graph_prev_month_button"
         android:id="@+id/buttonPrevAll"
         android:onClick="graphPrev" />
 
-    <Button style="@style/graph_next_month"
+    <Button style="@style/allgraph_graph_next_month_button"
         android:id="@+id/buttonNextAll"
         android:onClick="graphNext" />
 

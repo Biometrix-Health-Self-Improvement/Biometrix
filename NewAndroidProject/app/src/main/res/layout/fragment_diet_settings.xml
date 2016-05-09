@@ -334,7 +334,7 @@
 
             <Button
                 android:id="@+id/DietSettingsAcceptButton"
-                style="@style/accept_button"
+                style="@style/diet_accept_button"
                 android:onClick="EntryAcceptOnClick" />
 
         </TableLayout>

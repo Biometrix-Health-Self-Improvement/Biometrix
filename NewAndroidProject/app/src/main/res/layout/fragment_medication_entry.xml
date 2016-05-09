@@ -162,7 +162,7 @@
 
             <Button
                 android:id="@+id/medicaiton_entry_done_button"
-                style="@style/done_button"
+                style="@style/medication_done_button"
                 android:onClick="EntryDoneOnClick" />
 
         </TableLayout>

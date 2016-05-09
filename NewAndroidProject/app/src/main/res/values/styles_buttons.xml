@@ -10,7 +10,6 @@
         <item name="android:shadowRadius">0.2</item>
         <item name="android:textSize">18sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:background">@color/colorButtonBackground</item>
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
         <item name="android:text">@string/done_button</item>
@@ -19,6 +18,24 @@
         <item name="android:layout_margin">5dp</item>
         <item name="android:layout_alignParentBottom">true</item>
         <item name="android:layout_centerHorizontal">true</item>
+    </style>
+    <style name="mood_done_button" parent="done_button">
+        <item name="android:background">#B048B5</item>
+    </style>
+    <style name="sleep_done_button" parent="done_button">
+        <item name="android:background">#6495ED</item>
+    </style>
+    <style name="exercise_done_button" parent="done_button">
+        <item name="android:background">#FFB249</item>
+    </style>
+    <style name="diet_done_button" parent="done_button">
+        <item name="android:background">#4CC552</item>
+    </style>
+    <style name="medication_done_button" parent="done_button">
+        <item name="android:background">#F9A7B0</item>
+    </style>
+    <style name="home_done_button" parent="done_button">
+        <item name="android:background">#E42217</item>
     </style>
 
     <style name="finished_button" parent="@android:style/Widget.Button">
@@ -30,7 +47,6 @@
         <item name="android:shadowRadius">0.2</item>
         <item name="android:textSize">18sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:background">@color/colorButtonBackground</item>
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
         <item name="android:text">@string/finished_button</item>
@@ -41,6 +57,14 @@
         <item name="android:layout_centerHorizontal">true</item>
     </style>
 
+    <style name="analysis_finished_button" parent="finished_button">
+        <item name="android:background">#A77A3F</item>
+    </style>
+    <style name="home_finished_button" parent="finished_button">
+        <item name="android:background">#E42217</item>
+    </style>
+
+
     <style name="accept_button" parent="@android:style/Widget.Button">
         <item name="android:gravity">center_vertical|center_horizontal</item>
         <item name="android:textColor">#FFFFFFFF</item>
@@ -50,7 +74,6 @@
         <item name="android:shadowRadius">0.2</item>
         <item name="android:textSize">18sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:background">@color/colorButtonBackground</item>
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
         <item name="android:text">@string/accept_button</item>
@@ -59,6 +82,28 @@
         <item name="android:layout_margin">5dp</item>
         <item name="android:layout_alignParentBottom">true</item>
         <item name="android:layout_centerHorizontal">true</item>
+    </style>
+
+    <style name="analysis_accept_button" parent="accept_button">
+        <item name="android:background">#A77A3F</item>
+    </style>
+    <style name="mood_accept_button" parent="accept_button">
+        <item name="android:background">#B048B5</item>
+    </style>
+    <style name="sleep_accept_button" parent="accept_button">
+        <item name="android:background">#6495ED</item>
+    </style>
+    <style name="exercise_accept_button" parent="accept_button">
+        <item name="android:background">#FFB249</item>
+    </style>
+    <style name="diet_accept_button" parent="accept_button">
+        <item name="android:background">#4CC552</item>
+    </style>
+    <style name="medication_accept_button" parent="accept_button">
+        <item name="android:background">#F9A7B0</item>
+    </style>
+    <style name="home_accept_button" parent="accept_button">
+        <item name="android:background">#E42217</item>
     </style>
 
     <style name="create_entry_button" parent="@android:style/Widget.Button">
@@ -81,6 +126,22 @@
         <item name="android:layout_centerHorizontal">true</item>
     </style>
 
+    <style name="mood_create_entry_button" parent="create_entry_button">
+        <item name="android:background">#B048B5</item>
+    </style>
+    <style name="sleep_create_entry_button" parent="create_entry_button">
+        <item name="android:background">#6495ED</item>
+    </style>
+    <style name="exercise_create_entry_button" parent="create_entry_button">
+        <item name="android:background">#FFB249</item>
+    </style>
+    <style name="diet_create_entry_button" parent="create_entry_button">
+        <item name="android:background">#4CC552</item>
+    </style>
+    <style name="medication_create_entry_button" parent="create_entry_button">
+        <item name="android:background">#F9A7B0</item>
+    </style>
+
     <style name="graph_next_month" parent="@android:style/Widget.Button">
         <item name="android:gravity">center_vertical|center_horizontal</item>
         <item name="android:textColor">#FFFFFFFF</item>
@@ -90,7 +151,6 @@
         <item name="android:shadowRadius">0.2</item>
         <item name="android:textSize">15sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:background">@color/colorButtonBackground</item>
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
         <item name="android:text">Next Month</item>
@@ -100,6 +160,26 @@
         <item name="android:layout_alignParentRight">true</item>
         <item name="android:layout_centerHorizontal">true</item>
     </style>
+
+    <style name="mood_graph_next_month_button" parent="graph_next_month">
+        <item name="android:background">#B048B5</item>
+    </style>
+    <style name="sleep_graph_next_month_button" parent="graph_next_month">
+        <item name="android:background">#6495ED</item>
+    </style>
+    <style name="exercise_graph_next_month_button" parent="graph_next_month">
+        <item name="android:background">#FFB249</item>
+    </style>
+    <style name="diet_graph_next_month_button" parent="graph_next_month">
+        <item name="android:background">#4CC552</item>
+    </style>
+    <style name="medication_graph_next_month_button" parent="graph_next_month">
+        <item name="android:background">#F9A7B0</item>
+    </style>
+    <style name="allgraph_graph_next_month_button" parent="graph_next_month">
+        <item name="android:background">#A77A3F</item>
+    </style>
+
     <style name="graph_prev_month" parent="@android:style/Widget.Button">
         <item name="android:gravity">center_vertical|center_horizontal</item>
         <item name="android:textColor">#FFFFFFFF</item>
@@ -109,7 +189,6 @@
         <item name="android:shadowRadius">0.2</item>
         <item name="android:textSize">15sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:background">@color/colorButtonBackground</item>
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
         <item name="android:text">Prev Month</item>
@@ -118,6 +197,25 @@
         <item name="android:layout_margin">0dp</item>
         <item name="android:layout_alignParentLeft">true</item>
         <item name="android:layout_centerHorizontal">true</item>
+    </style>
+
+    <style name="mood_graph_prev_month_button" parent="graph_prev_month">
+        <item name="android:background">#B048B5</item>
+    </style>
+    <style name="sleep_graph_prev_month_button" parent="graph_prev_month">
+        <item name="android:background">#6495ED</item>
+    </style>
+    <style name="exercise_graph_prev_month_button" parent="graph_prev_month">
+        <item name="android:background">#FFB249</item>
+    </style>
+    <style name="diet_graph_prev_month_button" parent="graph_prev_month">
+        <item name="android:background">#4CC552</item>
+    </style>
+    <style name="medication_graph_prev_month_button" parent="graph_prev_month">
+        <item name="android:background">#F9A7B0</item>
+    </style>
+    <style name="allgraph_graph_prev_month_button" parent="graph_prev_month">
+        <item name="android:background">#A77A3F</item>
     </style>
 
     <style name="graph" parent="@android:style/Widget.Button">
@@ -129,7 +227,6 @@
         <item name="android:shadowRadius">0.2</item>
         <item name="android:textSize">15sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:background">@color/colorButtonBackground</item>
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
         <item name="android:text">Graph Month</item>
@@ -138,6 +235,25 @@
         <item name="android:layout_margin">0dp</item>
         <item name="android:layout_alignParentLeft">true</item>
         <item name="android:layout_centerHorizontal">true</item>
+    </style>
+
+    <style name="mood_graph_button" parent="graph">
+        <item name="android:background">#B048B5</item>
+    </style>
+    <style name="sleep_graph_button" parent="graph">
+        <item name="android:background">#6495ED</item>
+    </style>
+    <style name="exercise_graph_button" parent="graph">
+        <item name="android:background">#FFB249</item>
+    </style>
+    <style name="diet_graph_button" parent="graph">
+        <item name="android:background">#4CC552</item>
+    </style>
+    <style name="medication_graph_button" parent="graph">
+        <item name="android:background">#F9A7B0</item>
+    </style>
+    <style name="analysis_graph_button" parent="graph">
+        <item name="android:background">#A77A3F</item>
     </style>
 
 <!--

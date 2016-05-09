@@ -5,11 +5,11 @@
     tools:context="com.rocket.biometrix.DietModule.DietParent">
 
     <Button
-        style="@style/create_entry_button"
+        style="@style/diet_create_entry_button"
         android:id="@+id/createDietEntryButton"
         android:onClick="CreateEntryOnClick" />
 
-    <Button style="@style/graph"
+    <Button style="@style/diet_graph_button"
         android:id="@+id/goToGraphDiet"
         android:onClick="DietGraph" />
     <View

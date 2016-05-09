@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     tools:context="com.rocket.biometrix.MedicationModule.MedicationParent">
 
-    <Button style="@style/create_entry_button"
+    <Button style="@style/medication_create_entry_button"
         android:id="@+id/createMedicationEntryButton"
         android:onClick="CreateEntryOnClick" />
 

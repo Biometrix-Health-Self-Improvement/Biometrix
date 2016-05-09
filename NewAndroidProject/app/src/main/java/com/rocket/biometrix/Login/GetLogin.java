@@ -86,7 +86,7 @@ public class GetLogin extends Fragment implements AsyncResponse {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        v =  inflater.inflate(R.layout.fragment_get_login, container, false);
+        v =  inflater.inflate(R.layout.fragment_home_screen, container, false);
 
 
         return v;
@@ -101,10 +101,10 @@ public class GetLogin extends Fragment implements AsyncResponse {
      */
     public void okayButtonClick(View view)
     {
-        EditText usernameEdit =  (EditText) v.findViewById(R.id.usernameEditText);
+        EditText usernameEdit =  (EditText) v.findViewById(R.id.HomeScreenUserNameEditText);
         username = usernameEdit.getText().toString();
 
-        EditText passwordEdit = (EditText) v.findViewById(R.id.passwordEditText);
+        EditText passwordEdit = (EditText) v.findViewById(R.id.HomeScreenPasswordEditText);
         password = passwordEdit.getText().toString();
 
         if (username.equals("") || password.equals("") )

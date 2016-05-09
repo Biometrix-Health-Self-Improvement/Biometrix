@@ -5,11 +5,11 @@
     tools:context="com.rocket.biometrix.ExerciseModule.ExerciseParent">
 
     <Button
-        style="@style/create_entry_button"
+        style="@style/exercise_create_entry_button"
         android:id="@+id/exNewEntry"
         android:onClick="CreateEntryOnClick" />
 
-    <Button style="@style/graph"
+    <Button style="@style/exercise_graph_button"
         android:id="@+id/goToGraphEx"
         android:onClick="ExerciseGraph" />
 

@@ -11,11 +11,11 @@
         android:layout_marginTop="10dp"
         android:layout_below="@+id/buttonPrevExercise" />
 
-    <Button style="@style/graph_prev_month"
+    <Button style="@style/exercise_graph_prev_month_button"
         android:id="@+id/buttonPrevExercise"
         android:onClick="graphPrev" />
 
-    <Button style="@style/graph_next_month"
+    <Button style="@style/exercise_graph_next_month_button"
         android:id="@+id/buttonNextExercise"
         android:onClick="graphNext" />
 

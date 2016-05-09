@@ -130,7 +130,7 @@
 
             <Button
                 android:id="@+id/MedicationSettingsAcceptButton"
-                style="@style/accept_button"
+                style="@style/medication_accept_button"
                 android:onClick="EntryAcceptOnClick" />
 
         </TableLayout>

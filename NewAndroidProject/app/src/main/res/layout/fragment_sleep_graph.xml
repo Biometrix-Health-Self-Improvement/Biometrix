@@ -11,11 +11,11 @@
         android:layout_marginTop="10dp"
         android:layout_below="@+id/buttonPrevSleep" />
 
-    <Button style="@style/graph_prev_month"
+    <Button style="@style/sleep_graph_prev_month_button"
         android:id="@+id/buttonPrevSleep"
         android:onClick="graphPrev" />
 
-    <Button style="@style/graph_next_month"
+    <Button style="@style/sleep_graph_next_month_button"
         android:id="@+id/buttonNextSleep"
         android:onClick="graphNext" />
 

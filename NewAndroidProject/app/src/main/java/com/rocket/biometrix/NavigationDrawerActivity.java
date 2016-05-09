@@ -1,7 +1,9 @@
 package com.rocket.biometrix;
 
+import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.graphics.drawable.ColorDrawable;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -9,10 +11,14 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.ActionMenuItem;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ActionMenuView;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
@@ -88,6 +94,15 @@ public class NavigationDrawerActivity extends AppCompatActivity
         mEditEntryB = getIntent().getExtras();
 
         frag = new HomeScreen();
+
+        //TODO: Get first loaded page to be correct color
+/*        Class fragHome = activeFragment.getClass();
+        if(fragHome.equals(HomeScreen.class)) {
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_home_color));
+            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_home_color));
+        }*/
+
         transaction.replace(R.id.navigation_drawer_fragment_content, frag, "home");
         transaction.addToBackStack(null);
         transaction.commit();
@@ -113,6 +128,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
         
         //Local account/settings setup
         navView = navigationView;
+        MenuItem dietItem = navView.getMenu().findItem(R.id.nav_diet_module);
+
         LocalAccount.setNavDrawerRef(this);
         UpdateMenuItems();
 
@@ -132,6 +149,15 @@ public class NavigationDrawerActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.navigation_drawer_activity, menu);
+
+        if (LocalAccount.GetInstance().isLoggedIn())
+        {
+            menu.findItem(R.id.action_logout).setVisible(true);
+        }
+        else
+        {
+            menu.findItem(R.id.action_logout).setVisible(false);
+        }
         return true;
     }
 
@@ -143,6 +169,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Fragment frag;
+
         switch(item.getItemId()) {
             case R.id.action_help:
 
@@ -160,17 +187,17 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 {
                     frag = new MoodSettings();
                 }
-                else if(fragClass.equals(DietParent.class) //TODO: || fragClass.equals(DietGraph.class)
+                else if(fragClass.equals(DietParent.class)  || fragClass.equals(DietGraph.class)
                         || fragClass.equals(DietEntry.class))
                 {
                     frag = new DietSettings();
                 }
-                else if(fragClass.equals(MedicationParent.class) //TODO: || fragClass.equals(MedicationGraph.class)
+                else if(fragClass.equals(MedicationParent.class)  //TODO: || fragClass.equals(MedicationGraph.class)
                         || fragClass.equals(MedicationEntry.class))
                 {
                     frag = new MedicationSettings();
                 }
-                else if(fragClass.equals(ExerciseParent.class) //TODO: || fragClass.equals(ExerciseGraph.class)
+                else if(fragClass.equals(ExerciseParent.class)  || fragClass.equals(ExerciseGraph.class)
                         || fragClass.equals(ExerciseEntry.class))
                 {
                     frag = new ExerciseSettings();
@@ -182,6 +209,20 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
                 replaceFragment(frag);
                 return true;
+
+            case R.id.action_logout:
+
+                Class fragHomeClass = activeFragment.getClass();
+                if(fragHomeClass.equals(HomeScreen_Logged_In.class)) {
+                    if (LocalAccount.isLoggedIn())
+                        LogoutUser();
+                    //else if() {
+                    //TODO: Add Google Logout
+
+                    frag = new HomeScreen();
+                }
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -193,29 +234,52 @@ public class NavigationDrawerActivity extends AppCompatActivity
         int id = item.getItemId();
         Fragment frag = new HomeScreen(); //intialize to homescreen in case something goes wrong it will not crash and just go back to home
 
-        if (id == R.id.nav_mood_module) {
+        if(id == R.id.nav_home_logged_in) {
+            frag = new HomeScreen_Logged_In();
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_home_color));
+            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_home_color));
+        } else if (id == R.id.nav_home){
+            frag = new HomeScreen();
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_home_color));
+            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_home_color));
+        } else if (id == R.id.nav_mood_module) {
             frag = new MoodParent();
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_mood_color));
+            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_mood_color));
         } else if (id == R.id.nav_sleep_module) {
             frag = new SleepParent();
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_sleep_color));
+            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_sleep_color));
         } else if (id == R.id.nav_exercise_module) {
             frag = new ExerciseParent();
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_exercise_color));
+            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_exercise_color));
         } else if (id == R.id.nav_diet_module) {
             frag = new DietParent();
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_diet_color));
+            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_diet_color));
         } else if (id == R.id.nav_medication_module) {
             frag = new MedicationParent();
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_medication_color));
+            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_medication_color));
         } else if (id == R.id.nav_analytics) { //TODO: menu open analytics fragment
             frag = new AnalysisFragment();
-        } else if (id == R.id.nav_settings) {
-            frag = new ModuleSettings();
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_analysis_color));
+            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_analysis_color));
         } else if (id == R.id.nav_login) {
             frag = new GetLogin();
         } else if (id == R.id.nav_create_account){
             frag = new CreateLogin();
         } else if (id == R.id.nav_google_login){
             frag = new GoogleLogin();
-        } else if (id == R.id.nav_logout)
-        {
-            LogoutUser();
         } else if(id == R.id.nav_sync)
         {
             Sync sync = new Sync(getApplicationContext());
@@ -238,7 +302,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
             getSupportActionBar().setTitle(getResources().getString(title));
         } catch (Exception e){}
     }
-
+    public void setActionBarColorFromFragment(int color){
+        try {
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(color));
+        } catch (Exception e){}
+    }
     /**************************************************************************
      * Replaces the current active fragment with the fragment passed in
      * @param frag a new fragment that has been created before the function is called
@@ -248,6 +316,12 @@ public class NavigationDrawerActivity extends AppCompatActivity
         transaction.replace(R.id.navigation_drawer_fragment_content, frag);
         transaction.addToBackStack(null);
         transaction.commit();
+
+        if (activeFragment.getClass() == HomeScreen_Logged_In.class ||
+                frag.getClass() == HomeScreen_Logged_In.class)
+        {
+            supportInvalidateOptionsMenu();
+        }
     }
 
     /**************************************************************************
@@ -269,7 +343,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 newFragment = new SleepEntry();
             } else if (activeFragment.getClass() == ExerciseParent.class){
                 newFragment = new ExerciseEntry();
-            } else if (activeFragment.getClass() == DietParent.class){
+            } else if (activeFragment.getClass() == DietParent.class) {
                 newFragment = new DietEntry();
             } else if (activeFragment.getClass() == MedicationParent.class){
                 newFragment = new MedicationEntry();
@@ -333,7 +407,6 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 ((SleepEntry) activeFragment).onDoneClick(v);
                 newFragment = new SleepParent();
             } else if (activeFragment.getClass() == ExerciseEntry.class){
-                //TODO: let's not be a little bitch about it
                 ((ExerciseEntry) activeFragment).onDoneClick(v);
                 newFragment = new ExerciseParent();
             } else if (activeFragment.getClass() == DietEntry.class){
@@ -420,15 +493,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
     {
         if (LocalAccount.isLoggedIn())
         {
-            if (LocalAccount.isGoogleAccountSignedIn())
-            {
-                Toast.makeText(getApplicationContext(), "Please logout from the google login page", Toast.LENGTH_LONG).show();
-            }
-            else
-            {
-                LocalAccount.Logout();
-                Toast.makeText(getApplicationContext(), "Account logged out", Toast.LENGTH_LONG).show();
-            }
+            LocalAccount.Logout();
+            Toast.makeText(getApplicationContext(), "Account logged out", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -439,6 +505,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
     public void UpdateMenuItems()
     {
         Menu navMenu = navView.getMenu();
+
+
 
         SetItemVisibility(navMenu, R.id.nav_mood_module, SettingsAndEntryHelper.MOOD_MODULE);
         SetItemVisibility(navMenu, R.id.nav_sleep_module, SettingsAndEntryHelper.SLEEP_MODULE);
