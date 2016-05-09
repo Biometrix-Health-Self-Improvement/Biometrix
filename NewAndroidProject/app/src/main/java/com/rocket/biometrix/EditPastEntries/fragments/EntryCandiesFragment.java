@@ -18,6 +18,7 @@ import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.EditPastEntries.CandyItems;
 import com.rocket.biometrix.EditPastEntries.CursorHelper;
 import com.rocket.biometrix.EditPastEntries.CursorPair;
+import com.rocket.biometrix.EditPastEntries.adapters.DividerItemDecoration;
 import com.rocket.biometrix.EditPastEntries.adapters.MyEntryCandiesRecyclerViewAdapter;
 import com.rocket.biometrix.R;
 
@@ -89,7 +90,7 @@ public class EntryCandiesFragment extends Fragment {
             updateCandies();
 
             //TODO: Lp HOOK in item deco {mRecyclerView.addItemDecoration()} add seperators
-            //mRecyclerView.addItemDecoration();
+            mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
 
             mRecyclerView.setAdapter(new MyEntryCandiesRecyclerViewAdapter(context,candyItemslist));
         }
