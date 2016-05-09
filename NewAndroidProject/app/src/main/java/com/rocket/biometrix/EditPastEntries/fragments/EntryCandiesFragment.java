@@ -89,6 +89,7 @@ public class EntryCandiesFragment extends Fragment {
             updateCandies();
 
             //TODO: Lp HOOK in item deco {mRecyclerView.addItemDecoration()}
+            //mRecyclerView.addItemDecoration();
 
             mRecyclerView.setAdapter(new MyEntryCandiesRecyclerViewAdapter(context,candyItemslist));
         }
@@ -138,7 +139,7 @@ public class EntryCandiesFragment extends Fragment {
                 CursorHelper sleepCH = new CursorHelper(taybell, LocalStorageAccessSleep.QUALITY, LocalStorageAccessSleep.TIME, LocalStorageAccessSleep.LOCAL_SLEEP_ID);
                 allCH.add(sleepCH);
             }else if(taybell.getTableName().equals("mood")){
-                CursorHelper moodCH = new CursorHelper(taybell, "DEP: " + LocalStorageAccessMood.DEP, LocalStorageAccessMood.TIME, LocalStorageAccessMood.LOCAL_MOOD_ID);
+                CursorHelper moodCH = new CursorHelper(taybell, LocalStorageAccessMood.DEP, LocalStorageAccessMood.TIME, LocalStorageAccessMood.LOCAL_MOOD_ID);
                 allCH.add(moodCH);
             }else if(taybell.getTableName().equals("medication")){
                 CursorHelper medCH = new CursorHelper(taybell, LocalStorageAccessMedication.BRAND_NAME, LocalStorageAccessMedication.TIME, LocalStorageAccessMedication.LOCAL_MEDICATION_ID);

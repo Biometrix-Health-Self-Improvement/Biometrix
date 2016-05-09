@@ -14,24 +14,54 @@ import com.rocket.biometrix.R;
  * Child ViewHolder needed by recycle view Linear layout manager
  */
 public class EntryCandyViewHolder extends RecyclerView.ViewHolder {
-    public TextView type; //should be protected
+
     public TextView title;
     public TextView time;
     public TextView misc;
 
     public String _UID;
+    public String type;
 
     public LinearLayout recLayout;
 
     public EntryCandyViewHolder(View itemView) {
         super(itemView);
 
-        this.type = (TextView)(itemView.findViewById(R.id.candy_type));
+        //this.type = (TextView)(itemView.findViewById(R.id.candy_type));
         this.title = (TextView)(itemView.findViewById(R.id.candy_title));
         this.misc = (TextView)(itemView.findViewById(R.id.candy_misc));
         this.time = (TextView)(itemView.findViewById(R.id.candy_time));
+
         this.recLayout = (LinearLayout) (itemView.findViewById(R.id.candy_linearl));
 
         itemView.setClickable(true);
+
+    }
+
+    public void setBGC(){
+        if (this.type != null){
+            switch(this.type){
+                case "exercise":
+                    this.recLayout.setBackgroundColor(this.recLayout.getResources().getColor(R.color.background_exercise_color));
+                    break;
+                case "sleep":
+                    this.recLayout.setBackgroundColor(this.recLayout.getResources().getColor(R.color.background_sleep_color));
+                    break;
+                case "diet":
+                    this.recLayout.setBackgroundColor(this.recLayout.getResources().getColor(R.color.background_diet_color));
+                    break;
+                case "medication":
+                    this.recLayout.setBackgroundColor(this.recLayout.getResources().getColor(R.color.background_medication_color));
+                    break;
+                case "mood":
+                    this.recLayout.setBackgroundColor(this.recLayout.getResources().getColor(R.color.background_mood_color));
+                    break;
+                default:
+                    break;
+            }
+
+
+        }
+
     }
 }

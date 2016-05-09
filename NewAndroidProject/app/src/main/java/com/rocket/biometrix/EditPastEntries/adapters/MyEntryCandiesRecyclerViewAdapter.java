@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.rocket.biometrix.Common.StringDateTimeConverter;
 import com.rocket.biometrix.EditPastEntries.CandyItems;
 import com.rocket.biometrix.EditPastEntries.EntryCandyViewHolder;
 import com.rocket.biometrix.NavigationDrawerActivity;
@@ -50,10 +49,9 @@ public class MyEntryCandiesRecyclerViewAdapter extends RecyclerView.Adapter<Entr
 
                     Toast.makeText(mContext, "EDITING ENTRY", Toast.LENGTH_LONG).show();
 
-                    //TODO:Open up edit entry with proper info for candy touched
                     //rowEntryClicked(holder.type.toString(), holder._UID); //WAY too complicated to make 3 interfaces //HOW tf keep references to context/classes?
                     Intent intent = new Intent(mContext, NavigationDrawerActivity.class);
-                    intent.putExtra("tablename", StringDateTimeConverter.GetStringFromTextView(holder.type));
+                    intent.putExtra("tablename", holder.type);
                     intent.putExtra("uid", holder._UID);
                     mContext.startActivity(intent);
 
@@ -73,10 +71,11 @@ public class MyEntryCandiesRecyclerViewAdapter extends RecyclerView.Adapter<Entr
         ECVholder.getLayoutPosition();
 
         //Fill entry candy UI with appropriate data
-        ECVholder.type.setText(listItem.type);
+        ECVholder.type = (listItem.type);
         ECVholder.time.setText(listItem.time);
         ECVholder.title.setText(listItem.title);
         ECVholder._UID = (listItem._ID); //Have to map UI back to database somehow :)
+        ECVholder.setBGC();
 
     }
 
@@ -91,10 +90,4 @@ public class MyEntryCandiesRecyclerViewAdapter extends RecyclerView.Adapter<Entr
         notifyDataSetChanged(); //calls onBindViewHolder
     }
 
-//////Another failed solution: interface to EditPastActivity to somehow listen to this UI
-//    @Override
-//    public String[] rowEntryClicked(String tableName, String UID) {
-//        String[] row = new String[]{tableName, UID};
-//        return row;
-//    }
 }

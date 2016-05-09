@@ -16,5 +16,41 @@
 
     <color name="black_overlay">#66000000</color>
 
+    <color name="white">#FFFFFF</color>
+    <color name="yellow">#FFFF00</color>
+    <color name="fuchsia">#FF00FF</color>
+    <color name="red">#FF0000</color>
+    <color name="silver">#C0C0C0</color>
+    <color name="gray">#808080</color>
+    <color name="olive">#808000</color>
+    <color name="purple">#800080</color>
+    <color name="maroon">#800000</color>
+    <color name="aqua">#00FFFF</color>
+    <color name="lime">#00FF00</color>
+    <color name="teal">#008080</color>
+    <color name="green">#008000</color>
+    <color name="blue">#0000FF</color>
+    <color name="navy">#000080</color>
+    <color name="black">#000000</color>
+
+    <!-- Fragment Module Background Colors -->
+    <color name="background_mood_color">#F1CFFC</color>
+    <color name="background_sleep_color">#B4CFEC</color>
+    <color name="background_exercise_color">#FFFFA3</color>
+    <color name="background_diet_color">#C3FDB8</color>
+    <color name="background_medication_color">#FFDFDD</color>
+    <color name="background_home_color">#FFEDBE</color>
+    <color name="background_analysis_color">#FFFFCB</color>
+
+
+    <!--Fragment Module ActionTopBar Colors -->
+    <color name="ActionTopBar_mood_color">#B048B5</color>
+    <color name="ActionTopBar_sleep_color">#6495ED</color>
+    <color name="ActionTopBar_exercise_color">#FFB249</color>
+    <color name="ActionTopBar_diet_color">#4CC552</color>
+    <color name="ActionTopBar_medication_color">#F9A7B0</color>
+    <color name="ActionTopBar_home_color">#E42217</color>
+    <color name="ActionTopBar_analysis_color">#A77A3F</color>
+
 
 </resources>
