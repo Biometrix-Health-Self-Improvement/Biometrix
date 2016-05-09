@@ -1,6 +1,8 @@
 package com.rocket.biometrix.EditPastEntries.fragments;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -69,6 +71,7 @@ public class EntryCandiesFragment extends Fragment {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -89,8 +92,22 @@ public class EntryCandiesFragment extends Fragment {
 
             updateCandies();
 
-            //TODO: Lp HOOK in item deco {mRecyclerView.addItemDecoration()} add seperators
-            mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
+            ////////////////////Can't use custom separator?????????
+//            Resources resources =
+//            XmlPullParser parser = resources.getXml(myResource);
+//            AttributeSet attributes = Xml.asAttributeSet(parser);
+
+//            mRecyclerView.addItemDecoration(
+//                    new DividerItemDecoration(getActivity(), attributes));
+
+//           Drawable drawable = ContextCompat.getDrawable(getApplicationContext(),R.drawable.icon);
+
+//            mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getDrawable(R.drawable.shape_seperator),
+//                    true, true));
+
+            mRecyclerView.addItemDecoration(
+                    new DividerItemDecoration(getActivity(), null));
+
 
             mRecyclerView.setAdapter(new MyEntryCandiesRecyclerViewAdapter(context,candyItemslist));
         }

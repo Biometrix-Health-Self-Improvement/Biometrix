@@ -17,8 +17,9 @@
         app:layoutManager="LinearLayoutManager"
         tools:context="com.rocket.biometrix.EntryCandiesFragment"
         tools:listitem="@android:layout/simple_list_item_1"
-        android:background="#a3ffff"
         />
+    <!--android:background="#a3ffff"-->
+
 
 
 </FrameLayout>
