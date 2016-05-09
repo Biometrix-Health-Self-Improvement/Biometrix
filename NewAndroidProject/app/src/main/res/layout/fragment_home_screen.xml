@@ -30,7 +30,6 @@
             android:hint="Enter User Name"
             android:inputType="text"
             android:paddingStart="4dp">
-
         </EditText>
 
         <Space
@@ -60,10 +59,11 @@
             android:layout_height="60dp"
             android:layout_gravity="center"
             android:adjustViewBounds="true"
-            android:clickable="true"
             android:padding="0dp"
             android:scaleType="centerCrop"
-            android:src="@mipmap/ic_locallogin" />
+            android:src="@mipmap/ic_locallogin"
+            android:onClick="passwordSignIn"
+            android:clickable="true" />
 
         <Space
             android:layout_width="0dp"
