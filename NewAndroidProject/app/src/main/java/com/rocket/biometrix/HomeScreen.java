@@ -1,8 +1,11 @@
 package com.rocket.biometrix;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,6 +13,12 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.rocket.biometrix.Database.AsyncResponse;
 import com.rocket.biometrix.Database.DatabaseConnect;
 import com.rocket.biometrix.Database.DatabaseConnectionTypes;
@@ -29,7 +38,8 @@ import org.json.JSONObject;
  * Use the {@link HomeScreen#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeScreen extends Fragment implements AsyncResponse {
+public class HomeScreen extends Fragment implements GoogleApiClient.OnConnectionFailedListener,
+        AsyncResponse {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -41,6 +51,17 @@ public class HomeScreen extends Fragment implements AsyncResponse {
 
     private View homeScreenView;
     private String username;
+
+    //A reference to the Google API
+    private GoogleApiClient googleApiClient;
+    //A loading symbol
+    private ProgressDialog progressDialog;
+    //A tag that is used in debug logging
+    private static final String TAG = "GoogleLoginActivity";
+    //The number that corresponds to the google API "sign-in" activity
+    private static final int RC_SIGN_IN = 9001;
+    //A reference to the user's google account
+    private GoogleSignInAccount acct;
 
     private OnFragmentInteractionListener mListener;
 
@@ -67,6 +88,14 @@ public class HomeScreen extends Fragment implements AsyncResponse {
     }
 
     @Override
+    public void onStop()
+    {
+        super.onStop();
+
+        googleApiClient.disconnect();
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setHasOptionsMenu(true);
@@ -89,6 +118,22 @@ public class HomeScreen extends Fragment implements AsyncResponse {
         // Inflate the layout for this fragment
         final View v = inflater.inflate(R.layout.fragment_home_screen, container, false);
         homeScreenView = v;
+
+        //Creates the google sign in object with requests for email
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .requestIdToken("212262655567-0na15tnrbol7g1ukjhqh98vit1je64a4.apps.googleusercontent.com")
+                .build();
+
+        // Build a GoogleApiClient with access to the Google Sign-In API and the
+        // options specified by gso.
+        googleApiClient = new GoogleApiClient.Builder(v.getContext())
+                //.enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        googleApiClient.connect();
+
         return v;
     }
 
@@ -144,12 +189,118 @@ public class HomeScreen extends Fragment implements AsyncResponse {
         }
     }
 
+    /**
+     * Starts the google authentication activity from a button click.
+     */
+    public void googleSignIn(View v)
+    {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    /**
+     * Retrieves the result of the sign-in intent
+     * @param requestCode The type of google API call used
+     * @param resultCode A result code
+     * @param data The data from the sign-in packaged in an intent
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN)
+        {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleSignInResult(result);
+        }
+    }
+
+    /**
+     * This function is called when the google sign in activity is finished (see resultcallback in
+     * on start)
+     * @param result The result of the attempt to sign in using Google APIs
+     */
+    private void handleSignInResult(GoogleSignInResult result)
+    {
+        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
+
+        if (result.isSuccess())
+        {
+            // Signed in successfully, show authenticated UI.
+            acct = result.getSignInAccount();
+            //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
+
+            String token = acct.getIdToken();
+
+            new DatabaseConnect(this).execute(DatabaseConnectionTypes.GOOGLE_TOKEN, token);
+            showBiometrixProgressDialog();
+
+        }
+    }
+
+    /**
+     * Creates a progress dialog if it does not exist, and then shows it
+     */
+    private void showProgressDialog()
+    {
+        if (progressDialog == null)
+        {
+            progressDialog = new ProgressDialog(homeScreenView.getContext());
+            progressDialog.setMessage(getString(R.string.login_loading));
+            progressDialog.setIndeterminate(true);
+        }
+
+        progressDialog.show();
+    }
+
+    /**
+     * Creates a progress dialog if it does not exist, and then shows it
+     */
+    private void showBiometrixProgressDialog()
+    {
+        if (progressDialog == null)
+        {
+            progressDialog = new ProgressDialog(homeScreenView.getContext());
+            progressDialog.setMessage(getString(R.string.login_biometrix_loading));
+            progressDialog.setIndeterminate(true);
+        }
+
+        progressDialog.show();
+    }
+
+    /**
+     * Hides the progress dialog if it currently exists
+     */
+    private void hideProgressDialog()
+    {
+        if (progressDialog != null && progressDialog.isShowing())
+        {
+            progressDialog.hide();
+        }
+    }
+
+    /**
+     * A call to this function means that the connection to Google APIs failed, and so Google Account
+     * cannot be used
+     * @param connectionResult This paramater is ignored
+     */
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult)
+    {
+        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
+        // be available.
+        Toast.makeText(homeScreenView.getContext(), "Unable to access Google Services", Toast.LENGTH_LONG).show();
+    }
+
     @Override
     /**
      * Retrieves the results of the call to the webserver
      */
     public void processFinish(String result)
     {
+        hideProgressDialog();
         String returnResult = result;
 
         JSONObject jsonObject;
@@ -161,7 +312,16 @@ public class HomeScreen extends Fragment implements AsyncResponse {
             try
             {
                 //If the json object passes back a token then it was a login
-                if (jsonObject.has("Token"))
+                if (jsonObject.has("Google") )
+                {
+                    //Logins the google account user with their id as their "username"
+                    LocalAccount.Login(acct, jsonObject.getString("Token"));
+
+                    Toast.makeText(homeScreenView.getContext(), "Google sign in succeeded!", Toast.LENGTH_LONG).show();
+                    NavigationDrawerActivity nav = (NavigationDrawerActivity) getActivity();
+                    nav.returnToLoggedInHomePage();
+                }
+                else if (jsonObject.has("Token"))
                 {
                     Toast.makeText(homeScreenView.getContext(), "Login Successful!", Toast.LENGTH_LONG).show();
 
@@ -170,10 +330,6 @@ public class HomeScreen extends Fragment implements AsyncResponse {
 
                     NavigationDrawerActivity nav = (NavigationDrawerActivity) getActivity();
                     nav.returnToLoggedInHomePage();
-                } else
-                //Assume it was a password reset
-                {
-                    Toast.makeText(homeScreenView.getContext(), "Check your email (and your spam folder) for your reset link", Toast.LENGTH_LONG).show();
                 }
             }
             catch (JSONException jsonExcept)
