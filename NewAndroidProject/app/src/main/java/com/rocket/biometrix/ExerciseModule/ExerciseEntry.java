@@ -25,6 +25,11 @@ import com.rocket.biometrix.R;
 
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -160,17 +165,21 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
      */
     public void onDoneClick(View v) {
         String dateString = dateTV.getText().toString();
-        String timeString = timeTV.getText().toString();
+        String timeText = timeTV.getText().toString();
 
         //Cleaning date and time strings with helper class
         dateString = StringDateTimeConverter.fixDate(dateString);
-        timeString = StringDateTimeConverter.fixTime(timeString);
+        //Deactivated for time since this module is storing date in a different manner than all
+        //of the others, may need to go back to this later instead, but for all modules.
+        //timeString = StringDateTimeConverter.fixTime(timeString);
+
+        timeText = timeText.substring(timeText.indexOf(":") + 2).trim();
 
         //String[] exerciseEntryData = new String[]{null, username, null, titleString, typeSelected,
         // minSelected, Integer.toString(intensity), notes, dateString, timeString};
         //Has the affect of the comment above
         String[] exerciseEntryData = SettingsAndEntryHelper.prepareColumnArray(onCreateView,
-                LocalStorageAccessExercise.TABLE_NAME, dateString, timeString);
+                LocalStorageAccessExercise.TABLE_NAME, dateString, timeText);
 
         String[] cols = LocalStorageAccessExercise.getColumns();
 

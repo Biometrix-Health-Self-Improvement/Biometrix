@@ -18,7 +18,9 @@ import com.rocket.biometrix.Database.LocalStorageAccessMood;
 import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.R;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -270,6 +272,10 @@ public class SettingsAndEntryHelper {
     {
         List<Quintet<Integer, Integer, VIEW_TYPE, String, String>> quintets = null;
         Cursor cursor = null;
+        int dateRID = -1;
+        int timeRID = -1;
+        String dateColName = null;
+        String timeColName = null;
 
         switch (tableName)
         {
@@ -277,26 +283,46 @@ public class SettingsAndEntryHelper {
                 quintets = getSleepViewDependencies();
                 cursor = LocalStorageAccess.selectEntryByID(view.getContext(), LocalStorageAccessSleep.TABLE_NAME,
                         LocalStorageAccessSleep.LOCAL_SLEEP_ID, id);
+                dateRID = R.id.sleepStartDateTextView;
+                timeRID = R.id.sleepStartTimeTextView;
+                dateColName = LocalStorageAccessSleep.DATE;
+                timeColName = LocalStorageAccessSleep.TIME;
                 break;
             case LocalStorageAccessMood.TABLE_NAME:
                 quintets = getMoodViewDependencies();
                 cursor = LocalStorageAccess.selectEntryByID(view.getContext(), LocalStorageAccessMood.TABLE_NAME,
                         LocalStorageAccessMood.LOCAL_MOOD_ID, id);
+                dateRID = R.id.moodCreateEntryDateSelect;
+                timeRID = R.id.moodCreateEntryTimeSelect;
+                dateColName = LocalStorageAccessMood.DATE;
+                timeColName = LocalStorageAccessMood.TIME;
                 break;
             case LocalStorageAccessDiet.TABLE_NAME:
                 quintets = getDietViewDependencies();
                 cursor = LocalStorageAccess.selectEntryByID(view.getContext(), LocalStorageAccessDiet.TABLE_NAME,
                         LocalStorageAccessDiet.LOCAL_DIET_ID, id);
+                dateRID = R.id.DietStartDateTextView;
+                timeRID = -1;
+                dateColName = LocalStorageAccessDiet.DATE;
+                timeColName = null;
                 break;
             case LocalStorageAccessExercise.TABLE_NAME:
                 quintets = getExerciseViewDependencies();
                 cursor = LocalStorageAccess.selectEntryByID(view.getContext(), LocalStorageAccessExercise.TABLE_NAME,
                         LocalStorageAccessExercise.LOCAL_EXERCISE_ID, id);
+                dateRID = R.id.ex_tv_date;
+                timeRID = R.id.ex_tv_time;
+                dateColName = LocalStorageAccessExercise.DATE;
+                timeColName = LocalStorageAccessExercise.TIME;
                 break;
             case LocalStorageAccessMedication.TABLE_NAME:
                 quintets = getMedicationViewDependencies();
                 cursor = LocalStorageAccess.selectEntryByID(view.getContext(), LocalStorageAccessMedication.TABLE_NAME,
                         LocalStorageAccessMedication.LOCAL_MEDICATION_ID, id);
+                dateRID = R.id.MedicationStartDateTextView;
+                timeRID = R.id.MedicationStartTimeTextView;
+                dateColName = LocalStorageAccessMedication.DATE;
+                timeColName = LocalStorageAccessMedication.TIME;
                 break;
         }
 
@@ -304,6 +330,37 @@ public class SettingsAndEntryHelper {
         {
             if (cursor.moveToFirst())
             {
+                TextView dateTextView = (TextView)view.findViewById(dateRID);
+                TextView timeTextView = null;
+
+                SimpleDateFormat noDayOfWeek = new SimpleDateFormat("yyyy-MM-dd");
+                try {
+                    Date entryDate = noDayOfWeek.parse(cursor.getString(cursor.getColumnIndex(dateColName)));
+                    SimpleDateFormat withDayOfWeek = new SimpleDateFormat("EEE, MM/dd/yyyy");
+                    dateTextView.setText("Date: " + withDayOfWeek.format(entryDate));
+                }
+                catch (Exception e)
+                {
+                    Log.i("ParseFail", e.getMessage());
+                }
+
+
+                if (timeRID != -1)
+                {
+                    try {
+
+
+                        timeTextView = (TextView) view.findViewById(timeRID);
+                        timeTextView.setText("Time: " + cursor.getString(cursor.getColumnIndex(timeColName)));
+                    }
+                    catch (Exception e)
+                    {
+                        e.getMessage();
+                    }
+                }
+
+
+
                 for (Quintet<Integer, Integer, VIEW_TYPE, String, String> quintet : quintets)
                 {
                     View element = view.findViewById(quintet.first);
@@ -339,7 +396,13 @@ public class SettingsAndEntryHelper {
 
                                 break;
                             case SLEEP_DURATION:
+                                String durationString = cursor.getString(colIndex);
+                                int colonIndex = durationString.indexOf(':');
+                                int hours = Integer.parseInt(durationString.substring(0, colonIndex));
+                                int minutes = Integer.parseInt(durationString.substring(colonIndex + 1, colonIndex + 3));
 
+                                ((SeekBar) view.findViewById(R.id.sleepHoursSeekBar)).setProgress(hours);
+                                ((SeekBar) view.findViewById(R.id.sleepMinutesSeekBar)).setProgress(minutes);
                                 break;
                             case TEXT_VIEW_INT:
                                 ((TextView)element).setText(cursor.getString(colIndex));

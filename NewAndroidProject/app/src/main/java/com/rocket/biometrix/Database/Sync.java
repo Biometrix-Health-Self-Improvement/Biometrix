@@ -109,6 +109,8 @@ public class Sync implements AsyncResponse
      * Tries a database insertion on the web after adding the values to the sync table. If it
      * succeeds the sync table will have the entry removed.
      * @param responseClass The class that will handle the callback process.
+     * @param rowToBeInserted The content values that were already pushed into the local database
+     * @param tableName The name of the table for the operation
      */
     public void databaseInsertOrUpdateSyncTable(AsyncResponse responseClass, ContentValues rowToBeInserted, String tableName)
     {
@@ -168,6 +170,119 @@ public class Sync implements AsyncResponse
             String jsonToInsert = JsonCVHelper.convertToJSON(rowToBeInserted);
 
             new DatabaseConnect(responseClass).execute(DatabaseConnectionTypes.INSERT_TABLE_VALUES, jsonToInsert,
+                    LocalAccount.GetInstance().GetToken(), dbConnectionType);
+        }
+    }
+
+    /**
+     * Tries a database update on the web after adding the values to the sync table. If it
+     * succeeds the sync table will have the entry removed.
+     * @param responseClass The class that will handle the callback process.
+     * @param rowToBeUpdated The content values that were already pushed into the local database
+     * @param id THe local id that corresponds to the entry to update
+     * @param webid The web id that corresponds to the entry to update
+     * @param tableName The name of the table for the operation
+     */
+    public void databaseUpdateOrUpdateSyncTable(AsyncResponse responseClass, ContentValues rowToBeUpdated,
+                                                int id, int webid, String tableName)
+    {
+        //Assumes that any user who is logged in wants their data backed up.
+        //TODO: Local Account setting for turning off always backup?
+        if (LocalAccount.isLoggedIn() )
+        {
+            String usernameColumnName = null;
+            String dbConnectionType = null;
+
+            switch (tableName)
+            {
+                case LocalStorageAccessDiet.TABLE_NAME:
+                    usernameColumnName = LocalStorageAccessDiet.USER_NAME;
+                    dbConnectionType = DatabaseConnectionTypes.DIET_TABLE;
+                    break;
+                case LocalStorageAccessExercise.TABLE_NAME:
+                    usernameColumnName = LocalStorageAccessExercise.USER_NAME;
+                    dbConnectionType = DatabaseConnectionTypes.EXERCISE_TABLE;
+                    break;
+                case LocalStorageAccessMedication.TABLE_NAME:
+                    usernameColumnName = LocalStorageAccessMedication.USER_NAME;
+                    dbConnectionType = DatabaseConnectionTypes.MEDICATION_TABLE;
+                    break;
+                case LocalStorageAccessMood.TABLE_NAME:
+                    usernameColumnName = LocalStorageAccessMood.USER_NAME;
+                    dbConnectionType = DatabaseConnectionTypes.MOOD_TABLE;
+                    break;
+                case LocalStorageAccessSleep.TABLE_NAME:
+                    usernameColumnName = LocalStorageAccessSleep.USER_NAME;
+                    dbConnectionType = DatabaseConnectionTypes.SLEEP_TABLE;
+                    break;
+            }
+
+
+            //Adds the primary key of the field to the sync table along with the value marking it
+            //needs to be updated to the webdatabase
+            LocalStorageAccess.getInstance(context).insertOrUpdateSyncTable(context,
+                    tableName, id, webid, LocalStorageAccess.SYNC_NEEDS_UPDATED);
+
+            rowToBeUpdated.remove(usernameColumnName);
+
+            String jsonToInsert = JsonCVHelper.convertToJSON(rowToBeUpdated);
+
+            new DatabaseConnect(responseClass).execute(DatabaseConnectionTypes.UPDATE_TABLE_VALUES, jsonToInsert,
+                    LocalAccount.GetInstance().GetToken(), dbConnectionType);
+        }
+    }
+
+    /**
+     * Tries a database update on the web after adding the values to the sync table. If it
+     * succeeds the sync table will have the entry removed.
+     * @param responseClass The class that will handle the callback process.
+     * @param webid The web id that corresponds to the entry to update
+     * @param tableName The name of the table for the operation
+     */
+    public void databaseDeleteOrUpdateSyncTable(AsyncResponse responseClass, int id, int webid, String tableName)
+    {
+        //Assumes that any user who is logged in wants their data backed up.
+        //TODO: Local Account setting for turning off always backup?
+        if (LocalAccount.isLoggedIn() )
+        {
+            String webIDColumnName = null;
+            String dbConnectionType = null;
+
+            switch (tableName)
+            {
+                case LocalStorageAccessDiet.TABLE_NAME:
+                    webIDColumnName = LocalStorageAccessDiet.WEB_DIET_ID;
+                    dbConnectionType = DatabaseConnectionTypes.DIET_TABLE;
+                    break;
+                case LocalStorageAccessExercise.TABLE_NAME:
+                    webIDColumnName = LocalStorageAccessExercise.WEB_EXERCISE_ID;
+                    dbConnectionType = DatabaseConnectionTypes.EXERCISE_TABLE;
+                    break;
+                case LocalStorageAccessMedication.TABLE_NAME:
+                    webIDColumnName = LocalStorageAccessMedication.WEB_MEDICATION_ID;
+                    dbConnectionType = DatabaseConnectionTypes.MEDICATION_TABLE;
+                    break;
+                case LocalStorageAccessMood.TABLE_NAME:
+                    webIDColumnName = LocalStorageAccessMood.WEB_MOOD_ID;
+                    dbConnectionType = DatabaseConnectionTypes.MOOD_TABLE;
+                    break;
+                case LocalStorageAccessSleep.TABLE_NAME:
+                    webIDColumnName = LocalStorageAccessSleep.WEB_SLEEP_ID;
+                    dbConnectionType = DatabaseConnectionTypes.SLEEP_TABLE;
+                    break;
+            }
+
+            //Adds the primary key of the field to the sync table along with the value marking it
+            //needs to be updated to the webdatabase
+            LocalStorageAccess.getInstance(context).insertOrUpdateSyncTable(context,
+                    tableName, id, webid, LocalStorageAccess.SYNC_NEEDS_DELETED);
+
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(webIDColumnName, webid);
+
+            String jsonToInsert = JsonCVHelper.convertToJSON(contentValues);
+
+            new DatabaseConnect(responseClass).execute(DatabaseConnectionTypes.DELETE_TABLE_VALUES, jsonToInsert,
                     LocalAccount.GetInstance().GetToken(), dbConnectionType);
         }
     }

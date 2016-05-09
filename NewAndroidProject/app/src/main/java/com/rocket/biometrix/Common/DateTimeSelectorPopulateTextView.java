@@ -34,7 +34,7 @@ import java.util.TimeZone;
 public class DateTimeSelectorPopulateTextView {
 
     final public static String _dateFormat = "EEE, MM/dd/yyyy";
-    final public  static String _timeFormat = "h:mm a";
+    final public static String _timeFormat = "h:mm a";
     int dateID;
     int timeID;
     Activity activity;
