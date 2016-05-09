@@ -7,6 +7,7 @@ package com.rocket.biometrix.Common;
 
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -71,6 +72,19 @@ public class StringDateTimeConverter
             }//end try
             catch (IllegalArgumentException | ClassCastException exceptionName) {
                 endResult = "ERROR in GetStringFromEditText: try block";
+            }
+        return endResult;
+    }
+
+    public static String GetStringFromTextView(View v) {
+        String endResult = "ERROR in GetStringFromEditText: Resource ID does not exist";
+        if (v != null)
+            try {
+                final TextView et = (TextView) v;
+                endResult = et.getText().toString();
+            }//end try
+            catch (IllegalArgumentException | ClassCastException exceptionName) {
+                endResult = "ERROR in GetStringFromTextView: try block";
             }
         return endResult;
     }

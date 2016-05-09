@@ -1,6 +1,7 @@
 package com.rocket.biometrix.EditPastEntries.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,8 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.rocket.biometrix.Common.StringDateTimeConverter;
 import com.rocket.biometrix.EditPastEntries.CandyItems;
 import com.rocket.biometrix.EditPastEntries.EntryCandyViewHolder;
+import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
 import java.util.List;
@@ -17,7 +20,8 @@ import java.util.List;
 /**
  * Created by JP on 2/16/2016.
  */
-public class MyEntryCandiesRecyclerViewAdapter extends RecyclerView.Adapter<EntryCandyViewHolder> {
+public class MyEntryCandiesRecyclerViewAdapter extends RecyclerView.Adapter<EntryCandyViewHolder>
+{
 
     private List<CandyItems> listItemsList;
     private Context mContext;
@@ -31,11 +35,11 @@ public class MyEntryCandiesRecyclerViewAdapter extends RecyclerView.Adapter<Entr
     }
 
     @Override
-    public EntryCandyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public EntryCandyViewHolder onCreateViewHolder(final ViewGroup viewGroup, int viewType) {
 
         //Give layout of 'a' candy to the holder
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_entrycandies, null);
-        EntryCandyViewHolder holder = new EntryCandyViewHolder(v);
+        final EntryCandyViewHolder holder = new EntryCandyViewHolder(v);
 
             holder.recLayout.setOnClickListener(new View.OnClickListener() {
 
@@ -44,10 +48,15 @@ public class MyEntryCandiesRecyclerViewAdapter extends RecyclerView.Adapter<Entr
 
                     Log.d("List Size", Integer.toString(getItemCount()));
 
-                    //TODO:Open up edit entry with proper info for candy touched
-                    //mContext.startActivity(intent);
-
                     Toast.makeText(mContext, "EDITING ENTRY", Toast.LENGTH_LONG).show();
+
+                    //TODO:Open up edit entry with proper info for candy touched
+                    //rowEntryClicked(holder.type.toString(), holder._UID); //WAY too complicated to make 3 interfaces //HOW tf keep references to context/classes?
+                    Intent intent = new Intent(mContext, NavigationDrawerActivity.class);
+                    intent.putExtra("tablename", StringDateTimeConverter.GetStringFromTextView(holder.type));
+                    intent.putExtra("uid", holder._UID);
+                    mContext.startActivity(intent);
+
                 }
             });
 
@@ -67,6 +76,7 @@ public class MyEntryCandiesRecyclerViewAdapter extends RecyclerView.Adapter<Entr
         ECVholder.type.setText(listItem.type);
         ECVholder.time.setText(listItem.time);
         ECVholder.title.setText(listItem.title);
+        ECVholder._UID = (listItem._ID); //Have to map UI back to database somehow :)
 
     }
 
@@ -81,4 +91,10 @@ public class MyEntryCandiesRecyclerViewAdapter extends RecyclerView.Adapter<Entr
         notifyDataSetChanged(); //calls onBindViewHolder
     }
 
+//////Another failed solution: interface to EditPastActivity to somehow listen to this UI
+//    @Override
+//    public String[] rowEntryClicked(String tableName, String UID) {
+//        String[] row = new String[]{tableName, UID};
+//        return row;
+//    }
 }

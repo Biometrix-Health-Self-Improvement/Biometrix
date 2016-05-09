@@ -15,17 +15,20 @@ public class CursorHelper {
     public int mRows = 0; //index
     public String mTitleStrings[];
     public  String mTimeStrings[];
+    public String mUIDs[]; //Row IDs
 
     //
-    public CursorHelper(CursorPair cp, String titleCol, String timeCol) {
+    public CursorHelper(CursorPair cp, String titleCol, String timeCol, String UIDCol) {
         mCursorPair = cp;
         mTitleStrings = new String[mCursorPair.query.getCount()];
         mTimeStrings = new String[mCursorPair.query.getCount()];
+        mUIDs = new String[mCursorPair.query.getCount()];
 
         if (mCursorPair.query.moveToFirst()) {
             while (!mCursorPair.query.isAfterLast()) {
                 mTitleStrings[mRows] = mCursorPair.query.getString( mCursorPair.query.getColumnIndex(titleCol) );
                 mTimeStrings[mRows] = mCursorPair.query.getString( mCursorPair.query.getColumnIndex(timeCol) );
+                mUIDs[mRows] = mCursorPair.query.getString(mCursorPair.query.getColumnIndex(UIDCol));
                     mRows++; //count the rows (Same thing as cursor's count method)
                 mCursorPair.query.moveToNext();
             }

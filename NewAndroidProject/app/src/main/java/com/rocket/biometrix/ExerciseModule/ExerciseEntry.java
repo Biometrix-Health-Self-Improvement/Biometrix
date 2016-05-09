@@ -46,7 +46,24 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
     public static TextView timeTV; //Used by the DateTimePopulateTextView in the onCreate event
     public static TextView dateTV;
 
+
+    boolean Editing;
+
     Spinner typeSpinner;
+
+    String minSelected; //string to save minutes exercised spinner result
+    String typeSelected; //string to save type of exercise selected in the radio 'bubble' buttons
+
+    Spinner minuteSpinner;
+    boolean toasted = false; //Used to display encouraging messages ONCE in minuteSpinner.
+
+
+    String lowestSpinnerValueThreshold = "5"; //5 minutes
+    String lowSpinnerValueThreshold = "10"; //10 minutes (idea is to encourage user to exercise more but still celebrate their 'baby' gains)
+    String lowSpinnerMessage = "Keep it up :)"; //The encouraging message
+    String highSpinnerMessage = "Nice!"; //The BEST message users strive for
+
+    String[] exerciseEntryData = {}; //String array that will store all user entered data, used in bundles and SQLite insert
 
     private OnFragmentInteractionListener mListener;
 

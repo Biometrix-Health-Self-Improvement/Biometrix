@@ -57,6 +57,10 @@ public class NavigationDrawerActivity extends AppCompatActivity
     //A reference to the navigation view
     protected NavigationView navView;
 
+    public String mTblSignal;
+    public String mUidSignal;
+    Bundle mEditEntryB;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,15 +79,36 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
         Fragment frag;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        frag = new HomeScreen();
-        transaction.replace(R.id.navigation_drawer_fragment_content, frag, "home");
-        transaction.addToBackStack(null);
-        transaction.commit();
 
-        //Local account/settings setup
-        navView = navigationView;
-        LocalAccount.setNavDrawerRef(this);
-        UpdateMenuItems();
+                mEditEntryB = getIntent().getExtras();
+        if (mEditEntryB != null) {
+            //yourDataObject = getIntent().getStringExtra(KEY_EXTRA);
+            mTblSignal = mEditEntryB.getString("tablename"); //See MECR ViewAdapter, ViewHolder's list item onClick listener
+            mUidSignal = mEditEntryB.getString("uid");
+
+            frag = PopulateEntryIntercept(mTblSignal);
+
+            frag.setArguments(getIntent().getExtras());
+
+            transaction.replace(R.id.navigation_drawer_fragment_content, frag, mTblSignal);
+            transaction.addToBackStack(null);
+            transaction.commit();
+
+
+        } else {
+
+            frag = new HomeScreen();
+            transaction.replace(R.id.navigation_drawer_fragment_content, frag, "home");
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
+
+            //Local account/settings setup
+            navView = navigationView;
+            LocalAccount.setNavDrawerRef(this);
+            UpdateMenuItems();
+
+
     }
 
     @Override
@@ -183,7 +208,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
             frag = new GoogleLogin();
         } else if (id == R.id.nav_logout)
         {
-           LogoutUser();
+            LogoutUser();
         } else if(id == R.id.nav_sync)
         {
             Sync sync = new Sync(getApplicationContext());
@@ -267,7 +292,6 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 ((SleepEntry) activeFragment).onDoneClick(v);
                 newFragment = new SleepParent();
             } else if (activeFragment.getClass() == ExerciseEntry.class){
-                //TODO: Please implement Callback interface so I'm not forced to conform in a bad way
                 //TODO: let's not be a little bitch about it
                 ((ExerciseEntry) activeFragment).onDoneClick(v);
                 newFragment = new ExerciseParent();
@@ -440,5 +464,34 @@ public class NavigationDrawerActivity extends AppCompatActivity
     public  void AllGraph(View v){
         activeFragment = new AllGraph();
         replaceFragment(activeFragment);
+    }
+
+
+    public Fragment PopulateEntryIntercept(String tableKey) {
+        Fragment EntryFrag;
+
+        switch (tableKey) {
+            case "exercise":
+                EntryFrag = new ExerciseEntry();
+                break;
+            case "sleep":
+                EntryFrag = new SleepEntry();
+                break;
+            case "diet":
+                EntryFrag = new DietEntry();
+                break;
+            case "mood":
+                EntryFrag = new MoodEntry();
+                break;
+            case "medication":
+                EntryFrag = new MedicationEntry();
+                break;
+
+            default:
+                throw new IllegalArgumentException(" " + tableKey);
+        }
+
+
+        return EntryFrag;
     }
 }
