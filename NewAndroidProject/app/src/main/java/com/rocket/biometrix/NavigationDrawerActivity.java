@@ -78,7 +78,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
         Fragment frag;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-                mEditEntryB = getIntent().getExtras();
+        mEditEntryB = getIntent().getExtras();
+
         if (mEditEntryB != null) {
             //yourDataObject = getIntent().getStringExtra(KEY_EXTRA);
             mTblSignal = mEditEntryB.getString("tablename"); //See MECR ViewAdapter, ViewHolder's list item onClick listener
