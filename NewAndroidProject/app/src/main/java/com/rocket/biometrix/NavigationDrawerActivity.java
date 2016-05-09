@@ -117,6 +117,15 @@ public class NavigationDrawerActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.navigation_drawer_activity, menu);
+
+        if (LocalAccount.GetInstance().isLoggedIn())
+        {
+            menu.findItem(R.id.action_logout).setVisible(true);
+        }
+        else
+        {
+            menu.findItem(R.id.action_logout).setVisible(false);
+        }
         return true;
     }
 
@@ -275,6 +284,12 @@ public class NavigationDrawerActivity extends AppCompatActivity
         transaction.replace(R.id.navigation_drawer_fragment_content, frag);
         transaction.addToBackStack(null);
         transaction.commit();
+
+        if (activeFragment.getClass() == HomeScreen_Logged_In.class ||
+                frag.getClass() == HomeScreen_Logged_In.class)
+        {
+            supportInvalidateOptionsMenu();
+        }
     }
 
     /**************************************************************************
@@ -417,6 +432,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
     public void UpdateMenuItems()
     {
         Menu navMenu = navView.getMenu();
+
+
 
         SetItemVisibility(navMenu, R.id.nav_mood_module, SettingsAndEntryHelper.MOOD_MODULE);
         SetItemVisibility(navMenu, R.id.nav_sleep_module, SettingsAndEntryHelper.SLEEP_MODULE);
