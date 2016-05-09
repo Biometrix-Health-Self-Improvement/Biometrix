@@ -214,16 +214,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 return true;
 
             case R.id.action_logout:
-
-                Class fragHomeClass = activeFragment.getClass();
-                if(fragHomeClass.equals(HomeScreen_Logged_In.class)) {
-                    if (LocalAccount.isLoggedIn())
-                        LogoutUser();
-                    //else if() {
-                    //TODO: Add Google Logout
-
-                    frag = new HomeScreen();
-                }
+                LogoutUser();
+                frag = new HomeScreen();
                 return true;
 
             default:
@@ -253,8 +245,6 @@ public class NavigationDrawerActivity extends AppCompatActivity
             frag = new MedicationParent();
         } else if (id == R.id.nav_analytics) { //TODO: menu open analytics fragment
             frag = new AnalysisFragment();
-        } else if (id == R.id.nav_login) {
-            frag = new GetLogin();
         } else if (id == R.id.nav_create_account){
             frag = new CreateLogin();
         } else if (id == R.id.nav_google_login){
