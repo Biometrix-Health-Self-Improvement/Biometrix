@@ -3,12 +3,13 @@ package com.rocket.biometrix.EditPastEntries.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.PopupMenu;
 
+import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.EditPastEntries.CandyItems;
 import com.rocket.biometrix.EditPastEntries.EntryCandyViewHolder;
 import com.rocket.biometrix.NavigationDrawerActivity;
@@ -45,15 +46,37 @@ public class MyEntryCandiesRecyclerViewAdapter extends RecyclerView.Adapter<Entr
                 @Override
             public void onClick(View v) {
 
-                    Log.d("List Size", Integer.toString(getItemCount()));
+                    //Creating the instance of PopupMenu
+                    PopupMenu popup = new PopupMenu(mContext, holder.recLayout);
+                    //Inflating the Popup using xml file
+                    popup.getMenuInflater().inflate(R.menu.manage_popup, popup.getMenu());
 
-                    Toast.makeText(mContext, "EDITING ENTRY", Toast.LENGTH_LONG).show();
+                    //registering popup with OnMenuItemClickListener
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        public boolean onMenuItemClick(MenuItem item) {
+                            //Toast.makeText(mContext,"You Clicked : " + item.getTitle(),Toast.LENGTH_SHORT).show();
 
-                    //rowEntryClicked(holder.type.toString(), holder._UID); //WAY too complicated to make 3 interfaces //HOW tf keep references to context/classes?
-                    Intent intent = new Intent(mContext, NavigationDrawerActivity.class);
-                    intent.putExtra("tablename", holder.type);
-                    intent.putExtra("uid", holder._UID);
-                    mContext.startActivity(intent);
+                            if (item.getTitle().toString().equals("Edit")) {
+                                //Log.d("List Size", Integer.toString(getItemCount()))
+                                //Toast.makeText(mContext, "EDITING ENTRY", Toast.LENGTH_LONG).show();
+
+                                //rowEntryClicked(holder.type.toString(), holder._UID); //WAY too complicated to make 3 interfaces //HOW tf keep references to context/classes?
+                                Intent intent = new Intent(mContext, NavigationDrawerActivity.class);
+                                intent.putExtra("tablename", holder.type);
+                                intent.putExtra("uid", holder._UID);
+                                mContext.startActivity(intent);
+                            }
+                            else if (item.getTitle().toString().equals("Delete")){
+                                LocalStorageAccess.safeDeleteRow(holder.type,holder._UID);
+                            }
+
+
+                            return true;
+                        }
+                    });
+
+                    popup.show();//showing popup menu
+
 
                 }
             });
