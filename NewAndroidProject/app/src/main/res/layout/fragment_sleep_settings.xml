@@ -96,7 +96,7 @@
 
             <Button
                 android:id="@+id/SleepSettingsAcceptButton"
-                style="@style/accept_button"
+                style="@style/sleep_accept_button"
                 android:onClick="EntryAcceptOnClick" />
 
         </TableLayout>

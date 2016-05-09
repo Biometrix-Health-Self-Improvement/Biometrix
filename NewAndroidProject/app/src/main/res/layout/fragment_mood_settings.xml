@@ -113,7 +113,7 @@
 
             <Button
                 android:id="@+id/MoodSettingsAcceptButton"
-                style="@style/accept_button"
+                style="@style/mood_accept_button"
                 android:onClick="EntryAcceptOnClick" />
 
         </TableLayout>

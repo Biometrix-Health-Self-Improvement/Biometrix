@@ -4,11 +4,11 @@
     android:layout_height="match_parent"
     tools:context="com.rocket.biometrix.MoodModule.MoodParent">
 
-    <Button style="@style/create_entry_button"
+    <Button style="@style/mood_create_entry_button"
         android:id="@+id/createMoodEntryButton"
         android:onClick="CreateEntryOnClick" />
 
-    <Button style="@style/graph"
+    <Button style="@style/mood_graph_button"
         android:id="@+id/goToGraphMood"
         android:onClick="MoodGraph" />
 
