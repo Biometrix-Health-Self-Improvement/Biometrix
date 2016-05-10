@@ -4,7 +4,7 @@
     <!-- Action bar color -->
     <color name="colorPrimaryDark">#000000</color>
     <!-- Task bar color -->
-    <color name="colorAccent">#c088cc</color>
+    <color name="colorAccent">#000000</color>
 
     <color name="colorBackground">#ffffff</color>
     <color name="colorBackgroundSecondary">#fdfdfd</color>
