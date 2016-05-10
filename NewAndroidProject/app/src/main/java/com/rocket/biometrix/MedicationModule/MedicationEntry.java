@@ -129,7 +129,10 @@ public class MedicationEntry extends Fragment implements AsyncResponse{
 
         //Cleaning date and time strings with helper class
         dateString = StringDateTimeConverter.fixDate(dateString);
-        timeString = StringDateTimeConverter.fixTime(timeString);
+        //Deactivated for time since this module is storing date in a different manner than all
+        //of the others, may need to go back to this later instead, but for all modules.
+        //timeString = StringDateTimeConverter.fixTime(timeString);
+        timeString = timeString.substring(timeString.indexOf(":") + 2).trim();
 
         //String[] medEntryData = {null, username, null, dateString, timeString, brandString,
         //        prescriberString, dosetring, instructionsString, warningsString, notes};
