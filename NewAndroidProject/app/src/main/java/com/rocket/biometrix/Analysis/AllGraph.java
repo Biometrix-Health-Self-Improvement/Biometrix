@@ -29,47 +29,51 @@ public class AllGraph extends GraphBase {
 
     @Override
     public void populateGraph() {
-        populateGraphDep();
-        populateGraphElev();
-        populateGraphIrr();
-        populateGraphAnx();
+        try {
+            populateGraphDep();
+            populateGraphElev();
+            populateGraphIrr();
+            populateGraphAnx();
+        } catch (Exception ex) { }
         setMonthYearTitle();
     }
 
     private void populateGraphAnx() {
-        GraphView graph = (GraphView) v.findViewById(R.id.grapAllAnx) ;
+        GraphView graph = (GraphView) v.findViewById(R.id.grapAllAnx);
         graph.removeAllSeries();
-        ArrayList<DataPoint[]> dp = getDataPointArrayAnx(year, month);
+        try {
+            ArrayList<DataPoint[]> dp = getDataPointArrayAnx(year, month);
         /*
             0 - Anx * 2
             1 - hrs slept
             2 - exercise / 5
          */
-        LineGraphSeries<DataPoint> anx = new LineGraphSeries<DataPoint>(dp.get(0));
-        anx.setTitle("Anxiety");
+            LineGraphSeries<DataPoint> anx = new LineGraphSeries<DataPoint>(dp.get(0));
+            anx.setTitle("Anxiety");
 
-        LineGraphSeries<DataPoint> sleep = new LineGraphSeries<DataPoint>(dp.get(1));
-        sleep.setTitle("Hours Slept");
-        sleep.setColor(Color.MAGENTA);
+            LineGraphSeries<DataPoint> sleep = new LineGraphSeries<DataPoint>(dp.get(1));
+            sleep.setTitle("Hours Slept");
+            sleep.setColor(Color.MAGENTA);
 
-        PointsGraphSeries<DataPoint> exercise = new PointsGraphSeries<DataPoint>(dp.get(2));
-        exercise.setTitle("Exercise");
-        exercise.setColor(Color.GREEN);
+            PointsGraphSeries<DataPoint> exercise = new PointsGraphSeries<DataPoint>(dp.get(2));
+            exercise.setTitle("Exercise");
+            exercise.setColor(Color.GREEN);
 
+
+            graph.setTitle("Anxiety");
+
+            if (!anx.isEmpty()) graph.addSeries(anx);
+            if (!sleep.isEmpty()) graph.addSeries(sleep);
+            if (!exercise.isEmpty()) graph.addSeries(exercise);
+        } catch(Exception ex) { }
         setDateBounds(graph);
-
-        graph.setTitle("Anxiety");
-
-        if(!anx.isEmpty()) graph.addSeries(anx);
-        if(!sleep.isEmpty()) graph.addSeries(sleep);
-        if(!exercise.isEmpty()) graph.addSeries(exercise);
-
         setLegend(graph);
     }
 
     private void populateGraphIrr() {
         GraphView graph = (GraphView) v.findViewById(R.id.grapAllIrr) ;
         graph.removeAllSeries();
+        try {
         ArrayList<DataPoint[]> dp = getDataPointArrayIrr(year, month);
         /*
             0 - Irr * 2
@@ -87,14 +91,15 @@ public class AllGraph extends GraphBase {
         exercise.setTitle("Exercise");
         exercise.setColor(Color.GREEN);
 
-        setDateBounds(graph);
+
 
         graph.setTitle("Irritability");
 
         if(!irr.isEmpty()) graph.addSeries(irr);
         if(!sleep.isEmpty()) graph.addSeries(sleep);
         if(!exercise.isEmpty()) graph.addSeries(exercise);
-
+        } catch(Exception ex) { }
+        setDateBounds(graph);
         setLegend(graph);
         
     }
@@ -102,62 +107,66 @@ public class AllGraph extends GraphBase {
     private void populateGraphElev() {
         GraphView graph = (GraphView) v.findViewById(R.id.grapAllElev) ;
         graph.removeAllSeries();
-        ArrayList<DataPoint[]> dp = getDataPointArrayElev(year, month);
+        try {
+            ArrayList<DataPoint[]> dp = getDataPointArrayElev(year, month);
         /*
             0 - Elev * 2
             1 - hrs slept
             2 - exercise / 5
          */
-        LineGraphSeries<DataPoint> elev = new LineGraphSeries<>(dp.get(0));
-        elev.setTitle("Elevation");
+            LineGraphSeries<DataPoint> elev = new LineGraphSeries<>(dp.get(0));
+            elev.setTitle("Elevation");
 
-        LineGraphSeries<DataPoint> sleep = new LineGraphSeries<>(dp.get(1));
-        sleep.setTitle("Hours Slept");
-        sleep.setColor(Color.MAGENTA);
+            LineGraphSeries<DataPoint> sleep = new LineGraphSeries<>(dp.get(1));
+            sleep.setTitle("Hours Slept");
+            sleep.setColor(Color.MAGENTA);
 
-        PointsGraphSeries<DataPoint> exercise = new PointsGraphSeries<>(dp.get(2));
-        exercise.setTitle("Exercise");
-        exercise.setColor(Color.GREEN);
+            PointsGraphSeries<DataPoint> exercise = new PointsGraphSeries<>(dp.get(2));
+            exercise.setTitle("Exercise");
+            exercise.setColor(Color.GREEN);
 
+
+
+            graph.setTitle("Elevation");
+
+            if (!elev.isEmpty()) graph.addSeries(elev);
+            if (!sleep.isEmpty()) graph.addSeries(sleep);
+            if (!exercise.isEmpty()) graph.addSeries(exercise);
+        } catch (Exception ex) { }
         setDateBounds(graph);
-
-        graph.setTitle("Elevation");
-
-        if(!elev.isEmpty()) graph.addSeries(elev);
-        if(!sleep.isEmpty()) graph.addSeries(sleep);
-        if(!exercise.isEmpty()) graph.addSeries(exercise);
-
         setLegend(graph);
     }
 
     private void populateGraphDep() {
         GraphView graph = (GraphView) v.findViewById(R.id.grapAllDep) ;
         graph.removeAllSeries();
-        ArrayList<DataPoint[]> dp = getDataPointArrayDep(year, month);
+        try {
+            ArrayList<DataPoint[]> dp = getDataPointArrayDep(year, month);
         /*
             0 - Dep * 2
             1 - hrs slept
             2 - exercise / 5
          */
-        LineGraphSeries<DataPoint> dep = new LineGraphSeries<>(dp.get(0));
-        dep.setTitle("Depression");
+            LineGraphSeries<DataPoint> dep = new LineGraphSeries<>(dp.get(0));
+            dep.setTitle("Depression");
 
-        LineGraphSeries<DataPoint> sleep = new LineGraphSeries<>(dp.get(1));
-        sleep.setTitle("Hours Slept");
-        sleep.setColor(Color.MAGENTA);
+            LineGraphSeries<DataPoint> sleep = new LineGraphSeries<>(dp.get(1));
+            sleep.setTitle("Hours Slept");
+            sleep.setColor(Color.MAGENTA);
 
-        PointsGraphSeries<DataPoint> exercise = new PointsGraphSeries<>(dp.get(2));
-        exercise.setTitle("Exercise");
-        exercise.setColor(Color.GREEN);
+            PointsGraphSeries<DataPoint> exercise = new PointsGraphSeries<>(dp.get(2));
+            exercise.setTitle("Exercise");
+            exercise.setColor(Color.GREEN);
 
+
+
+            graph.setTitle("Depression");
+
+            if (!dep.isEmpty()) graph.addSeries(dep);
+            if (!sleep.isEmpty()) graph.addSeries(sleep);
+            if (!exercise.isEmpty()) graph.addSeries(exercise);
+        } catch (Exception ex ) { }
         setDateBounds(graph);
-
-        graph.setTitle("Depression");
-
-        if(!dep.isEmpty()) graph.addSeries(dep);
-        if(!sleep.isEmpty()) graph.addSeries(sleep);
-        if(!exercise.isEmpty()) graph.addSeries(exercise);
-
         setLegend(graph);
     }
 
