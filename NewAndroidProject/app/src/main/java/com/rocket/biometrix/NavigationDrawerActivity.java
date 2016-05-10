@@ -237,6 +237,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
         {
             Sync sync = new Sync(getApplicationContext());
             sync.syncDatabases();
+            frag = new HomeScreen_Logged_In();
         }
         replaceFragment(frag);
 
