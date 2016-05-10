@@ -749,6 +749,9 @@ public class SettingsAndEntryHelper {
     public static final String MOOD_ELEV = "MoodElevEnabled";
     public static final String MOOD_IRRITABLE = "MoodIrritableEnabled";
     public static final String MOOD_ANX = "MoodAnxEnabled";
+    public static final String MOOD_SAD = "MoodSadEnabled";
+    public static final String MOOD_HAPPY = "MoodHappyEnabled";
+    public static final String MOOD_ANGER = "MoodAngerEnabled";
     public static final String MOOD_NOTES = "MoodNotesEnabled";
 
     /**
@@ -762,6 +765,9 @@ public class SettingsAndEntryHelper {
                 {MOOD_ELEV, Integer.toString(R.id.DisableSwitchElevatedSlider)},
                 {MOOD_IRRITABLE, Integer.toString(R.id.DisableSwitchIrritabilitySlider)},
                 {MOOD_ANX, Integer.toString(R.id.DisableSwitchAnxietySlider)},
+                {MOOD_SAD, Integer.toString(R.id.DisableSwitchSadnessSlider)},
+                {MOOD_HAPPY, Integer.toString(R.id.DisableSwitchHappinessSlider)},
+                {MOOD_ANGER, Integer.toString(R.id.DisableSwitchAngerSlider)},
                 {MOOD_NOTES, Integer.toString(R.id.DisableSwitchMoodNotesInput)}};
     }
 
@@ -772,7 +778,7 @@ public class SettingsAndEntryHelper {
      */
     private static List<Pair<String[], Integer[]>> getMoodInvisibilityDependencies()
     {
-        List<Pair<String[], Integer[]>> returnList = new ArrayList<>(6);
+        List<Pair<String[], Integer[]>> returnList = new ArrayList<>(9);
         returnList.add(new Pair<>(new String[] {MOOD_DEP}, new Integer[]{R.id.moodDepressedDesc, R.id.moodDepressedLabel,
         R.id.moodDepressedRating}));
         returnList.add(new Pair<>(new String[] {MOOD_ANX}, new Integer[]{R.id.moodAnxietyDesc, R.id.moodAnxietyLabel,
@@ -781,8 +787,14 @@ public class SettingsAndEntryHelper {
                 R.id.moodIrritabilityRating}));
         returnList.add(new Pair<>(new String[] {MOOD_ELEV}, new Integer[]{R.id.moodElevatedDesc, R.id.moodElevatedLabel,
                 R.id.moodElevatedRating}));
+        returnList.add(new Pair<>(new String[] {MOOD_SAD}, new Integer[]{ R.id.moodSadLabel,
+                R.id.moodSadRating}));
+        returnList.add(new Pair<>(new String[] {MOOD_HAPPY}, new Integer[]{R.id.moodHappyLabel,
+                R.id.moodElevatedRating}));
+        returnList.add(new Pair<>(new String[] {MOOD_ANGER}, new Integer[]{R.id.moodAngerLabel,
+                R.id.moodAngerRating}));
 
-        returnList.add(new Pair<>(new String[] {MOOD_DEP, MOOD_ANX, MOOD_ELEV, MOOD_IRRITABLE},
+        returnList.add(new Pair<>(new String[] {MOOD_DEP, MOOD_ANX, MOOD_ELEV, MOOD_IRRITABLE, MOOD_HAPPY, MOOD_SAD, MOOD_ANGER},
                 new Integer[]{R.id.moodSpaceAfterAnxiety}));
 
         returnList.add(new Pair<>(new String[] {MOOD_NOTES}, new Integer[]{R.id.moodDetailsEditText}));
@@ -799,12 +811,15 @@ public class SettingsAndEntryHelper {
      */
     private static List<Quintet<Integer, Integer, VIEW_TYPE, String, String>> getMoodViewDependencies()
     {
-        List<Quintet<Integer, Integer, VIEW_TYPE, String, String>> returnList = new ArrayList<>(5);
+        List<Quintet<Integer, Integer, VIEW_TYPE, String, String>> returnList = new ArrayList<>(8);
         returnList.add(new Quintet<>(R.id.moodDepressedRating, 5, VIEW_TYPE.SEEKBAR, (String)null, LocalStorageAccessMood.DEP));
         returnList.add(new Quintet<>(R.id.moodElevatedRating, 6, VIEW_TYPE.SEEKBAR, (String)null, LocalStorageAccessMood.ELEV));
         returnList.add(new Quintet<>(R.id.moodIrritabilityRating, 7, VIEW_TYPE.SEEKBAR, (String)null, LocalStorageAccessMood.IRR));
         returnList.add(new Quintet<>(R.id.moodAnxietyRating, 8, VIEW_TYPE.SEEKBAR, (String)null, LocalStorageAccessMood.ANX));
-        returnList.add(new Quintet<>(R.id.moodDetailsEditText, 9, VIEW_TYPE.TEXT_VIEW, "", LocalStorageAccessMood.NOTE));
+        returnList.add(new Quintet<>(R.id.moodSadRating, 9, VIEW_TYPE.SEEKBAR, (String)null, LocalStorageAccessMood.SAD));
+        returnList.add(new Quintet<>(R.id.moodHappyRating, 10, VIEW_TYPE.SEEKBAR, (String)null, LocalStorageAccessMood.HAPPY));
+        returnList.add(new Quintet<>(R.id.moodAngerRating, 11, VIEW_TYPE.SEEKBAR, (String)null, LocalStorageAccessMood.ANGER));
+        returnList.add(new Quintet<>(R.id.moodDetailsEditText, 12, VIEW_TYPE.TEXT_VIEW, "", LocalStorageAccessMood.NOTE));
 
         return returnList;
     }

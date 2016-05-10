@@ -97,8 +97,74 @@
             <TableRow>
                 <TextView
                     android:id="@+id/DisableMoodNotesTextView"
-                    android:text="Disable Notes Input"
+                    android:text="Disable Sadness Slider"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+                <Switch
+                    android:id="@+id/DisableSwitchSadnessSlider"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:text="Disable Happiness Slider"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <Switch
+                    android:id="@+id/DisableSwitchHappinessSlider"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp"/>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:text="Disable Anger Slider"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <Switch
+                    android:id="@+id/DisableSwitchAngerSlider"
+                    android:layout_width="60dp"
+                    android:layout_height="15dp"
+                    android:checked="true"/>
+            </TableRow>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="20dp"/>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:text="Disable Notes Input"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
 
                 <Switch
                     android:id="@+id/DisableSwitchMoodNotesInput"
@@ -109,7 +175,7 @@
 
             <Space
                 android:layout_width="20dp"
-                android:layout_height="20dp" />
+                android:layout_height="20dp"/>
 
             <Button
                 android:id="@+id/MoodSettingsAcceptButton"

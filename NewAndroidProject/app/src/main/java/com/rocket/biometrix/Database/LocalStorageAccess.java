@@ -30,8 +30,9 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
     //Incremented to 9. Sync table username field changed to avoid same names on inner join
     //10. Sync table given webkey column to uniquely identify removals and updates
     //11 gen health removed from sleep. Exercise module refactored
-    //12 Null values refactored, //TODO update mood module on this database version as well
-    protected static final int DATABASE_VERSION = 12;
+    //12 Null values refactored
+    //13 Updated mood module to include things like anger
+    protected static final int DATABASE_VERSION = 13;
     protected static LocalStorageAccess m_instance = null;
 
     //Strings for the sync table creation

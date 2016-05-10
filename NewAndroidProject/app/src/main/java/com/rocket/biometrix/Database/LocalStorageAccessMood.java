@@ -26,10 +26,13 @@ public class LocalStorageAccessMood {
     public static final String ELEV = "Elevated";
     public static final String IRR = "Irritable";
     public static final String ANX = "Anxiety";
+    public static final String SAD = "Sad";
+    public static final String HAPPY = "Happy";
+    public static final String ANGER = "Anger";
     public static final String NOTE = "Notes";
 
     public static final String[] cols = {LOCAL_MOOD_ID, USER_NAME, WEB_MOOD_ID, DATE,
-            TIME, DEP, ELEV, IRR, ANX, NOTE};
+            TIME, DEP, ELEV, IRR, ANX, SAD, HAPPY, ANGER, NOTE};
 
     private LocalStorageAccessMood(){}
 
@@ -45,6 +48,9 @@ public class LocalStorageAccessMood {
                 ELEV + " int Null, " +
                 IRR + " int Null, " +
                 ANX + " int Null, " +
+                SAD + " int Null, " +
+                HAPPY + " int Null, " +
+                ANGER + " int Null, " +
                 NOTE + " varchar(255)" +");";
     }
 
@@ -65,42 +71,6 @@ public class LocalStorageAccessMood {
     public static int GetLastID(Context c)
     {
         return LocalStorageAccess.getInstance(c).GetLastID(c, LOCAL_MOOD_ID, TABLE_NAME);
-    }
-
-    public static List<String[]> getEntries(Context c)
-    {
-
-        SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
-
-        //Select DATE, TIME, DEP, ELEV, IRR, ANX, NOTE FROM TABLE_NAME ORDER BY DATE DESC
-        Cursor cursor = db.query(TABLE_NAME, new String[]{DATE, TIME, DEP, ELEV, IRR, ANX, NOTE}, null, null, null, null, DATE + " DESC, " + TIME + " DESC");
-
-        List<String[]> lst = new LinkedList<String[]>();
-
-        String date, time, dep, elev, irr, anx, note;
-
-        //If there is a valid entry move to it
-        if (cursor.moveToFirst()) {
-
-            while (!cursor.isAfterLast())
-            {
-                date = cursor.getString(0);
-                time = cursor.getString(1);
-                dep = cursor.getString(2);
-                elev = cursor.getString(3);
-                irr = cursor.getString(4);
-                anx = cursor.getString(5);
-                note = cursor.getString(6);
-
-                String[] data = {date, time, dep, elev, irr, anx, note};
-                lst.add(data);
-
-                cursor.moveToNext();
-            }
-        }
-        cursor.close();
-        db.close();
-        return lst;
     }
 
     public static Cursor getMonthEntries(Context c, int year, int month)
