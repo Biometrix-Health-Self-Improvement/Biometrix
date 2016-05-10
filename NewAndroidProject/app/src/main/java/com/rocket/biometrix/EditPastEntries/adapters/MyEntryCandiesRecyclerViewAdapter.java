@@ -3,13 +3,13 @@ package com.rocket.biometrix.EditPastEntries.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.PopupMenu;
 
-import com.rocket.biometrix.Common.StringDateTimeConverter;
+import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.EditPastEntries.CandyItems;
 import com.rocket.biometrix.EditPastEntries.EntryCandyViewHolder;
 import com.rocket.biometrix.NavigationDrawerActivity;
@@ -38,7 +38,7 @@ public class MyEntryCandiesRecyclerViewAdapter extends RecyclerView.Adapter<Entr
     public EntryCandyViewHolder onCreateViewHolder(final ViewGroup viewGroup, int viewType) {
 
         //Give layout of 'a' candy to the holder
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_entrycandies, null);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_entrycandies, null); //second param was null
         final EntryCandyViewHolder holder = new EntryCandyViewHolder(v);
 
             holder.recLayout.setOnClickListener(new View.OnClickListener() {
@@ -46,16 +46,37 @@ public class MyEntryCandiesRecyclerViewAdapter extends RecyclerView.Adapter<Entr
                 @Override
             public void onClick(View v) {
 
-                    Log.d("List Size", Integer.toString(getItemCount()));
+                    //Creating the instance of PopupMenu
+                    PopupMenu popup = new PopupMenu(mContext, holder.recLayout);
+                    //Inflating the Popup using xml file
+                    popup.getMenuInflater().inflate(R.menu.manage_popup, popup.getMenu());
 
-                    Toast.makeText(mContext, "EDITING ENTRY", Toast.LENGTH_LONG).show();
+                    //registering popup with OnMenuItemClickListener
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        public boolean onMenuItemClick(MenuItem item) {
+                            //Toast.makeText(mContext,"You Clicked : " + item.getTitle(),Toast.LENGTH_SHORT).show();
 
-                    //TODO:Open up edit entry with proper info for candy touched
-                    //rowEntryClicked(holder.type.toString(), holder._UID); //WAY too complicated to make 3 interfaces //HOW tf keep references to context/classes?
-                    Intent intent = new Intent(mContext, NavigationDrawerActivity.class);
-                    intent.putExtra("tablename", StringDateTimeConverter.GetStringFromTextView(holder.type));
-                    intent.putExtra("uid", holder._UID);
-                    mContext.startActivity(intent);
+                            if (item.getTitle().toString().equals("Edit")) {
+                                //Log.d("List Size", Integer.toString(getItemCount()))
+                                //Toast.makeText(mContext, "EDITING ENTRY", Toast.LENGTH_LONG).show();
+
+                                //rowEntryClicked(holder.type.toString(), holder._UID); //WAY too complicated to make 3 interfaces //HOW tf keep references to context/classes?
+                                Intent intent = new Intent(mContext, NavigationDrawerActivity.class);
+                                intent.putExtra("tablename", holder.type);
+                                intent.putExtra("uid", holder._UID);
+                                mContext.startActivity(intent);
+                            }
+                            else if (item.getTitle().toString().equals("Delete")){
+                                LocalStorageAccess.safeDeleteRow(holder.type,holder._UID);
+                            }
+
+
+                            return true;
+                        }
+                    });
+
+                    popup.show();//showing popup menu
+
 
                 }
             });
@@ -73,10 +94,11 @@ public class MyEntryCandiesRecyclerViewAdapter extends RecyclerView.Adapter<Entr
         ECVholder.getLayoutPosition();
 
         //Fill entry candy UI with appropriate data
-        ECVholder.type.setText(listItem.type);
+        ECVholder.type = (listItem.type);
         ECVholder.time.setText(listItem.time);
         ECVholder.title.setText(listItem.title);
         ECVholder._UID = (listItem._ID); //Have to map UI back to database somehow :)
+        ECVholder.setBGC();
 
     }
 
@@ -91,10 +113,4 @@ public class MyEntryCandiesRecyclerViewAdapter extends RecyclerView.Adapter<Entr
         notifyDataSetChanged(); //calls onBindViewHolder
     }
 
-//////Another failed solution: interface to EditPastActivity to somehow listen to this UI
-//    @Override
-//    public String[] rowEntryClicked(String tableName, String UID) {
-//        String[] row = new String[]{tableName, UID};
-//        return row;
-//    }
 }

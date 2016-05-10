@@ -338,6 +338,77 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
         return rowNumberInserted;
     }
 
+    public static int safeDeleteRow(String tablename, String uid){
+        String UIDCol = null;
+        String TrueTableName = null;
+        boolean neverFound = false;
+        int deletedRow = -1;
+
+        while ((UIDCol == null || TrueTableName == null) && neverFound == false) {
+            //Manage entries: great code nice job!
+            if (tablename.equals("exercise") || tablename.equals(LocalStorageAccessExercise.TABLE_NAME)) {
+                TrueTableName = LocalStorageAccessExercise.TABLE_NAME;
+                UIDCol = LocalStorageAccessExercise.LOCAL_EXERCISE_ID;
+            } else if (tablename.equals("sleep")|| tablename.equals(LocalStorageAccessSleep.TABLE_NAME)) {
+                TrueTableName = LocalStorageAccessSleep.TABLE_NAME;
+                UIDCol = LocalStorageAccessSleep.LOCAL_SLEEP_ID;
+            } else if (tablename.equals("diet")|| tablename.equals(LocalStorageAccessDiet.TABLE_NAME)) {
+                TrueTableName = LocalStorageAccessDiet.TABLE_NAME;
+                UIDCol = LocalStorageAccessDiet.LOCAL_DIET_ID;
+            } else if (tablename.equals("mood")|| tablename.equals(LocalStorageAccessMood.TABLE_NAME)) {
+                TrueTableName = LocalStorageAccessMood.TABLE_NAME;
+                UIDCol = LocalStorageAccessMood.LOCAL_MOOD_ID;
+            } else if (tablename.equals("medication")|| tablename.equals(LocalStorageAccessMedication.TABLE_NAME)) {
+                TrueTableName = LocalStorageAccessMedication.TABLE_NAME;
+                UIDCol = LocalStorageAccessMedication.LOCAL_MEDICATION_ID;
+            }
+            else{
+                neverFound = true;
+            }
+
+        }
+        String whereClause = UIDCol + "=?";
+        String[] whereArgs = new String[] { uid };
+
+
+
+        SQLiteDatabase db = null;
+
+        try
+        {
+            db = m_instance.getWritableDatabase();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        if (db != null)
+        {
+            db.beginTransaction();
+
+//            "SELECT " + UIDCol +
+//                    "FROM " + TrueTableName +
+//                    "WHERE " + UIDCol + " " + uid;
+
+            try {
+                //Select Status From Sync Where TableName = *tableName* AND Key = *keyValue*
+                deletedRow =  db.delete(TrueTableName, whereClause, whereArgs);
+                db.setTransactionSuccessful();
+
+            } catch (SQLException e) {
+
+                e.printStackTrace();
+
+            } finally {
+                db.endTransaction(); //rollback is automatic
+                db.close();
+            }
+        }
+
+        return deletedRow;
+    }
+
     /**
      * Get all rows that match date YYYY-MM-DD (pass in date to search, then table you are looking at...
      * @param date The date that you want all values for

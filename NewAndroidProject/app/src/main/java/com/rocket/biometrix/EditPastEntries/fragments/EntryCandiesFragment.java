@@ -1,6 +1,8 @@
 package com.rocket.biometrix.EditPastEntries.fragments;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -18,6 +20,7 @@ import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.EditPastEntries.CandyItems;
 import com.rocket.biometrix.EditPastEntries.CursorHelper;
 import com.rocket.biometrix.EditPastEntries.CursorPair;
+import com.rocket.biometrix.EditPastEntries.adapters.DividerItemDecoration;
 import com.rocket.biometrix.EditPastEntries.adapters.MyEntryCandiesRecyclerViewAdapter;
 import com.rocket.biometrix.R;
 
@@ -68,6 +71,7 @@ public class EntryCandiesFragment extends Fragment {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -88,7 +92,22 @@ public class EntryCandiesFragment extends Fragment {
 
             updateCandies();
 
-            //TODO: Lp HOOK in item deco {mRecyclerView.addItemDecoration()}
+            ////////////////////Can't use custom separator?????????
+//            Resources resources =
+//            XmlPullParser parser = resources.getXml(myResource);
+//            AttributeSet attributes = Xml.asAttributeSet(parser);
+
+//            mRecyclerView.addItemDecoration(
+//                    new DividerItemDecoration(getActivity(), attributes));
+
+//           Drawable drawable = ContextCompat.getDrawable(getApplicationContext(),R.drawable.icon);
+
+//            mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getDrawable(R.drawable.shape_seperator),
+//                    true, true));
+
+            mRecyclerView.addItemDecoration(
+                    new DividerItemDecoration(getActivity(), null));
+
 
             mRecyclerView.setAdapter(new MyEntryCandiesRecyclerViewAdapter(context,candyItemslist));
         }
@@ -138,7 +157,7 @@ public class EntryCandiesFragment extends Fragment {
                 CursorHelper sleepCH = new CursorHelper(taybell, LocalStorageAccessSleep.QUALITY, LocalStorageAccessSleep.TIME, LocalStorageAccessSleep.LOCAL_SLEEP_ID);
                 allCH.add(sleepCH);
             }else if(taybell.getTableName().equals("mood")){
-                CursorHelper moodCH = new CursorHelper(taybell, "DEP: " + LocalStorageAccessMood.DEP, LocalStorageAccessMood.TIME, LocalStorageAccessMood.LOCAL_MOOD_ID);
+                CursorHelper moodCH = new CursorHelper(taybell, LocalStorageAccessMood.DEP, LocalStorageAccessMood.TIME, LocalStorageAccessMood.LOCAL_MOOD_ID);
                 allCH.add(moodCH);
             }else if(taybell.getTableName().equals("medication")){
                 CursorHelper medCH = new CursorHelper(taybell, LocalStorageAccessMedication.BRAND_NAME, LocalStorageAccessMedication.TIME, LocalStorageAccessMedication.LOCAL_MEDICATION_ID);

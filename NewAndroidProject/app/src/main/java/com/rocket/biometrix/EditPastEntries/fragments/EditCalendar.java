@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CalendarView;
-import android.widget.Toast;
 
 import com.rocket.biometrix.Common.StringDateTimeConverter;
 import com.rocket.biometrix.Database.LocalStorageAccess;
@@ -143,7 +142,7 @@ public class EditCalendar extends Fragment {
 
 
                 //getActivity() for the context.
-                Toast.makeText(getActivity(), dateSelectedFormatted, Toast.LENGTH_LONG).show();
+               // Toast.makeText(getActivity(), dateSelectedFormatted, Toast.LENGTH_LONG).show();
 
                 if (mListener != null) {
                     List<CursorPair> cpInjecting = new ArrayList<CursorPair>();

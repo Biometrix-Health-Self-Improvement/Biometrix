@@ -3,6 +3,7 @@ package com.rocket.biometrix.EditPastEntries;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.rocket.biometrix.EditPastEntries.fragments.EditCalendar;
 import com.rocket.biometrix.EditPastEntries.fragments.EntryCandiesFragment;
@@ -32,6 +33,8 @@ public class EditPastActivity extends AppCompatActivity
 //         the fragment_container FrameLayout
         if (findViewById(R.id.fragment_container) != null) {
 
+            View narutoView = findViewById(R.id.fragment_container);
+
             // However, if we're being restored from a previous state,
             // then we don't need to do anything and should return or else
             // we could end up with overlapping fragments.
@@ -49,15 +52,18 @@ public class EditPastActivity extends AppCompatActivity
             CalendarFragmenti.setArguments(getIntent().getExtras());
             ECF.setArguments(getIntent().getExtras());
 
-            // Add the fragment to the 'fragment_container' FrameLayout
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, CalendarFragmenti).commit();
 
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, ECF).commit();
 
+            // Add the fragment to the 'fragment_container' FrameLayout
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, CalendarFragmenti).commit();
 
-            //v.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1));
+
+
+
+            //narutoView.setLayoutParams();
 
         }
 
