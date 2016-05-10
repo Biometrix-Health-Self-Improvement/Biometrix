@@ -364,7 +364,7 @@ public class SleepEntry extends Fragment implements AsyncResponse {
         LocalStorageAccessSleep.insertFromContentValues(rowToBeInserted, v.getContext());
 
         Sync sync = new Sync(v.getContext());
-        sync.databaseInsertOrUpdateSyncTable(this, rowToBeInserted, LocalStorageAccessExercise.TABLE_NAME);
+        sync.databaseInsertOrUpdateSyncTable(this, rowToBeInserted, LocalStorageAccessSleep.TABLE_NAME);
     }
 
     public interface OnFragmentInteractionListener {
