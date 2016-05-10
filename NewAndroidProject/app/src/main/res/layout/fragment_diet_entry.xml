@@ -326,7 +326,7 @@
 
             <Button
                 android:id="@+id/diet_entry_done_button"
-                style="@style/done_button"
+                style="@style/diet_done_button"
                 android:onClick="EntryDoneOnClick" />
 
         </TableLayout>

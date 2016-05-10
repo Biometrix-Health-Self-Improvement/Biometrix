@@ -5,6 +5,9 @@
         <item
             android:id="@+id/nav_home"
             android:title="Home" />
+<!--        <item
+            android:id="@+id/nav_home_logged_in"
+            android:title="Home Logged In" />-->
         <item
             android:id="@+id/nav_mood_module"
             android:title="Mood Tracker" />
@@ -23,29 +26,9 @@
         <item
             android:id="@+id/nav_analytics"
             android:title="Analysis" />
+        <item
+            android:id="@+id/nav_sync"
+            android:title="Sync Database"/>
     </group>
-
-    <item android:title="Account Settings">
-        <menu>
-            <item
-                android:id="@+id/nav_settings"
-                android:title="Settings" />
-            <item
-                android:id="@+id/nav_login"
-                android:title="Login" />
-            <item
-                android:id="@+id/nav_create_account"
-                android:title="Create Account" />
-            <item
-                android:id="@+id/nav_google_login"
-                android:title="Google Login"/>
-            <item
-                android:id="@+id/nav_logout"
-                android:title="Logout"/>
-            <item
-                android:id="@+id/nav_sync"
-                android:title="Sync Database"/>
-        </menu>
-    </item>
 
 </menu>

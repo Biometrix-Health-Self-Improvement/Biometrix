@@ -1,7 +1,7 @@
 package com.rocket.biometrix.Login;
 
 /**
- * Created by TJ on 5/5/2016. Helper class for SettingsAndEntryHelper.. Basically just a pair with 4 elements
+ * Created by TJ on 5/5/2016. Helper class for SettingsAndEntryHelper.. Basically just a pair with 5 elements
  */
 public class Quintet<T1, T2, T3, T4, T5>
 {

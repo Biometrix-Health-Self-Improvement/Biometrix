@@ -43,20 +43,20 @@ public class MoodGraph extends GraphBase {
         anx.setColor(Color.GREEN);
 
 
-        StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
-        staticLabelsFormatter.setVerticalLabels(new String[]{"None", "Mild", "Moderate", "Severe", "Very Severe"});
-        staticLabelsFormatter.setDynamicLabelFormatter(setDateBounds(graph));
-        graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
+        //StaticLabelsFormatter staticLabelsFormatter = new StaticLabelsFormatter(graph);
+        //staticLabelsFormatter.setVerticalLabels(new String[]{"None", "Mild", "Moderate", "Severe", "Very Severe"});
+        //staticLabelsFormatter.setDynamicLabelFormatter();
+       // graph.getGridLabelRenderer().setLabelFormatter(staticLabelsFormatter);
 
         graph.setTitle("Mood");
-        if(!dep.isEmpty()){
-            graph.addSeries(dep);
-            graph.addSeries(elev);
-            graph.addSeries(irr);
-            graph.addSeries(anx);
-        }
+        if(!dep.isEmpty())graph.addSeries(dep);
+        if(!elev.isEmpty())    graph.addSeries(elev);
+        if(!irr.isEmpty())    graph.addSeries(irr);
+        if(!anx.isEmpty()) graph.addSeries(anx);
+
         setLegend(graph);
         setMonthYearTitle();
+        setDateBounds(graph);
     }
 
 
@@ -77,15 +77,23 @@ public class MoodGraph extends GraphBase {
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
                 int dayOfMonth = Integer.parseInt(cursor.getString(0).substring(8));
-                int val = Integer.parseInt(cursor.getString(2));
-                dep.add(new DataPoint(dayOfMonth, val));
-                val = Integer.parseInt(cursor.getString(3));
-                elev.add(new DataPoint(dayOfMonth, val));
-                val = Integer.parseInt(cursor.getString(4));
-                irr.add(new DataPoint(dayOfMonth, val));
-                val = Integer.parseInt(cursor.getString(5));
-                anx.add(new DataPoint(dayOfMonth, val));
-
+                int val;
+                if(tryParseInt(cursor.getString(2))) {
+                    val = Integer.parseInt(cursor.getString(2));
+                    dep.add(new DataPoint(dayOfMonth, val));
+                }
+                if(tryParseInt(cursor.getString(3))) {
+                    val = Integer.parseInt(cursor.getString(3));
+                    elev.add(new DataPoint(dayOfMonth, val));
+                }
+                if(tryParseInt(cursor.getString(4))) {
+                    val = Integer.parseInt(cursor.getString(4));
+                    irr.add(new DataPoint(dayOfMonth, val));
+                }
+                if(tryParseInt(cursor.getString(5))) {
+                    val = Integer.parseInt(cursor.getString(5));
+                    anx.add(new DataPoint(dayOfMonth, val));
+                }
                 cursor.moveToNext();
             }
         }
@@ -115,6 +123,8 @@ public class MoodGraph extends GraphBase {
 
         return ret;
     }
+
+
 
     @Override
     GraphView getGraph() {

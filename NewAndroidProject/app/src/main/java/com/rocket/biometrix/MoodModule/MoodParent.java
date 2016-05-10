@@ -1,14 +1,18 @@
 package com.rocket.biometrix.MoodModule;
 
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Space;
 import android.widget.TextView;
 
+import com.rocket.biometrix.Database.LocalStorageAccessMedication;
 import com.rocket.biometrix.Database.LocalStorageAccessMood;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
@@ -86,28 +90,55 @@ public class MoodParent extends Fragment {
 
     private void UpdatePreviousEntries(View v)
     {
-        List<String[]> moodData = LocalStorageAccessMood.getEntries(v.getContext());
-        try {
+        Cursor moodCursor = LocalStorageAccessMood.selectAll(v.getContext(), true);
 
+        displayEntriesLayout.removeAllViews();
 
-            displayEntriesLayout.removeAllViews();
-
-            for (String[] data : moodData) {
-                TextView textView = new TextView(v.getContext());
-
-                //Creates the string that will be displayed.
-                StringBuilder str = new StringBuilder();
-                str.append(data[0]);
-                str.append("   Depr.: ");
-
-                str.append(getDescString(data[2]));
-                str.append("   Elev.: ");
-                str.append(getDescString(data[3]));
-
-                textView.setText(str);
-                displayEntriesLayout.addView(textView);
+        View.OnClickListener buttonListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavigationDrawerActivity nav = (NavigationDrawerActivity) getActivity();
+                Bundle bundle = new Bundle();
+                bundle.putString("uid", v.getTag().toString());
+                bundle.putString("tablename", LocalStorageAccessMood.TABLE_NAME);
+                nav.CreateEntryOnClickWithBundle(v, bundle);
             }
-        } catch (Exception x){        }
+        };
+
+        while (moodCursor.moveToNext())
+        {
+            Button button = new Button(v.getContext());
+
+            //Creates the string that will be displayed.
+            StringBuilder dispString = new StringBuilder();
+
+            dispString.append(moodCursor.getString(moodCursor.getColumnIndex(LocalStorageAccessMood.DATE)));
+            dispString.append(" ");
+            dispString.append(moodCursor.getString(moodCursor.getColumnIndex(LocalStorageAccessMood.TIME)));
+            dispString.append(" Depr: ");
+            dispString.append(moodCursor.getString(moodCursor.getColumnIndex(LocalStorageAccessMood.DEP)));
+            dispString.append(" Elev: ");
+            dispString.append(moodCursor.getString(moodCursor.getColumnIndex(LocalStorageAccessMood.ELEV)));
+            dispString.append(" Anx: ");
+            dispString.append(moodCursor.getString(moodCursor.getColumnIndex(LocalStorageAccessMood.ANX)));
+            dispString.append(" Irr: ");
+            dispString.append(moodCursor.getString(moodCursor.getColumnIndex(LocalStorageAccessMood.IRR)));
+
+            button.setText(dispString);
+            button.setTransformationMethod(null);
+
+            button.setOnClickListener(buttonListener);
+            button.setTag(moodCursor.getInt(moodCursor.getColumnIndex(LocalStorageAccessMood.LOCAL_MOOD_ID)));
+            button.setBackground(getResources().getDrawable(R.drawable.mood_past_entry_button));
+            displayEntriesLayout.addView(button);
+
+            Space space = new Space(v.getContext());
+            space.setMinimumHeight(7);
+            displayEntriesLayout.addView(space );
+        }
+
+        moodCursor.close();
+
     }
 
     String getDescString(String intStr){

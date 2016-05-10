@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.rocket.biometrix.ExerciseModule.ExerciseEntry;
+import com.rocket.biometrix.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -33,7 +34,7 @@ import java.util.TimeZone;
 public class DateTimeSelectorPopulateTextView {
 
     final public static String _dateFormat = "EEE, MM/dd/yyyy";
-    final public  static String _timeFormat = "h:mm a";
+    final public static String _timeFormat = "h:mm a";
     int dateID;
     int timeID;
     Activity activity;
@@ -74,10 +75,10 @@ public class DateTimeSelectorPopulateTextView {
                 int mDay = current.get(Calendar.DAY_OF_MONTH);
 
                 //creates the date picker and sets the listener to call setDate whenever the date is changed
-                DatePickerDialog mDatePicker = new DatePickerDialog(DateTimeSelectorPopulateTextView.this.view.getContext(), new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog mDatePicker = new DatePickerDialog(DateTimeSelectorPopulateTextView.this.view.getContext(), DatePickerDialog.THEME_DEVICE_DEFAULT_DARK, new DatePickerDialog.OnDateSetListener() {
                     public void onDateSet(DatePicker datepicker, int year, int month, int day) {
                         setDate(year, month, day);
-                    }
+                      }
                 }, mYear, mMonth, mDay); //mYear, mMonth, and mDay are default values to strt the date picker on, which are set to current
                 mDatePicker.setTitle("Select Date");
                 mDatePicker.show(); //shows the date picker that was just create
@@ -90,7 +91,7 @@ public class DateTimeSelectorPopulateTextView {
                 Calendar current = Calendar.getInstance(TimeZone.getDefault());
                 int mHour = current.get(Calendar.HOUR_OF_DAY);
                 int mMinute = current.get(Calendar.MINUTE);
-                TimePickerDialog time = new TimePickerDialog(DateTimeSelectorPopulateTextView.this.view.getContext(), new TimePickerDialog.OnTimeSetListener() {
+                TimePickerDialog time = new TimePickerDialog(DateTimeSelectorPopulateTextView.this.view.getContext(), TimePickerDialog.THEME_DEVICE_DEFAULT_DARK, new TimePickerDialog.OnTimeSetListener() {
                     public void onTimeSet(TimePicker timepicker, int hourOfDay, int minute) {
                         setTime(hourOfDay, minute);
                     }

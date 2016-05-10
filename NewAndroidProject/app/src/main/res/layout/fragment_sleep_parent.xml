@@ -5,11 +5,11 @@
     tools:context="com.rocket.biometrix.SleepModule.SleepParent">
 
     <Button
-        style="@style/create_entry_button"
+        style="@style/sleep_create_entry_button"
         android:id="@+id/NewSleepEntryButton"
         android:onClick="CreateEntryOnClick" />
 
-    <Button style="@style/graph"
+    <Button style="@style/sleep_graph_button"
         android:id="@+id/goToGraphSleep"
         android:onClick="SleepGraph" />
 

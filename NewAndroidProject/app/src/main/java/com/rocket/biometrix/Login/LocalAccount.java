@@ -124,6 +124,7 @@ public class LocalAccount {
         }
 
 
+        navDrawerRef.UpdateMenuItems();
         return _instance;
     }
 

@@ -59,8 +59,10 @@ DATE, TIME, TITLE, TYPE, MINUTES, REPS, LAPS, WEIGHT, INTY
                 int dayOfMonth = Integer.parseInt(cursor.getString(0).substring(8));
                 String s = cursor.getString(4);
                 if(s != null) {
-                    int val = Integer.parseInt(s);
-                    dataPoints.add(new DataPoint(dayOfMonth, val));
+                    if (tryParseInt(s)){
+                        int val = Integer.parseInt(s);
+                        dataPoints.add(new DataPoint(dayOfMonth, val));
+                    }
                 }
 
                 cursor.moveToNext();

@@ -1,0 +1,19 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:andorid="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fragment_home_screen_logged_in"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HomeScreen_Logged_In">
+
+    <ImageView
+        android:id="@+id/HomeScreenLoggedInLogoImage"
+        android:layout_width="match_parent"
+        android:layout_height="370dp"
+        android:layout_centerInParent="true"
+        android:padding="0dp"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/ic_biologo" />
+
+
+</RelativeLayout>

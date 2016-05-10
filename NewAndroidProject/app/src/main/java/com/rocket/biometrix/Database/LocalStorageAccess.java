@@ -668,4 +668,20 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
             return null;
         }
     }
+
+
+    /**
+     * Returns the row that has the passed in local ID
+     * @param c The current context which is used by the database queries
+     * @param tableName The name of the table to select entries on
+     * @param idFieldName The name of the field that has the local primary key
+     * @param idValue The value of the id field for the row to be pulled
+     * @return A Cursor to all of the columns on the table for the current user
+     */
+    public static Cursor selectEntryByID(Context c, String tableName, String idFieldName, Integer idValue)
+    {
+        SQLiteDatabase database = getInstance(c).getReadableDatabase();
+
+        return database.query(tableName, null, idFieldName + " = ?", new String[]{idValue.toString()}, null, null, null);
+    }
 }

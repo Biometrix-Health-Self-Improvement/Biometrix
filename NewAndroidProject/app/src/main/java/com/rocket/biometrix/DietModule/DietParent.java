@@ -1,5 +1,6 @@
 package com.rocket.biometrix.DietModule;
 
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -7,10 +8,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Space;
 import android.widget.TextView;
 
 import com.rocket.biometrix.Database.LocalStorageAccessDiet;
+import com.rocket.biometrix.Database.LocalStorageAccessExercise;
 import com.rocket.biometrix.Database.LocalStorageAccessMood;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
@@ -100,30 +104,47 @@ public class DietParent extends Fragment {
 
     private void UpdatePreviousEntries(View v)
     {
-        try {
-            //LocalStorageAccessMood fileAccess = new LocalStorageAccessMood(v.getContext(),null,null,1);
+        Cursor dietCursor = LocalStorageAccessDiet.selectAll(v.getContext(), true);
 
-            List<String[]> dietData = LocalStorageAccessDiet.getEntries(v.getContext());
+        displayEntriesLayout.removeAllViews();
 
-            displayEntriesLayout.removeAllViews();
-
-            for (String[] data : dietData) {
-                TextView textView = new TextView(v.getContext());
-
-                //Creates the string that will be displayed.
-                StringBuilder str = new StringBuilder();
-                str.append(data[0]);
-                str.append(" - ");
-                str.append(data[1]);
-                str.append(" - Calories: ");
-                str.append(data[2]);
-
-                textView.setText(str);
-                displayEntriesLayout.addView(textView);
+        View.OnClickListener buttonListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavigationDrawerActivity nav = (NavigationDrawerActivity) getActivity();
+                Bundle bundle = new Bundle();
+                bundle.putString("uid", v.getTag().toString());
+                bundle.putString("tablename", LocalStorageAccessDiet.TABLE_NAME);
+                nav.CreateEntryOnClickWithBundle(v, bundle);
             }
-        } catch (Exception e)
+        };
+
+        while (dietCursor.moveToNext())
         {
-            Log.i("", e.toString() );
+            Button button = new Button(v.getContext());
+
+            //Creates the string that will be displayed.
+            StringBuilder dispString = new StringBuilder();
+
+            dispString.append(dietCursor.getString(dietCursor.getColumnIndex(LocalStorageAccessDiet.DATE)));
+            dispString.append(" - ");
+            dispString.append(dietCursor.getString(dietCursor.getColumnIndex(LocalStorageAccessDiet.MEAL)));
+            dispString.append(" - Calories ");
+            dispString.append(dietCursor.getString(dietCursor.getColumnIndex(LocalStorageAccessDiet.CALORIES)));
+
+            button.setText(dispString);
+            button.setTransformationMethod(null);
+
+            button.setOnClickListener(buttonListener);
+            button.setTag(dietCursor.getInt(dietCursor.getColumnIndex(LocalStorageAccessDiet.LOCAL_DIET_ID)));
+            button.setBackground(getResources().getDrawable(R.drawable.diet_past_entry_button));
+            displayEntriesLayout.addView(button);
+
+            Space space = new Space(v.getContext());
+            space.setMinimumHeight(7);
+            displayEntriesLayout.addView(space );
         }
+
+        dietCursor.close();
     }
 }

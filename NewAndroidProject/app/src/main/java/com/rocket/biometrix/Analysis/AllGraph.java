@@ -170,10 +170,13 @@ public class AllGraph extends GraphBase {
         Cursor cursor = LocalStorageAccessMood.getMonthEntries(v.getContext(), year, month);
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
-                int dayOfMonth = Integer.parseInt(cursor.getString(0).substring(8));
-                int val = Integer.parseInt(cursor.getString(2));
-                mood.add(new DataPoint(dayOfMonth, val*2));
-
+                if(tryParseInt(cursor.getString(0).substring(8))) {
+                    int dayOfMonth = Integer.parseInt(cursor.getString(0).substring(8));
+                    if(tryParseInt(cursor.getString(2))) {
+                        int val = Integer.parseInt(cursor.getString(2));
+                        mood.add(new DataPoint(dayOfMonth, val * 2));
+                    }
+                }
                 cursor.moveToNext();
             }
         }
@@ -182,12 +185,15 @@ public class AllGraph extends GraphBase {
         cursor = LocalStorageAccessSleep.getMonthEntries(v.getContext(), year, month);
         if(cursor.moveToFirst()){
             while(!cursor.isAfterLast()) {
-                int day = Integer.parseInt(cursor.getString(0).substring(8));
-                String hr = cursor.getString(2).substring(0, cursor.getString(2).indexOf(":"));
-                String min= cursor.getString(2).substring(cursor.getString(2).indexOf(":")+1);
-
-                double val = Integer.parseInt(hr) + (Integer.parseInt(min) / 60.0);
-                sleep.add(new DataPoint(day, val));
+                if(tryParseInt(cursor.getString(0).substring(8))) {
+                    int day = Integer.parseInt(cursor.getString(0).substring(8));
+                    String hr = cursor.getString(2).substring(0, cursor.getString(2).indexOf(":"));
+                    String min = cursor.getString(2).substring(cursor.getString(2).indexOf(":") + 1);
+                    if(tryParseInt(hr) && tryParseInt(min)) {
+                        double val = Integer.parseInt(hr) + (Integer.parseInt(min) / 60.0);
+                        sleep.add(new DataPoint(day, val));
+                    }
+                }
                 cursor.moveToNext();
             }
         }
@@ -197,11 +203,14 @@ public class AllGraph extends GraphBase {
 
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
-                int dayOfMonth = Integer.parseInt(cursor.getString(0).substring(8));
-                String s = cursor.getString(4);
-                if(s != null) {
-                    int val = Integer.parseInt(s);
-                    exer.add(new DataPoint(dayOfMonth, val/5));
+                if(tryParseInt(cursor.getString(0).substring(8))) {
+                    int dayOfMonth = Integer.parseInt(cursor.getString(0).substring(8));
+                    String s = cursor.getString(4);
+                    if (s != null && tryParseInt(s)) {
+
+                        int val = Integer.parseInt(s);
+                        exer.add(new DataPoint(dayOfMonth, val / 5));
+                    }
                 }
                 cursor.moveToNext();
             }
@@ -236,10 +245,13 @@ public class AllGraph extends GraphBase {
         Cursor cursor = LocalStorageAccessMood.getMonthEntries(v.getContext(), year, month);
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
-                int dayOfMonth = Integer.parseInt(cursor.getString(0).substring(8));
-                int val = Integer.parseInt(cursor.getString(3));
-                mood.add(new DataPoint(dayOfMonth, val*2));
-
+                if(tryParseInt(cursor.getString(0).substring(8))) {
+                    int dayOfMonth = Integer.parseInt(cursor.getString(0).substring(8));
+                    if(tryParseInt(cursor.getString(3))) {
+                        int val = Integer.parseInt(cursor.getString(3));
+                        mood.add(new DataPoint(dayOfMonth, val * 2));
+                    }
+                }
                 cursor.moveToNext();
             }
         }
@@ -248,12 +260,15 @@ public class AllGraph extends GraphBase {
         cursor = LocalStorageAccessSleep.getMonthEntries(v.getContext(), year, month);
         if(cursor.moveToFirst()){
             while(!cursor.isAfterLast()) {
-                int day = Integer.parseInt(cursor.getString(0).substring(8));
-                String hr = cursor.getString(2).substring(0, cursor.getString(2).indexOf(":"));
-                String min= cursor.getString(2).substring(cursor.getString(2).indexOf(":")+1);
-
-                double val = Integer.parseInt(hr) + (Integer.parseInt(min) / 60.0);
-                sleep.add(new DataPoint(day, val));
+                if(tryParseInt(cursor.getString(0).substring(8))) {
+                    int day = Integer.parseInt(cursor.getString(0).substring(8));
+                    String hr = cursor.getString(2).substring(0, cursor.getString(2).indexOf(":"));
+                    String min = cursor.getString(2).substring(cursor.getString(2).indexOf(":") + 1);
+                    if(tryParseInt(hr) && tryParseInt(min)) {
+                        double val = Integer.parseInt(hr) + (Integer.parseInt(min) / 60.0);
+                        sleep.add(new DataPoint(day, val));
+                    }
+                }
                 cursor.moveToNext();
             }
         }
@@ -263,11 +278,14 @@ public class AllGraph extends GraphBase {
 
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
-                int dayOfMonth = Integer.parseInt(cursor.getString(0).substring(8));
-                String s = cursor.getString(4);
-                if(s != null) {
-                    int val = Integer.parseInt(s);
-                    exer.add(new DataPoint(dayOfMonth, val/5));
+                if(tryParseInt(cursor.getString(0).substring(8))) {
+                    int dayOfMonth = Integer.parseInt(cursor.getString(0).substring(8));
+                    String s = cursor.getString(4);
+                    if (s != null && tryParseInt(s)) {
+
+                        int val = Integer.parseInt(s);
+                        exer.add(new DataPoint(dayOfMonth, val / 5));
+                    }
                 }
                 cursor.moveToNext();
             }
@@ -302,10 +320,13 @@ public class AllGraph extends GraphBase {
         Cursor cursor = LocalStorageAccessMood.getMonthEntries(v.getContext(), year, month);
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
-                int dayOfMonth = Integer.parseInt(cursor.getString(0).substring(8));
-                int val = Integer.parseInt(cursor.getString(4));
-                mood.add(new DataPoint(dayOfMonth, val*2));
-
+                if(tryParseInt(cursor.getString(0).substring(8))) {
+                    int dayOfMonth = Integer.parseInt(cursor.getString(0).substring(8));
+                    if(tryParseInt(cursor.getString(4))) {
+                        int val = Integer.parseInt(cursor.getString(4));
+                        mood.add(new DataPoint(dayOfMonth, val * 2));
+                    }
+                }
                 cursor.moveToNext();
             }
         }
@@ -314,12 +335,15 @@ public class AllGraph extends GraphBase {
         cursor = LocalStorageAccessSleep.getMonthEntries(v.getContext(), year, month);
         if(cursor.moveToFirst()){
             while(!cursor.isAfterLast()) {
-                int day = Integer.parseInt(cursor.getString(0).substring(8));
-                String hr = cursor.getString(2).substring(0, cursor.getString(2).indexOf(":"));
-                String min= cursor.getString(2).substring(cursor.getString(2).indexOf(":")+1);
-
-                double val = Integer.parseInt(hr) + (Integer.parseInt(min) / 60.0);
-                sleep.add(new DataPoint(day, val));
+                if(tryParseInt(cursor.getString(0).substring(8))) {
+                    int day = Integer.parseInt(cursor.getString(0).substring(8));
+                    String hr = cursor.getString(2).substring(0, cursor.getString(2).indexOf(":"));
+                    String min = cursor.getString(2).substring(cursor.getString(2).indexOf(":") + 1);
+                    if(tryParseInt(hr) && tryParseInt(min)) {
+                        double val = Integer.parseInt(hr) + (Integer.parseInt(min) / 60.0);
+                        sleep.add(new DataPoint(day, val));
+                    }
+                }
                 cursor.moveToNext();
             }
         }
@@ -329,11 +353,14 @@ public class AllGraph extends GraphBase {
 
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
-                int dayOfMonth = Integer.parseInt(cursor.getString(0).substring(8));
-                String s = cursor.getString(4);
-                if(s != null) {
-                    int val = Integer.parseInt(s);
-                    exer.add(new DataPoint(dayOfMonth, val/5));
+                if(tryParseInt(cursor.getString(0).substring(8))) {
+                    int dayOfMonth = Integer.parseInt(cursor.getString(0).substring(8));
+                    String s = cursor.getString(4);
+                    if (s != null && tryParseInt(s)) {
+
+                        int val = Integer.parseInt(s);
+                        exer.add(new DataPoint(dayOfMonth, val / 5));
+                    }
                 }
                 cursor.moveToNext();
             }
@@ -368,10 +395,13 @@ public class AllGraph extends GraphBase {
         Cursor cursor = LocalStorageAccessMood.getMonthEntries(v.getContext(), year, month);
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
-                int dayOfMonth = Integer.parseInt(cursor.getString(0).substring(8));
-                int val = Integer.parseInt(cursor.getString(5));
-                mood.add(new DataPoint(dayOfMonth, val*2));
-
+                if(tryParseInt(cursor.getString(0).substring(8))) {
+                    int dayOfMonth = Integer.parseInt(cursor.getString(0).substring(8));
+                    if(tryParseInt(cursor.getString(5))) {
+                        int val = Integer.parseInt(cursor.getString(5));
+                        mood.add(new DataPoint(dayOfMonth, val * 2));
+                    }
+                }
                 cursor.moveToNext();
             }
         }
@@ -380,12 +410,15 @@ public class AllGraph extends GraphBase {
         cursor = LocalStorageAccessSleep.getMonthEntries(v.getContext(), year, month);
         if(cursor.moveToFirst()){
             while(!cursor.isAfterLast()) {
-                int day = Integer.parseInt(cursor.getString(0).substring(8));
-                String hr = cursor.getString(2).substring(0, cursor.getString(2).indexOf(":"));
-                String min= cursor.getString(2).substring(cursor.getString(2).indexOf(":")+1);
-
-                double val = Integer.parseInt(hr) + (Integer.parseInt(min) / 60.0);
-                sleep.add(new DataPoint(day, val));
+                if(tryParseInt(cursor.getString(0).substring(8))) {
+                    int day = Integer.parseInt(cursor.getString(0).substring(8));
+                    String hr = cursor.getString(2).substring(0, cursor.getString(2).indexOf(":"));
+                    String min = cursor.getString(2).substring(cursor.getString(2).indexOf(":") + 1);
+                    if(tryParseInt(hr) && tryParseInt(min)) {
+                        double val = Integer.parseInt(hr) + (Integer.parseInt(min) / 60.0);
+                        sleep.add(new DataPoint(day, val));
+                    }
+                }
                 cursor.moveToNext();
             }
         }
@@ -395,11 +428,14 @@ public class AllGraph extends GraphBase {
 
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
-                int dayOfMonth = Integer.parseInt(cursor.getString(0).substring(8));
-                String s = cursor.getString(4);
-                if(s != null) {
-                    int val = Integer.parseInt(s);
-                    exer.add(new DataPoint(dayOfMonth, val/5));
+                if(tryParseInt(cursor.getString(0).substring(8))) {
+                    int dayOfMonth = Integer.parseInt(cursor.getString(0).substring(8));
+                    String s = cursor.getString(4);
+                    if (s != null && tryParseInt(s)) {
+
+                        int val = Integer.parseInt(s);
+                        exer.add(new DataPoint(dayOfMonth, val / 5));
+                    }
                 }
                 cursor.moveToNext();
             }

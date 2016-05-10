@@ -98,18 +98,31 @@ DATE,
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
                 int dayOfMonth = Integer.parseInt(cursor.getString(0).substring(8));
-                int val = Integer.parseInt(cursor.getString(1));
-                cal.add(new DataPoint(dayOfMonth, val));
-                val = Integer.parseInt(cursor.getString(2));
-                fat.add(new DataPoint(dayOfMonth, val));
-                val = Integer.parseInt(cursor.getString(3));
-                carb.add(new DataPoint(dayOfMonth, val));
-                val = Integer.parseInt(cursor.getString(4));
-                fib.add(new DataPoint(dayOfMonth, val));
-                val = Integer.parseInt(cursor.getString(5));
-                pro.add(new DataPoint(dayOfMonth, val));
-                val = Integer.parseInt(cursor.getString(6));
-                cnt.add(new DataPoint(dayOfMonth, val));
+                int val;
+                if(tryParseInt(cursor.getString(1))) {
+                    val = Integer.parseInt(cursor.getString(1));
+                    cal.add(new DataPoint(dayOfMonth, val));
+                }
+                if(tryParseInt(cursor.getString(2))) {
+                    val = Integer.parseInt(cursor.getString(2));
+                    fat.add(new DataPoint(dayOfMonth, val));
+                }
+                if(tryParseInt(cursor.getString(3))) {
+                    val = Integer.parseInt(cursor.getString(3));
+                    carb.add(new DataPoint(dayOfMonth, val));
+                }
+                if(tryParseInt(cursor.getString(4))) {
+                    val = Integer.parseInt(cursor.getString(4));
+                    fib.add(new DataPoint(dayOfMonth, val));
+                }
+                if(tryParseInt(cursor.getString(5))) {
+                    val = Integer.parseInt(cursor.getString(5));
+                    pro.add(new DataPoint(dayOfMonth, val));
+                }
+                if(tryParseInt(cursor.getString(6))) {
+                    val = Integer.parseInt(cursor.getString(6));
+                    cnt.add(new DataPoint(dayOfMonth, val));
+                }
 
                 cursor.moveToNext();
             }

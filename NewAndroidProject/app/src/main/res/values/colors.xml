@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#78c0d8</color>
+    <color name="colorPrimary">#000000</color>
     <!-- Action bar color -->
-    <color name="colorPrimaryDark">#61b5d1</color>
+    <color name="colorPrimaryDark">#000000</color>
     <!-- Task bar color -->
-    <color name="colorAccent">#c088cc</color>
-
+    <color name="colorAccent">#000000</color>
 
     <color name="colorBackground">#ffffff</color>
     <color name="colorBackgroundSecondary">#fdfdfd</color>
@@ -13,7 +12,6 @@
 
     <color name="colorButtonBackground">@color/colorPrimaryDark</color>
     <color name="colorButtonText">#ffffff</color>
-
     <color name="black_overlay">#66000000</color>
 
     <color name="white">#FFFFFF</color>
@@ -33,7 +31,13 @@
     <color name="navy">#000080</color>
     <color name="black">#000000</color>
 
+    <!-- Linked Text Appearance -->
+    <color name="linked_initial_text">#FF0000</color>
+    <color name="linked_text_highlight">#FFFFFF</color>
+    <color name="linked_text_link">#0000FF</color>
+
     <!-- Fragment Module Background Colors -->
+
     <color name="background_mood_color">#F1CFFC</color>
     <color name="background_sleep_color">#B4CFEC</color>
     <color name="background_exercise_color">#FFFFA3</color>
@@ -51,6 +55,10 @@
     <color name="ActionTopBar_medication_color">#F9A7B0</color>
     <color name="ActionTopBar_home_color">#E42217</color>
     <color name="ActionTopBar_analysis_color">#A77A3F</color>
+
+    <!--Fragment ModuleActionTopBar Text Colors -->
+    <color name="ActionTopBar_Title">#000000</color>
+    <color name="ActionTopBar_Subtitle">#000000</color>
 
 
 </resources>

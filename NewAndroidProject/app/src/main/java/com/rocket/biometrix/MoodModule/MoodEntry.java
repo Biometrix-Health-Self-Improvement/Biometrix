@@ -38,11 +38,11 @@ import java.util.Locale;
  */
 public class MoodEntry extends Fragment implements AsyncResponse {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String TABLENAME_PARAM = "tablename";
+    private static final String ROWID_PARAM = "uid";
 
-    private String mParam1;
-    private String mParam2;
+    private String uid;
+    private String tablename; //unused
 
     View view;
 
@@ -56,15 +56,13 @@ public class MoodEntry extends Fragment implements AsyncResponse {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment MoodEntry.
      */
-    public static MoodEntry newInstance(String param1, String param2) {
+    public static MoodEntry newInstance(String tablename, String uid) {
         MoodEntry fragment = new MoodEntry();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(TABLENAME_PARAM, tablename);
+        args.putString(ROWID_PARAM, uid);
         fragment.setArguments(args);
         return fragment;
     }
@@ -73,8 +71,12 @@ public class MoodEntry extends Fragment implements AsyncResponse {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            tablename = getArguments().getString(TABLENAME_PARAM);
+            uid = getArguments().getString(ROWID_PARAM);
+        }
+        else
+        {
+            uid = null;
         }
 
         try{
@@ -95,13 +97,17 @@ public class MoodEntry extends Fragment implements AsyncResponse {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_mood_entry, container, false);
 
-        setRatingBarListener(view);
+        //setRatingBarListener(view);
 
         DateTimeSelectorPopulateTextView popDateTime = new DateTimeSelectorPopulateTextView
                 (getActivity(), view, R.id.moodCreateEntryDateSelect, R.id.moodCreateEntryTimeSelect);
         popDateTime.Populate();
 
         SettingsAndEntryHelper.makeDisabledEntryViewsInvisible(view, LocalStorageAccessMood.TABLE_NAME);
+        if (uid != null)
+        {
+            SettingsAndEntryHelper.repopulateEntryPage(view, tablename, Integer.parseInt(uid));
+        }
         return view;
     }
 
@@ -111,6 +117,7 @@ public class MoodEntry extends Fragment implements AsyncResponse {
      * @param view the view the rating bar is in
      **************************************************************************/
     private void setRatingBarListener(final View view) {
+        /*
         //Depression
         SeekBar rating = (SeekBar)view.findViewById(R.id.moodDepressedRating);//the rating bar
         rating.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -175,7 +182,7 @@ public class MoodEntry extends Fragment implements AsyncResponse {
                 TextView desc = (TextView) view.findViewById(R.id.moodAnxietyDesc);//description of rating
                 setRatingLabel(desc, progress);
             }
-        });
+        });*/
 
     }
 

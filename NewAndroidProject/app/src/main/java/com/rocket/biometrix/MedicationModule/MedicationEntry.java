@@ -33,11 +33,11 @@ import org.json.JSONObject;
  */
 public class MedicationEntry extends Fragment implements AsyncResponse{
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String TABLENAME_PARAM = "tablename";
+    private static final String ROWID_PARAM = "uid";
 
-    private String mParam1;
-    private String mParam2;
+    private String uid;
+    private String tablename; //unused
 
     private View entryView;
 
@@ -51,15 +51,13 @@ public class MedicationEntry extends Fragment implements AsyncResponse{
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment MedicationEntry.
      */
-    public static MedicationEntry newInstance(String param1, String param2) {
+    public static MedicationEntry newInstance(String tablename, String uid) {
         MedicationEntry fragment = new MedicationEntry();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(TABLENAME_PARAM, tablename);
+        args.putString(ROWID_PARAM, uid);
         fragment.setArguments(args);
         return fragment;
     }
@@ -68,8 +66,12 @@ public class MedicationEntry extends Fragment implements AsyncResponse{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            tablename = getArguments().getString(TABLENAME_PARAM);
+            uid = getArguments().getString(ROWID_PARAM);
+        }
+        else
+        {
+            uid = null;
         }
 
         try{
@@ -95,7 +97,10 @@ public class MedicationEntry extends Fragment implements AsyncResponse{
         entryView = view;
 
         SettingsAndEntryHelper.makeDisabledEntryViewsInvisible(entryView, LocalStorageAccessMedication.TABLE_NAME);
-
+        if (uid != null)
+        {
+            SettingsAndEntryHelper.repopulateEntryPage(entryView, tablename, Integer.parseInt(uid));
+        }
         return view;
     }
 
@@ -170,7 +175,7 @@ public class MedicationEntry extends Fragment implements AsyncResponse{
         Context context = entryView.getContext();
 
         JSONObject jsonObject;
-        jsonObject = JsonCVHelper.processServerJsonString(result, context, "Could not create exercise entry on web database");
+        jsonObject = JsonCVHelper.processServerJsonString(result, context, "Could not create medication entry on web database");
 
         if (jsonObject != null)
         {

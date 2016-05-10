@@ -4,7 +4,7 @@
             android:layout_height="match_parent"
             tools:context="com.rocket.biometrix.Analysis.AnalysisFragment">
 
-        <Button style="@style/graph"
+        <Button style="@style/analysis_graph_button"
             android:id="@+id/goToGraphAll"
             android:onClick="AllGraph" />
 
@@ -119,7 +119,7 @@
                     android:layout_width="wrap_content"/>
 
                 <Button
-                    style="@style/create_entry_button"
+                    style="@style/analysis_finished_button"
                     android:id="@+id/runAnalysisButton"
                     android:text="@string/analysis_run_button"
                     android:layout_span="1"
@@ -146,9 +146,9 @@
                     android:id="@+id/analysisCorrelationCommentsTextView"/>
 
                 <Button
-                    android:id="@+id/diet_entry_done_button"
+                    android:id="@+id/AnalysisFinishedButton"
                     android:layout_span="1"
-                    style="@style/finished_button"
+                    style="@style/analysis_finished_button"
                     android:onClick="EntryDoneOnClick"
                     android:layout_column="2"/>
 

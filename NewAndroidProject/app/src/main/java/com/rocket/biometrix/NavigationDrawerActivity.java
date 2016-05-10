@@ -2,6 +2,7 @@ package com.rocket.biometrix;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.graphics.drawable.ColorDrawable;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -30,8 +31,6 @@ import com.rocket.biometrix.DietModule.DietParent;
 import com.rocket.biometrix.ExerciseModule.ExerciseEntry;
 import com.rocket.biometrix.ExerciseModule.ExerciseParent;
 import com.rocket.biometrix.Login.CreateLogin;
-import com.rocket.biometrix.Login.GetLogin;
-import com.rocket.biometrix.Login.GoogleLogin;
 import com.rocket.biometrix.Login.LocalAccount;
 import com.rocket.biometrix.Login.SettingsAndEntryHelper;
 import com.rocket.biometrix.MedicationModule.MedicationEntry;
@@ -88,10 +87,13 @@ public class NavigationDrawerActivity extends AppCompatActivity
         mEditEntryB = getIntent().getExtras();
 
         frag = new HomeScreen();
+
         transaction.replace(R.id.navigation_drawer_fragment_content, frag, "home");
         transaction.addToBackStack(null);
         transaction.commit();
-
+        this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                getResources().getColor(R.color.background_home_color));
+        setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_home_color));
         if (mEditEntryB != null) {
             //yourDataObject = getIntent().getStringExtra(KEY_EXTRA);
             mTblSignal = mEditEntryB.getString("tablename"); //See MECR ViewAdapter, ViewHolder's list item onClick listener
@@ -110,7 +112,13 @@ public class NavigationDrawerActivity extends AppCompatActivity
             mTblSignal = null;}
 
         }
+        
+        //Local account/settings setup
+        navView = navigationView;
+        MenuItem dietItem = navView.getMenu().findItem(R.id.nav_diet_module);
 
+        LocalAccount.setNavDrawerRef(this);
+        UpdateMenuItems();
 
     }
 
@@ -128,6 +136,15 @@ public class NavigationDrawerActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.navigation_drawer_activity, menu);
+
+        if (LocalAccount.GetInstance().isLoggedIn())
+        {
+            menu.findItem(R.id.action_logout).setVisible(true);
+        }
+        else
+        {
+            menu.findItem(R.id.action_logout).setVisible(false);
+        }
         return true;
     }
 
@@ -139,6 +156,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Fragment frag;
+
         switch(item.getItemId()) {
             case R.id.action_help:
 
@@ -156,17 +174,17 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 {
                     frag = new MoodSettings();
                 }
-                else if(fragClass.equals(DietParent.class) //TODO: || fragClass.equals(DietGraph.class)
+                else if(fragClass.equals(DietParent.class)  || fragClass.equals(DietGraph.class)
                         || fragClass.equals(DietEntry.class))
                 {
                     frag = new DietSettings();
                 }
-                else if(fragClass.equals(MedicationParent.class) //TODO: || fragClass.equals(MedicationGraph.class)
+                else if(fragClass.equals(MedicationParent.class)  //TODO: || fragClass.equals(MedicationGraph.class)
                         || fragClass.equals(MedicationEntry.class))
                 {
                     frag = new MedicationSettings();
                 }
-                else if(fragClass.equals(ExerciseParent.class) //TODO: || fragClass.equals(ExerciseGraph.class)
+                else if(fragClass.equals(ExerciseParent.class)  || fragClass.equals(ExerciseGraph.class)
                         || fragClass.equals(ExerciseEntry.class))
                 {
                     frag = new ExerciseSettings();
@@ -178,6 +196,12 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
                 replaceFragment(frag);
                 return true;
+
+            case R.id.action_logout:
+                LogoutUser();
+                replaceFragment(new HomeScreen());
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -189,7 +213,15 @@ public class NavigationDrawerActivity extends AppCompatActivity
         int id = item.getItemId();
         Fragment frag = new HomeScreen(); //intialize to homescreen in case something goes wrong it will not crash and just go back to home
 
-        if (id == R.id.nav_mood_module) {
+/*        if(id == R.id.nav_home_logged_in) {
+            frag = new HomeScreen_Logged_In();
+        } else */
+        if (id == R.id.nav_home){
+            if(LocalAccount.isLoggedIn())
+                frag = new HomeScreen_Logged_In();
+            else
+                frag = new HomeScreen();
+        } else if (id == R.id.nav_mood_module) {
             frag = new MoodParent();
         } else if (id == R.id.nav_sleep_module) {
             frag = new SleepParent();
@@ -199,19 +231,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
             frag = new DietParent();
         } else if (id == R.id.nav_medication_module) {
             frag = new MedicationParent();
-        } else if (id == R.id.nav_analytics) { //TODO: menu open analytics fragment
+        } else if (id == R.id.nav_analytics) {
             frag = new AnalysisFragment();
-        } else if (id == R.id.nav_settings) {
-            frag = new ModuleSettings();
-        } else if (id == R.id.nav_login) {
-            frag = new GetLogin();
-        } else if (id == R.id.nav_create_account){
-            frag = new CreateLogin();
-        } else if (id == R.id.nav_google_login){
-            frag = new GoogleLogin();
-        } else if (id == R.id.nav_logout)
-        {
-            LogoutUser();
         } else if(id == R.id.nav_sync)
         {
             Sync sync = new Sync(getApplicationContext());
@@ -234,7 +255,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
             getSupportActionBar().setTitle(getResources().getString(title));
         } catch (Exception e){}
     }
-
+    public void setActionBarColorFromFragment(int color){
+        try {
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(color));
+        } catch (Exception e){}
+    }
     /**************************************************************************
      * Replaces the current active fragment with the fragment passed in
      * @param frag a new fragment that has been created before the function is called
@@ -244,6 +269,57 @@ public class NavigationDrawerActivity extends AppCompatActivity
         transaction.replace(R.id.navigation_drawer_fragment_content, frag);
         transaction.addToBackStack(null);
         transaction.commit();
+
+        if (activeFragment.getClass() == HomeScreen_Logged_In.class ||
+                frag.getClass() == HomeScreen_Logged_In.class)
+        {
+            supportInvalidateOptionsMenu();
+        }
+
+        Class fragClass = frag.getClass();
+
+        if (fragClass == HomeScreen.class || fragClass == HomeScreen_Logged_In.class) //TODO ad other reset/create login pages
+        {
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_home_color));
+            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_home_color));
+        }
+        else if (fragClass == MoodParent.class || fragClass == MoodEntry.class)
+        {
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_mood_color));
+            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_mood_color));
+        }
+        else if (fragClass == SleepParent.class || fragClass == SleepEntry.class)
+        {
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_sleep_color));
+            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_sleep_color));
+        }
+        else if (fragClass == ExerciseParent.class || fragClass == ExerciseEntry.class)
+        {
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_exercise_color));
+            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_exercise_color));
+        }
+        else if(fragClass == DietParent.class || fragClass == DietEntry.class)
+        {
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_diet_color));
+            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_diet_color));
+        }
+        else if(fragClass == MedicationParent.class || fragClass == MedicationEntry.class)
+        {
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_medication_color));
+            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_medication_color));
+        }
+        else if(fragClass == AnalysisFragment.class)
+        {
+            this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
+                    getResources().getColor(R.color.background_analysis_color));
+            setActionBarColorFromFragment(getResources().getColor(R.color.ActionTopBar_analysis_color));
+        }
     }
 
     /**************************************************************************
@@ -265,11 +341,45 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 newFragment = new SleepEntry();
             } else if (activeFragment.getClass() == ExerciseParent.class){
                 newFragment = new ExerciseEntry();
+            } else if (activeFragment.getClass() == DietParent.class) {
+                newFragment = new DietEntry();
+            } else if (activeFragment.getClass() == MedicationParent.class){
+                newFragment = new MedicationEntry();
+            }
+
+            //replaces the current fragment with the entry fragment
+            replaceFragment(newFragment);
+        }
+    }
+
+    /**************************************************************************
+     *  Manages onClick events for each modules CreateEntry button.
+     *  The current fragment is retrieved and identified and replaces with its create entry fragment
+     *  Duplicate of above code with a set arguments call with the bundle
+     * @param v
+     * @param bundle A bundle of arguments to pass to the next fragment
+     **************************************************************************/
+    public void CreateEntryOnClickWithBundle(View v, Bundle bundle) {
+        //Initialize to home screen in case the fragment active is not found in the following, it will not crash and just go back to home
+        Fragment newFragment = new HomeScreen();
+
+        //if fragment exists
+        if (activeFragment != null && activeFragment.isVisible()) {
+
+            //Determines which module parent activity is active and then replaces it with its child Entry fragment
+            if(activeFragment.getClass() == MoodParent.class) {
+                newFragment = new MoodEntry();
+            } else if (activeFragment.getClass() == SleepParent.class){
+                newFragment = new SleepEntry();
+            } else if (activeFragment.getClass() == ExerciseParent.class){
+                newFragment = new ExerciseEntry();
             } else if (activeFragment.getClass() == DietParent.class){
                 newFragment = new DietEntry();
             } else if (activeFragment.getClass() == MedicationParent.class){
                 newFragment = new MedicationEntry();
             }
+
+            newFragment.setArguments(bundle);
 
             //replaces the current fragment with the entry fragment
             replaceFragment(newFragment);
@@ -295,7 +405,6 @@ public class NavigationDrawerActivity extends AppCompatActivity
                 ((SleepEntry) activeFragment).onDoneClick(v);
                 newFragment = new SleepParent();
             } else if (activeFragment.getClass() == ExerciseEntry.class){
-                //TODO: let's not be a little bitch about it
                 ((ExerciseEntry) activeFragment).onDoneClick(v);
                 newFragment = new ExerciseParent();
             } else if (activeFragment.getClass() == DietEntry.class){
@@ -358,7 +467,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
         ((com.rocket.biometrix.Login.GetLogin)activeFragment).resetPasswordClick();
     }
     public  void passwordSignIn(View v){
-        ((com.rocket.biometrix.Login.GetLogin)activeFragment).okayButtonClick(v);
+        ((com.rocket.biometrix.HomeScreen)activeFragment).okayButtonClick(v);
+    }
+
+    public  void googleSignIn(View v){
+        ((com.rocket.biometrix.HomeScreen)activeFragment).googleSignIn(v);
     }
 
     public void onRunButtonClick(View v)
@@ -374,6 +487,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
         ((CreateLogin)activeFragment).createAccount();
     }
 
+    public void returnToLoggedInHomePage()
+    {
+        replaceFragment(new HomeScreen_Logged_In());
+    }
+
     /**
      * If the current user is logged in with Biometrix, sign them out. If they are logged in via
      * google this directs them to that page instead.
@@ -382,15 +500,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
     {
         if (LocalAccount.isLoggedIn())
         {
-            if (LocalAccount.isGoogleAccountSignedIn())
-            {
-                Toast.makeText(getApplicationContext(), "Please logout from the google login page", Toast.LENGTH_LONG).show();
-            }
-            else
-            {
-                LocalAccount.Logout();
-                Toast.makeText(getApplicationContext(), "Account logged out", Toast.LENGTH_LONG).show();
-            }
+            LocalAccount.Logout();
+            Toast.makeText(getApplicationContext(), "Account logged out", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -412,13 +523,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
         if(!LocalAccount.isLoggedIn() )
         {
             navMenu.findItem(R.id.nav_sync).setVisible(false);
-            navMenu.findItem(R.id.nav_logout).setVisible(false);
             navMenu.findItem(R.id.nav_analytics).setVisible(false);
         }
         else
         {
             navMenu.findItem(R.id.nav_sync).setVisible(true);
-            navMenu.findItem(R.id.nav_logout).setVisible(true);
             navMenu.findItem(R.id.nav_analytics).setVisible(true);
         }
 

@@ -36,30 +36,7 @@ public class DatabaseConnect extends AsyncTask<String, Void, Void>
         delegate = receiver;
     }
 
-    /**
-     * A check for network availability? Taken from here
-     * http://stackoverflow.com/questions/5474089/how-to-check-currently-internet-connection-is-available-or-not-in-android
-     * TODO: Make use of this if it works. Currently untested...
-     * @param context Current context
-     * @return True if available, false otherwise
-     */
-    public static boolean isNetworkAvailable(Context context)
-    {
-        boolean connected = false;
-        ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-            //we are connected to a network
-            connected = true;
-        }
-        else
-        {
-            connected = false;
-        }
-
-        return connected;
-    }
 
     //The string object that will be passed to the return result
     private String returnResult;

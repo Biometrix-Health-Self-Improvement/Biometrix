@@ -161,7 +161,7 @@
 
             <Button
                 android:id="@+id/submitSleepButton"
-                style="@style/done_button"
+                style="@style/sleep_done_button"
                 android:onClick="EntryDoneOnClick" />
 
         </TableLayout>

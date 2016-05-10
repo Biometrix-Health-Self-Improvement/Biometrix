@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="action_bar_title_home_screen">BioMetrix</string>
+    <string name="action_bar_title_home_screen_logged_in">BioMetrix Logged In</string>
     <string name="action_bar_title_module_settings">Module Settings</string>
 
     <string name="action_bar_title_exercise_parent">BioMetrix Exercise Tracker</string>
