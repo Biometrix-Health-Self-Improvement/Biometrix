@@ -2,6 +2,7 @@ package com.rocket.biometrix;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.content.Context;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import com.rocket.biometrix.Analysis.SleepGraph;
 import com.rocket.biometrix.Database.Sync;
 import com.rocket.biometrix.DietModule.DietEntry;
 import com.rocket.biometrix.DietModule.DietParent;
+import com.rocket.biometrix.EditPastEntries.EditPastActivity;
 import com.rocket.biometrix.ExerciseModule.ExerciseEntry;
 import com.rocket.biometrix.ExerciseModule.ExerciseParent;
 import com.rocket.biometrix.Login.CreateLogin;
@@ -238,7 +240,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
             Sync sync = new Sync(getApplicationContext());
             sync.syncDatabases();
             frag = new HomeScreen_Logged_In();
+        } else if(id == R.id.nav_manage_entries){
+            Intent intent = new Intent(getApplicationContext(), EditPastActivity.class);
+            startActivity(intent);
         }
+
         replaceFragment(frag);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
