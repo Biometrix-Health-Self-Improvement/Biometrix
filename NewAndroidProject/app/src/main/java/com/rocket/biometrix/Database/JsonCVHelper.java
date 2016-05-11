@@ -415,7 +415,7 @@ public class JsonCVHelper
     {
         String returnString;
 
-        if (durationString.indexOf(0) == '0')
+        if (durationString.charAt(0) == '0')
         {
             returnString = durationString.substring(1);
         }
@@ -438,13 +438,17 @@ public class JsonCVHelper
         String returnString;
         String stringSuffix;
 
-        String hourPart = timeString.substring(0, 1);
-        String minutePart = timeString.substring(3, 4);
+        String hourPart = timeString.substring(0, 2);
+        String minutePart = timeString.substring(3, 5);
         Integer hourInt = Integer.parseInt(hourPart);
 
         if (hourInt > 11)
         {
             stringSuffix = " PM";
+
+            if (hourInt != 12) {
+                hourInt -= 12;
+            }
         }
         else
         {
