@@ -78,6 +78,8 @@ public class Sync implements AsyncResponse
 
             for(int i = 0; i < tableNames.length; ++i)
             {
+                getAllIDInfo(tableNames[i], primaryKeyColumnLists[i][0], primaryKeyColumnLists[i][1], jsonArray[i]);
+
                 for(int j = 0; j < syncTypes.length; ++j)
                 {
                     if (syncTypes[j] == LocalStorageAccess.SYNC_NEEDS_DELETED)
@@ -91,8 +93,6 @@ public class Sync implements AsyncResponse
                                 columnLists[i], jsonArray[i], syncTypes[j]);
                     }
                 }
-
-                getAllIDInfo(tableNames[i], primaryKeyColumnLists[i][0], primaryKeyColumnLists[i][1], jsonArray[i]);
 
                 try
                 {
