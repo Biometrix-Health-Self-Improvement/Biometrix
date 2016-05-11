@@ -834,7 +834,10 @@ public class SettingsAndEntryHelper {
                 {MOOD_DEP, LocalStorageAccessMood.DEP},
                 {MOOD_ELEV, LocalStorageAccessMood.ELEV},
                 {MOOD_IRRITABLE, LocalStorageAccessMood.IRR},
-                {MOOD_ANX, LocalStorageAccessMood.ANX}};
+                {MOOD_ANX, LocalStorageAccessMood.ANX},
+                {MOOD_SAD, LocalStorageAccessMood.SAD},
+                {MOOD_HAPPY, LocalStorageAccessMood.HAPPY},
+                {MOOD_ANGER, LocalStorageAccessMood.ANGER}};
     }
     
     //Sleep module settings
