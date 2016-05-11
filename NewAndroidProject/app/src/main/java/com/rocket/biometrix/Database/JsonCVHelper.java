@@ -274,6 +274,7 @@ public class JsonCVHelper
                             break;
                         case "Reset":
                             Toast.makeText(context, "Check your email (and your spam folder) for your reset link", Toast.LENGTH_LONG).show();
+                            navdrawerReference.returnToAppHomePage();
                             break;
                         default:
                             break;

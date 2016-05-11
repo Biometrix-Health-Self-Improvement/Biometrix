@@ -100,7 +100,8 @@
                 android:textColorHighlight="@color/linked_text_highlight"
                 android:textColorLink="@color/linked_text_link"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentStart="true" />
+                android:layout_alignParentStart="true"
+                android:onClick="resetPasswordHomeScreenButtonClick"/>
 
             <TextView
                 android:id="@+id/HomeScreenCreateLoginClickableText"

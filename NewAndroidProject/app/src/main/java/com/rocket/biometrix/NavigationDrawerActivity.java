@@ -34,6 +34,7 @@ import com.rocket.biometrix.ExerciseModule.ExerciseEntry;
 import com.rocket.biometrix.ExerciseModule.ExerciseParent;
 import com.rocket.biometrix.Login.CreateLogin;
 import com.rocket.biometrix.Login.LocalAccount;
+import com.rocket.biometrix.Login.ResetLogin;
 import com.rocket.biometrix.Login.SettingsAndEntryHelper;
 import com.rocket.biometrix.MedicationModule.MedicationEntry;
 import com.rocket.biometrix.MedicationModule.MedicationParent;
@@ -286,7 +287,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
         Class fragClass = frag.getClass();
 
         if (fragClass == HomeScreen.class || fragClass == HomeScreen_Logged_In.class ||
-         fragClass == CreateLogin.class) //TODO ad other reset/create login pages
+         fragClass == CreateLogin.class || fragClass == ResetLogin.class)
         {
             this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
                     getResources().getColor(R.color.background_home_color));
@@ -553,7 +554,7 @@ public class NavigationDrawerActivity extends AppCompatActivity
     }
 
     public void resetPasswordButtonClick(View v){
-        ((com.rocket.biometrix.Login.GetLogin)activeFragment).resetPasswordClick();
+        ((ResetLogin)activeFragment).resetPasswordClick();
     }
     public  void passwordSignIn(View v){
         ((com.rocket.biometrix.HomeScreen)activeFragment).okayButtonClick(v);
@@ -585,6 +586,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
     public void createLoginHomeScreenButtonClick(View v)
     {
         replaceFragment(new CreateLogin());
+    }
+
+    public void resetPasswordHomeScreenButtonClick(View v)
+    {
+        replaceFragment(new ResetLogin());
     }
 
     public void returnToLoggedInHomePage()

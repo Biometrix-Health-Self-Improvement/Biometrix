@@ -16,26 +16,21 @@ import com.rocket.biometrix.Database.JsonCVHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link GetLogin.OnFragmentInteractionListener} interface
+ * {@link ResetLogin.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link GetLogin#newInstance} factory method to
+ * Use the {@link ResetLogin#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GetLogin extends Fragment implements AsyncResponse {
+public class ResetLogin extends Fragment implements AsyncResponse {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     View v;
-    private String returnResult;
 
     private String username;
-    private String password;
     private String email;
 
     private String mParam1;
@@ -43,7 +38,7 @@ public class GetLogin extends Fragment implements AsyncResponse {
 
     private OnFragmentInteractionListener mListener;
 
-    public GetLogin() {
+    public ResetLogin() {
         // Required empty public constructor
     }
 
@@ -53,10 +48,10 @@ public class GetLogin extends Fragment implements AsyncResponse {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment GetLogin.
+     * @return A new instance of fragment ResetLogin.
      */
-    public static GetLogin newInstance(String param1, String param2) {
-        GetLogin fragment = new GetLogin();
+    public static ResetLogin newInstance(String param1, String param2) {
+        ResetLogin fragment = new ResetLogin();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -86,36 +81,11 @@ public class GetLogin extends Fragment implements AsyncResponse {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        v =  inflater.inflate(R.layout.fragment_home_screen, container, false);
-
+        v =  inflater.inflate(R.layout.fragment_reset_login, container, false);
 
         return v;
     }
 
-
-
-
-    /**
-     * Calls the database to check the login for the user
-     * @param view
-     */
-    public void okayButtonClick(View view)
-    {
-        EditText usernameEdit =  (EditText) v.findViewById(R.id.HomeScreenUserNameEditText);
-        username = usernameEdit.getText().toString();
-
-        EditText passwordEdit = (EditText) v.findViewById(R.id.HomeScreenPasswordEditText);
-        password = passwordEdit.getText().toString();
-
-        if (username.equals("") || password.equals("") )
-        {
-            Toast.makeText(v.getContext(), "Username or password is blank", Toast.LENGTH_LONG).show();
-        }
-        else
-        {
-            new DatabaseConnect(this).execute(DatabaseConnectionTypes.LOGIN_CHECK,username, password);
-        }
-    }
 
 
     public void resetPasswordClick()
@@ -158,7 +128,7 @@ public class GetLogin extends Fragment implements AsyncResponse {
      */
     public void processFinish(String result)
     {
-        JsonCVHelper.processServerJsonStringHomeScreen(returnResult, v.getContext(), null, null,
+        JsonCVHelper.processServerJsonStringHomeScreen(result, v.getContext(), null, null,
                 (NavigationDrawerActivity) getActivity());
     }
 }
