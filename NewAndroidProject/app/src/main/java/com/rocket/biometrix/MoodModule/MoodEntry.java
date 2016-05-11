@@ -152,7 +152,69 @@ public class MoodEntry extends Fragment implements AsyncResponse {
         sync.databaseInsertOrUpdateSyncTable(this, row, LocalStorageAccessMood.TABLE_NAME);
     }
 
+    public void onUpdateClick(View v) {
+        //get date, and time
+        String datetmp = ((TextView) view.findViewById(R.id.moodCreateEntryDateSelect)).getText().toString().substring(11);
 
+        DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+        Date date = null;
+        try {
+            date = format.parse(datetmp);
+        } catch (Exception e) {
+        }
+        format = new SimpleDateFormat("yyyy-MM-dd");
+        String dateShort = format.format(date);
+        String time = ((TextView) view.findViewById(R.id.moodCreateEntryTimeSelect)).getText().toString().substring(6);
+
+        //String[] data = new String[]{null, username, null, dateShort, time, dep, elev, irr, anx, notes};
+        //The below has the affect of the above comment
+        String[] data = SettingsAndEntryHelper.prepareColumnArray(view, LocalStorageAccessMood.TABLE_NAME,
+                dateShort, time);
+
+
+        Integer webPrimarykey = LocalStorageAccessMood.getWebKeyFromLocalKey(view.getContext(), Integer.parseInt(uid));
+        //Changes the null of the web primary key to the expected value
+        data[2] = webPrimarykey.toString();
+        data[0] = uid;
+
+        //Retrieves column names from the class
+        String[] columnNames = LocalStorageAccessMood.getColumns();
+
+        if (columnNames.length == data.length)
+        {
+            ContentValues rowToUpdate = new ContentValues();
+            int dataIndex = 0;
+
+            for (String column : columnNames)
+            {
+                //Don't need to insert nulls
+                if (data[dataIndex] != null) {
+                    rowToUpdate.put(column, data[dataIndex]);
+                }
+                dataIndex++;
+            }
+
+            //Call update method
+            LocalStorageAccessMood.updateFromContentValues(rowToUpdate, view.getContext(), Integer.parseInt(uid));
+
+            Sync sync = new Sync(v.getContext());
+            sync.databaseUpdateOrUpdateSyncTable(this, rowToUpdate, Integer.parseInt(uid), webPrimarykey, LocalStorageAccessMood.TABLE_NAME);
+        }
+
+    }
+
+    /**
+     * Deletes the entry on click based on local ID and web ID
+     * @param v
+     */
+    public void onDeleteClick(View v)
+    {
+        Integer webPrimarykey = LocalStorageAccessMood.getWebKeyFromLocalKey(view.getContext(), Integer.parseInt(uid));
+        LocalStorageAccessMood.deleteByLocalKeyValue(view.getContext(), Integer.parseInt(uid));
+
+        Sync sync = new Sync(view.getContext());
+        sync.databaseDeleteOrUpdateSyncTable(this, Integer.parseInt(uid), webPrimarykey, LocalStorageAccessMood.TABLE_NAME);
+    }
 
     /**
      * This interface must be implemented by activities that contain this

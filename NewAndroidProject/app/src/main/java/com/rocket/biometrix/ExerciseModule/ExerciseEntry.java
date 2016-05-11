@@ -25,6 +25,7 @@ import com.rocket.biometrix.R;
 
 import org.json.JSONObject;
 
+import java.lang.reflect.ParameterizedType;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -122,7 +123,7 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
 
         typeSpinner  = (Spinner) v.findViewById(R.id.ex_type);
         ArrayAdapter typeSpin = ArrayAdapter.createFromResource(
-                getActivity(),R.array.ex_type_array,android.R.layout.simple_spinner_item);
+                getActivity(), R.array.ex_type_array, android.R.layout.simple_spinner_item);
 
         typeSpinner.setAdapter(typeSpin);
 
@@ -210,6 +211,76 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
             Sync sync = new Sync(v.getContext());
             sync.databaseInsertOrUpdateSyncTable(this, rowToBeInserted, LocalStorageAccessExercise.TABLE_NAME);
         }
+    }
+
+    /**
+     * This method is called when a user is viewing an entry that was previously entered and then
+     * clicks update.
+     * @param v The current view
+     */
+    public void onUpdateClick(View v)
+    {
+        String dateString = dateTV.getText().toString();
+        String timeText = timeTV.getText().toString();
+
+        //Cleaning date and time strings with helper class
+        dateString = StringDateTimeConverter.fixDate(dateString);
+        //Deactivated for time since this module is storing date in a different manner than all
+        //of the others, may need to go back to this later instead, but for all modules.
+        //timeString = StringDateTimeConverter.fixTime(timeString);
+
+        timeText = timeText.substring(timeText.indexOf(":") + 2).trim();
+
+        //String[] exerciseEntryData = new String[]{null, username, null, titleString, typeSelected,
+        // minSelected, Integer.toString(intensity), notes, dateString, timeString};
+        //Has the affect of the comment above
+        String[] exerciseEntryData = SettingsAndEntryHelper.prepareColumnArray(onCreateView,
+                LocalStorageAccessExercise.TABLE_NAME, dateString, timeText);
+
+        Integer webPrimarykey = LocalStorageAccessExercise.getWebKeyFromLocalKey(onCreateView.getContext(), Integer.parseInt(uid));
+        //Changes the null of the web primary key to the expected value
+        exerciseEntryData[2] = webPrimarykey.toString();
+        exerciseEntryData[0] = uid;
+
+        String[] cols = LocalStorageAccessExercise.getColumns();
+
+        //Getting context for LSA constructor
+        Context context = onCreateView.getContext();
+
+        //Constructor for LSA Exercise
+        LocalStorageAccessExercise dbEx = new LocalStorageAccessExercise(context);
+        //Making sure I have data for each column (even if null or empty, note that this is NOT required, you can insert columns individually if you wish.) @see putNull
+        //I don't believe the above comment is correct.
+        if (cols.length == exerciseEntryData.length) {
+            ContentValues rowToUpdate = new ContentValues();
+            int dataIndex = 0;
+            for (String column : cols) {
+                //Insert column name ripped from LSA child class, and the user's entry data we gathered above
+                if (exerciseEntryData[dataIndex] != null) {
+                    rowToUpdate.put(column, exerciseEntryData[dataIndex]);
+                }
+                dataIndex++;
+            }
+            //Call insert method
+            dbEx.updateFromContentValues(rowToUpdate, v.getContext(), Integer.parseInt(uid));
+
+            Sync sync = new Sync(v.getContext());
+            sync.databaseUpdateOrUpdateSyncTable(this, rowToUpdate, Integer.parseInt(uid), webPrimarykey, LocalStorageAccessExercise.TABLE_NAME);
+        }
+
+    }
+
+    /**
+     * Deletes the entry on click based on local ID and web ID
+     * @param view
+     */
+    public void onDeleteClick(View view)
+    {
+        Integer webPrimarykey = LocalStorageAccessExercise.getWebKeyFromLocalKey(onCreateView.getContext(), Integer.parseInt(uid));
+        LocalStorageAccessExercise.deleteByLocalKeyValue(onCreateView.getContext(), Integer.parseInt(uid));
+
+        Sync sync = new Sync(onCreateView.getContext());
+        sync.databaseDeleteOrUpdateSyncTable(this, Integer.parseInt(uid), webPrimarykey, LocalStorageAccessExercise.TABLE_NAME);
     }
 
     /**

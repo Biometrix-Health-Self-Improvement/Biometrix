@@ -173,6 +173,75 @@ public class MedicationEntry extends Fragment implements AsyncResponse{
     }
 
     /**
+     * This method is called when a user is viewing an entry that was previously entered and then
+     * clicks update.
+     * @param v The current view
+     */
+    public void onUpdateClick(View v)
+    {
+        //Filling date and time strings for bundle's string array
+        String dateString = ((TextView)entryView.findViewById(R.id.MedicationStartDateTextView)).getText().toString();
+        String timeString = ((TextView)entryView.findViewById(R.id.MedicationStartTimeTextView)).getText().toString();
+
+        //Cleaning date and time strings with helper class
+        dateString = StringDateTimeConverter.fixDate(dateString);
+        //Deactivated for time since this module is storing date in a different manner than all
+        //of the others, may need to go back to this later instead, but for all modules.
+        //timeString = StringDateTimeConverter.fixTime(timeString);
+        timeString = timeString.substring(timeString.indexOf(":") + 2).trim();
+
+        //String[] medEntryData = {null, username, null, dateString, timeString, brandString,
+        //        prescriberString, dosetring, instructionsString, warningsString, notes};
+        //Has the affect of the comment above
+        String[] medEntryData = SettingsAndEntryHelper.prepareColumnArray(entryView,
+                LocalStorageAccessMedication.TABLE_NAME, dateString, timeString);
+
+        Integer webPrimarykey = LocalStorageAccessMedication.getWebKeyFromLocalKey(entryView.getContext(), Integer.parseInt(uid));
+        //Changes the null of the web primary key to the expected value
+        medEntryData[2] = webPrimarykey.toString();
+        medEntryData[0] = uid;
+
+        //Retrieves column names from the class
+        String[] columnNames = LocalStorageAccessMedication.getColumns();
+
+
+        if (columnNames.length == medEntryData.length)
+        {
+            ContentValues rowToUpdate = new ContentValues();
+            int dataIndex = 0;
+
+            for (String column : columnNames)
+            {
+                //Don't need to insert nulls
+                if (medEntryData[dataIndex] != null) {
+                    rowToUpdate.put(column, medEntryData[dataIndex]);
+                }
+                dataIndex++;
+            }
+
+            //Call update method
+            LocalStorageAccessMedication.updateFromContentValues(rowToUpdate, entryView.getContext(), Integer.parseInt(uid));
+
+            Sync sync = new Sync(v.getContext());
+            sync.databaseUpdateOrUpdateSyncTable(this, rowToUpdate, Integer.parseInt(uid), webPrimarykey, LocalStorageAccessMedication.TABLE_NAME);
+        }
+
+    }
+
+    /**
+     * Deletes the entry on click based on local ID and web ID
+     * @param view
+     */
+    public void onDeleteClick(View view)
+    {
+        Integer webPrimarykey = LocalStorageAccessMedication.getWebKeyFromLocalKey(entryView.getContext(), Integer.parseInt(uid));
+        LocalStorageAccessMedication.deleteByLocalKeyValue(entryView.getContext(), Integer.parseInt(uid));
+
+        Sync sync = new Sync(entryView.getContext());
+        sync.databaseDeleteOrUpdateSyncTable(this, Integer.parseInt(uid), webPrimarykey, LocalStorageAccessMedication.TABLE_NAME);
+    }
+
+    /**
      * Called asynchronously when the call to the webserver is done. This method updates the webID
      * reference that is stored on the local database
      *

@@ -7,6 +7,7 @@ import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 
 import com.rocket.biometrix.Login.LocalAccount;
@@ -620,27 +621,17 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
     }
 
     /**
-     * Selects all of the entries for the passed in table that match the type passed
+     * Selects all of the entries for the passed in table including ones that are deleted and sitting
+     * in the sync table
      * @param c The current context which is used by the database queries
      * @param tableName The name of the table to select entries on
-     * @param localKey The name of the primary key for the local table
-     * @param columns The names of the columns that are to be returned, should be the local key
-     *                and the web key
      * @param curUserOnly True means return only data for the currently logged in user, false means
      *                    return all data for local users
      * @return A Cursor to all of the columns that need to be updated
      */
-    public static Cursor selectNonPendingEntries(Context c, String tableName, String localKey, String columns[]
-            , boolean curUserOnly)
+    public static Cursor selectAllSyncDeletions(Context c, String tableName, boolean curUserOnly)
     {
         SQLiteDatabase database = getInstance(c).getReadableDatabase();
-
-        //e.g. Mood LEFT INNER JOIN SYNC ON MOOD.LocalMoodID = Sync.Key AND Sync.TableName = Mood
-        String joinedTable = tableName + " LEFT OUTER JOIN " + SYNC_TABLE_NAME + " ON " + tableName +
-                "." + localKey + " = " + SYNC_TABLE_NAME + "." + SYNC_KEY_COLUMN + " AND " +
-                SYNC_TABLE_NAME + "." + SYNC_TABLE_NAME_COLUMN + " = '" + tableName + "'";
-
-        String statusCheck = SYNC_KEY_COLUMN + " is null";
 
         try
         {
@@ -653,13 +644,17 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
                     username = LocalAccount.GetInstance().GetUsername();
                 }
 
-                //e.g. select all mood columns for the username where the status is needs added
-                return database.query(joinedTable, columns, "Username = ? AND " + statusCheck,
+                //e.g. select all mood columns for the username where the status is needs delete
+                return database.query(SYNC_TABLE_NAME, new String[]{SYNC_WEB_KEY_COLUMN},
+                        SYNC_USERNAME_COLUMN + " = ? AND " + SYNC_TABLE_NAME_COLUMN + " = '" + tableName + "' AND " +
+                        SYNC_STATUS_COLUMN + " = " + SYNC_NEEDS_DELETED,
                         new String[]{username}, null, null, null);
             }
             else
             {
-                return database.query(joinedTable, columns, statusCheck,
+                return database.query(SYNC_TABLE_NAME, new String[]{SYNC_WEB_KEY_COLUMN},
+                        SYNC_TABLE_NAME_COLUMN + " = '" + tableName + "' AND " +
+                                SYNC_STATUS_COLUMN + " = " + SYNC_NEEDS_DELETED,
                         null, null, null, null);
             }
         }
@@ -684,5 +679,70 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
         SQLiteDatabase database = getInstance(c).getReadableDatabase();
 
         return database.query(tableName, null, idFieldName + " = ?", new String[]{idValue.toString()}, null, null, null);
+    }
+
+    /**
+     * Deletes the row associated with the passed in tablename, column name and integer value
+     * @param c The current context, used for database access.
+     * @param tableName The name of the table to delete from
+     * @param idFieldName The name of the column on the table
+     * @param idValue The value of the primary key of the row to delete
+     * @return Returns the value of the delete which corresponds to rows affected
+     */
+    public static int deleteEntryByID(Context c, String tableName, String idFieldName, Integer idValue)
+    {
+        SQLiteDatabase database = getInstance(c).getReadableDatabase();
+
+        int retVal = database.delete(tableName, idFieldName + " = ?", new String[]{idValue.toString()});
+        database.close();
+        return  retVal;
+    }
+
+    /**
+     * Retrieves the web ID associated with the local ID for a row
+     * @param context The current context, used for database access
+     * @param tableName The name of hte table to grab from
+     * @param idFieldName The name of the column that holds the local key
+     * @param webIDFieldName The name of the column that holds the web key
+     * @param idValue The value to match with the local key
+     * @return The integer corresponding to the web primary key
+     */
+    public static int getWebKeyFromLocalKey(Context context, String tableName, String idFieldName, String webIDFieldName, Integer idValue)
+    {
+        SQLiteDatabase database = getInstance(context).getReadableDatabase();
+        int retVal = -1;
+        Cursor cursor = database.query(tableName, new String[]{webIDFieldName}, idFieldName + " = ?", new String[]{idValue.toString()}, null, null, null);
+
+        if(cursor.moveToFirst() && !cursor.isNull(0))
+        {
+            retVal = cursor.getInt(0);
+        }
+
+        cursor.close();
+        database.close();
+        return  retVal;
+    }
+
+
+    /**
+     * Performs an update method on the table row specified by the local primary key based on the
+     * content values passed in
+     * @param context Current context, used for grabbing the database
+     * @param contentValues The key/value pairs used to update
+     * @param localPrimaryKey The value of the primary key of the row that is to be updated
+     * @param tableName The name of the table the update takes place on
+     * @param primaryKeyColumnName The name of the primary key column
+     * @return Returns the number of rows updated
+     */
+    public static int updateTableFromContentValues(Context context, ContentValues contentValues, Integer localPrimaryKey,
+                                                    String tableName, String primaryKeyColumnName)
+    {
+        SQLiteDatabase database = getInstance(context).getWritableDatabase();
+        int retVal = -1;
+
+        retVal = database.update(tableName, contentValues, primaryKeyColumnName + " = ?", new String[]{localPrimaryKey.toString()});
+        database.close();
+
+        return retVal;
     }
 }

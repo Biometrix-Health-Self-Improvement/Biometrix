@@ -449,19 +449,19 @@ public class NavigationDrawerActivity extends AppCompatActivity
         if (activeFragment != null && activeFragment.isVisible()) {
             //Determines which module entry activity is active and then replaces it with its parent fragment
             if(activeFragment.getClass() == MoodEntry.class) {
-                //((MoodEntry) activeFragment).onUpdateClick(v);
+                ((MoodEntry) activeFragment).onUpdateClick(v);
                 newFragment = new MoodParent();
             } else if (activeFragment.getClass() == SleepEntry.class){
-                //((SleepEntry) activeFragment).onUpdateClick(v);
+                ((SleepEntry) activeFragment).onUpdateClick(v);
                 newFragment = new SleepParent();
             } else if (activeFragment.getClass() == ExerciseEntry.class){
-                //((ExerciseEntry) activeFragment).onUpdateClick(v);
+                ((ExerciseEntry) activeFragment).onUpdateClick(v);
                 newFragment = new ExerciseParent();
             } else if (activeFragment.getClass() == DietEntry.class){
                 ((DietEntry) activeFragment).onUpdateClick(v);
                 newFragment = new DietParent();
             } else if (activeFragment.getClass() == MedicationEntry.class){
-                //((MedicationEntry) activeFragment).onUpdateClick(v);
+                ((MedicationEntry) activeFragment).onUpdateClick(v);
                 newFragment = new MedicationParent();
             }
             //replaces the current fragment with the parent fragment
@@ -489,19 +489,19 @@ public class NavigationDrawerActivity extends AppCompatActivity
         if (activeFragment != null && activeFragment.isVisible()) {
             //Determines which module entry activity is active and then replaces it with its parent fragment
             if(activeFragment.getClass() == MoodEntry.class) {
-                //((MoodEntry) activeFragment).onDeleteClick(v);
+                ((MoodEntry) activeFragment).onDeleteClick(v);
                 newFragment = new MoodParent();
             } else if (activeFragment.getClass() == SleepEntry.class){
-                //((SleepEntry) activeFragment).onDeleteClick(v);
+                ((SleepEntry) activeFragment).onDeleteClick(v);
                 newFragment = new SleepParent();
             } else if (activeFragment.getClass() == ExerciseEntry.class){
-                //((ExerciseEntry) activeFragment).onDeleteClick(v);
+                ((ExerciseEntry) activeFragment).onDeleteClick(v);
                 newFragment = new ExerciseParent();
             } else if (activeFragment.getClass() == DietEntry.class){
-                //((DietEntry) activeFragment).onDeleteClick(v);
+                ((DietEntry) activeFragment).onDeleteClick(v);
                 newFragment = new DietParent();
             } else if (activeFragment.getClass() == MedicationEntry.class){
-                //((MedicationEntry) activeFragment).onDeleteClick(v);
+                ((MedicationEntry) activeFragment).onDeleteClick(v);
                 newFragment = new MedicationParent();
             }
 

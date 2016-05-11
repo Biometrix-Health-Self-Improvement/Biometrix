@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import com.rocket.biometrix.Common.DateTimeSelectorPopulateTextView;
 import com.rocket.biometrix.Common.StringDateTimeConverter;
 import com.rocket.biometrix.Database.AsyncResponse;
 import com.rocket.biometrix.Database.JsonCVHelper;
+import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessDiet;
 import com.rocket.biometrix.Database.Sync;
 import com.rocket.biometrix.Login.SettingsAndEntryHelper;
@@ -162,6 +164,11 @@ public class DietEntry extends Fragment implements AsyncResponse {
 
     }
 
+    /**
+     * This method is called when a user is viewing an entry that was previously entered and then
+     * clicks update.
+     * @param v The current view
+     */
     public void onUpdateClick(View v)
     {
         String dateText = ((TextView)dietView.findViewById(R.id.DietStartDateTextView)).getText().toString();
@@ -174,28 +181,49 @@ public class DietEntry extends Fragment implements AsyncResponse {
         String[] dietEntryData = SettingsAndEntryHelper.prepareColumnArray(dietView,
                 LocalStorageAccessDiet.TABLE_NAME, dateText, null);
 
+        Integer webPrimarykey = LocalStorageAccessDiet.getWebKeyFromLocalKey(dietView.getContext(), Integer.parseInt(uid));
+        //Changes the null of the web primary key to the expected value
+        dietEntryData[2] = webPrimarykey.toString();
+        dietEntryData[0] = uid;
+
         //Retrieves column names from the class
         String[] columnNames = LocalStorageAccessDiet.getColumns();
 
 
         if (columnNames.length == dietEntryData.length)
         {
-            ContentValues rowToBeInserted = new ContentValues();
+            ContentValues rowToUpdate = new ContentValues();
             int dataIndex = 0;
 
             for (String column : columnNames)
             {
-                rowToBeInserted.put(column, dietEntryData[dataIndex]);
+                //Don't need to insert nulls
+                if (dietEntryData[dataIndex] != null) {
+                    rowToUpdate.put(column, dietEntryData[dataIndex]);
+                }
                 dataIndex++;
             }
 
-            //Call insert method
-            LocalStorageAccessDiet.insertFromContentValues(rowToBeInserted, dietView.getContext());
+            //Call update method
+            LocalStorageAccessDiet.updateFromContentValues(rowToUpdate, dietView.getContext(), Integer.parseInt(uid));
 
             Sync sync = new Sync(v.getContext());
-            sync.databaseUpdateOrUpdateSyncTable(this, rowToBeInserted, Integer.parseInt(uid), 0, LocalStorageAccessDiet.TABLE_NAME);
+            sync.databaseUpdateOrUpdateSyncTable(this, rowToUpdate, Integer.parseInt(uid), webPrimarykey, LocalStorageAccessDiet.TABLE_NAME);
         }
 
+    }
+
+    /**
+     * Deletes the entry on click based on local ID and web ID
+     * @param view
+     */
+    public void onDeleteClick(View view)
+    {
+        Integer webPrimarykey = LocalStorageAccessDiet.getWebKeyFromLocalKey(dietView.getContext(), Integer.parseInt(uid));
+        LocalStorageAccessDiet.deleteByLocalKeyValue(dietView.getContext(), Integer.parseInt(uid));
+
+        Sync sync = new Sync(dietView.getContext());
+        sync.databaseDeleteOrUpdateSyncTable(this, Integer.parseInt(uid), webPrimarykey, LocalStorageAccessDiet.TABLE_NAME);
     }
 
     /**

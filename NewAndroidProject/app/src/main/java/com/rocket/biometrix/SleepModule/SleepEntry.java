@@ -373,9 +373,72 @@ public class SleepEntry extends Fragment implements AsyncResponse {
         sync.databaseInsertOrUpdateSyncTable(this, rowToBeInserted, LocalStorageAccessSleep.TABLE_NAME);
     }
 
-    public interface OnFragmentInteractionListener {
+    public void onUpdateClick(View v) {
+        String dateText = startDateTextView.getText().toString();
+        String timeText = startTimeTextView.getText().toString();
+        dateText = dateText.substring(dateText.indexOf(",") + 1).trim();
+        timeText = timeText.substring(timeText.indexOf(":") + 2).trim();
+        DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+        Date date = null;
+        try{ date = format.parse(dateText); } catch (Exception e) { }
+        format = new SimpleDateFormat("yyyy-MM-dd");
+        dateText = format.format(date);
+
+        //Calls a helper method to grab most of the data for this.
+        //Effectively grabs,
+        //String[] sleepEntryData = {null, username, null, dateText, timeText, duration, quality, notes};
+        String[] sleepEntryData = SettingsAndEntryHelper.prepareColumnArray(entryView, LocalStorageAccessSleep.TABLE_NAME, dateText, timeText);
+
+        Integer webPrimarykey = LocalStorageAccessSleep.getWebKeyFromLocalKey(entryView.getContext(), Integer.parseInt(uid));
+        //Changes the null of the web primary key to the expected value
+        sleepEntryData[2] = webPrimarykey.toString();
+        sleepEntryData[0] = uid;
+
+        //Retrieves column names from the class
+        String[] columnNames = LocalStorageAccessSleep.getColumns();
+
+
+        if (columnNames.length == sleepEntryData.length)
+        {
+            ContentValues rowToUpdate = new ContentValues();
+            int dataIndex = 0;
+
+            for (String column : columnNames)
+            {
+                //Don't need to insert nulls
+                if (sleepEntryData[dataIndex] != null) {
+                    rowToUpdate.put(column, sleepEntryData[dataIndex]);
+                }
+                dataIndex++;
+            }
+
+            //Call update method
+            LocalStorageAccessSleep.updateFromContentValues(rowToUpdate, entryView.getContext(), Integer.parseInt(uid));
+
+            Sync sync = new Sync(v.getContext());
+            sync.databaseUpdateOrUpdateSyncTable(this, rowToUpdate, Integer.parseInt(uid), webPrimarykey, LocalStorageAccessSleep.TABLE_NAME);
+        }
+
+    }
+
+    /**
+     * Deletes the entry on click based on local ID and web ID
+     * @param v
+     */
+    public void onDeleteClick(View v)
+    {
+        Integer webPrimarykey = LocalStorageAccessSleep.getWebKeyFromLocalKey(entryView.getContext(), Integer.parseInt(uid));
+        LocalStorageAccessSleep.deleteByLocalKeyValue(entryView.getContext(), Integer.parseInt(uid));
+
+        Sync sync = new Sync(entryView.getContext());
+        sync.databaseDeleteOrUpdateSyncTable(this, Integer.parseInt(uid), webPrimarykey, LocalStorageAccessSleep.TABLE_NAME);
+    }
+
+        public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }
+    
+    
 
     /**
      * Called asynchronously when the call to the webserver is done. This method updates the webID

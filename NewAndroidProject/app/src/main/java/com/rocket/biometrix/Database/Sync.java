@@ -78,14 +78,13 @@ public class Sync implements AsyncResponse
 
             for(int i = 0; i < tableNames.length; ++i)
             {
-                getAllIDInfo(tableNames[i], primaryKeyColumnLists[i][0], primaryKeyColumnLists[i][1], jsonArray[i]);
+                getAllIDInfo(tableNames[i], primaryKeyColumnLists[i][1], jsonArray[i]);
 
                 for(int j = 0; j < syncTypes.length; ++j)
                 {
                     if (syncTypes[j] == LocalStorageAccess.SYNC_NEEDS_DELETED)
                     {
-                        getAllPendingInfoOfType(tableNames[i], primaryKeyColumnLists[i][0],
-                                primaryKeyColumnLists[i], jsonArray[i], syncTypes[j]);
+                        getAllPendingInfoForDelete(tableNames[i], primaryKeyColumnLists[i][1], jsonArray[i], syncTypes[j]);
                     }
                     else
                     {
@@ -368,9 +367,6 @@ public class Sync implements AsyncResponse
                 case LocalStorageAccess.SYNC_NEEDS_UPDATED:
                     jsonObject.put("Update", opJson);
                     break;
-                case LocalStorageAccess.SYNC_NEEDS_DELETED:
-                    jsonObject.put("Delete", opJson);
-                    break;
                 default:
                     jsonObject.put("Error", "Invalid sync type chosen");
                     break;
@@ -394,23 +390,20 @@ public class Sync implements AsyncResponse
     }
 
     /**
-     * Retrieves all of the primary key info (local and web) for entries that are not in the sync table
-     * and stores it in the jsonObject that is passed in.
+     * Updates the passed in jsonObject with all of the data corresponding to an add in the
      * @param tableName The name of the table to pull from
-     * @param keyName The name of the localID/primary key
-     * @param webKeyColumn The name of the web primary key
-     * @param jsonObject The json object to store all of the return data in
-     *
+     * @param webKeyColumnName The name of the webkey column that is being referenced. e.g. webdietID
+     * @param jsonObject The JSONObject to update with the returned values
+     * @param syncType The type of operation to check the sync table for
      */
-    private void getAllIDInfo(String tableName, String keyName, String webKeyColumn, JSONObject jsonObject)
+    private void getAllPendingInfoForDelete(String tableName, String webKeyColumnName, JSONObject jsonObject, int syncType)
     {
-        Cursor cursor = LocalStorageAccess.selectNonPendingEntries(context, tableName, keyName,
-                new String[]{webKeyColumn}, true);
+        Cursor cursor = LocalStorageAccess.selectAllSyncDeletions(context, tableName, true);
 
-        JSONObject tableJson = new JSONObject();
+        JSONObject opJson = new JSONObject();
         Integer curRow = 0;
 
-        if(cursor != null && cursor.moveToFirst() )
+        if(cursor.moveToFirst())
         {
             int numColumns = cursor.getColumnCount();
 
@@ -426,10 +419,10 @@ public class Sync implements AsyncResponse
                     for (int i = 0; i < numColumns; ++i)
                     {
                         //e.g. LocalMoodID=2
-                        entryJSON.put(cursor.getColumnName(i), cursor.getString(i));
+                        entryJSON.put(webKeyColumnName, cursor.getString(i));
                     }
 
-                    tableJson.put(curRow.toString(), entryJSON);
+                    opJson.put(curRow.toString(), entryJSON);
                 }
                 catch (JSONException except)
                 {
@@ -442,6 +435,80 @@ public class Sync implements AsyncResponse
 
         try
         {
+            if (syncType == LocalStorageAccess.SYNC_NEEDS_DELETED)
+            {
+                jsonObject.put("Delete", opJson);
+            }
+        }
+        catch(JSONException except)
+        {
+            try
+            {
+                //This should never fail.. But just to make Android Studio happy...
+                jsonObject.put("Error", except.getMessage());
+            }
+            catch (JSONException e)
+            {
+                e.getMessage();
+            }
+        }
+
+        cursor.close();
+    }
+
+    /**
+     * Retrieves all of the primary key info (web) for entries on the local database, including
+     * entries that have been deleted locally but not on the web.
+     * @param tableName The name of the table to pull from
+     * @param webKeyColumn The name of the web primary key
+     * @param jsonObject The json object to store all of the return data in
+     *
+     */
+    private void getAllIDInfo(String tableName, String webKeyColumn, JSONObject jsonObject)
+    {
+        Cursor cursor = LocalStorageAccess.selectAllEntries(context, tableName, null, new String[]{webKeyColumn}, true);
+
+        JSONObject tableJson = new JSONObject();
+        Integer curRow = 0;
+        boolean done = false;
+        boolean switchToSync = false;
+
+        while (!done) {
+            if (cursor != null && cursor.moveToFirst()) {
+                int numColumns = cursor.getColumnCount();
+
+                //Creates a json object for each row in the returned results, and adds it to
+                //the entryJson object
+                while (!cursor.isAfterLast()) {
+                    JSONObject entryJSON = new JSONObject();
+
+                    try {
+
+                        entryJSON.put(webKeyColumn, cursor.getString(0));
+
+                        tableJson.put(curRow.toString(), entryJSON);
+                    } catch (JSONException except) {
+                        except.getMessage();
+                    }
+                    cursor.moveToNext();
+                    ++curRow;
+                }
+            }
+
+            cursor.close();
+            if (switchToSync == false)
+            {
+                switchToSync = true;
+                cursor = LocalStorageAccess.selectAllSyncDeletions(context, tableName, true);
+            }
+            else
+            {
+                done = true;
+            }
+        }
+
+        try
+        {
             jsonObject.put("PullData", tableJson);
         }
         catch(JSONException except)
@@ -449,7 +516,7 @@ public class Sync implements AsyncResponse
             except.getMessage();
         }
 
-        cursor.close();
+
     }
 
     /**
@@ -478,10 +545,6 @@ public class Sync implements AsyncResponse
         if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
             //we are connected to a network
             connected = true;
-        }
-        else
-        {
-            connected = false;
         }
 
         return connected;

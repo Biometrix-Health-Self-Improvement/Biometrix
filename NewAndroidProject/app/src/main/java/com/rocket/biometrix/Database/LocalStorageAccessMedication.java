@@ -79,6 +79,41 @@ public class LocalStorageAccessMedication {
         LocalStorageAccess.getInstance(c).safeInsert(TABLE_NAME, columns[2], cv);
     }
 
+    /**
+     * Deletes a the row with the local key that has the passed in value
+     * @param context A reference to the context, used to grab database access
+     * @param value The value of the key on the row to delete
+     * @return The number of rows deleted. Should be 0 on fail and 1 on success. Greater than 1
+     * means something went wrong.
+     */
+    public static int deleteByLocalKeyValue(Context context, int value)
+    {
+        return LocalStorageAccess.deleteEntryByID(context, TABLE_NAME, LOCAL_MEDICATION_ID, value);
+    }
+
+    /**
+     * Retrieves the web primary key associated with the local primary key that is associated with
+     * value.
+     * @param context The current context. Used for database access
+     * @param value The value of the local primary key on the desired row
+     * @return -1 on failure. Otherwise returns the web primary key
+     */
+    public static int getWebKeyFromLocalKey(Context context, int value)
+    {
+        return LocalStorageAccess.getWebKeyFromLocalKey(context, TABLE_NAME, LOCAL_MEDICATION_ID, WEB_MEDICATION_ID, value);
+    }
+
+    /**
+     * Calls an update for this table using the passed in params
+     * @param contentValues The content values that determine the new values for the row
+     * @param context The current context, used for database access
+     * @param localPrimaryKey The value of the primary key on the row to update
+     * @return The number of rows that were updated. Should be either 1 or 0.
+     */
+    public static int updateFromContentValues(ContentValues contentValues, Context context, Integer localPrimaryKey)
+    {
+        return LocalStorageAccess.updateTableFromContentValues(context, contentValues, localPrimaryKey, TABLE_NAME, LOCAL_MEDICATION_ID);
+    }
 
     /**
      * Returns all rows for the currently logged in user. If no user is logged in, returns the
