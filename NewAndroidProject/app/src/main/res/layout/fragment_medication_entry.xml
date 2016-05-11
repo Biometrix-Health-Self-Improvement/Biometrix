@@ -165,6 +165,15 @@
                 style="@style/medication_done_button"
                 android:onClick="EntryDoneOnClick" />
 
+            <Button
+                android:id="@+id/medication_entry_update_button"
+                style="@style/medication_update_button"
+                android:onClick="EntryUpdateOnClick" />
+
+            <Button
+                android:id="@+id/medication_entry_delete_button"
+                style="@style/medication_delete_button"
+                android:onClick="EntryDeleteOnClick" />
         </TableLayout>
     </ScrollView>
 

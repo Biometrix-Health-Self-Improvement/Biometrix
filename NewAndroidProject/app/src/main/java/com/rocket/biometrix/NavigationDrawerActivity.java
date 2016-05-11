@@ -436,6 +436,87 @@ public class NavigationDrawerActivity extends AppCompatActivity
         }
     }
 
+    /**************************************************************************
+     *  Manages onClick events for each modules Entry done button.
+     *  The current fragment is retrieved and identified and replaces with its parent fragment
+     * @param v
+     **************************************************************************/
+    public void EntryUpdateOnClick(View v) {
+        //Initialize to home screen in case the fragment active is not found in the following, it will not crash and just go back to home
+        Fragment newFragment = new HomeScreen();
+
+        //if fragment exists
+        if (activeFragment != null && activeFragment.isVisible()) {
+            //Determines which module entry activity is active and then replaces it with its parent fragment
+            if(activeFragment.getClass() == MoodEntry.class) {
+                //((MoodEntry) activeFragment).onUpdateClick(v);
+                newFragment = new MoodParent();
+            } else if (activeFragment.getClass() == SleepEntry.class){
+                //((SleepEntry) activeFragment).onUpdateClick(v);
+                newFragment = new SleepParent();
+            } else if (activeFragment.getClass() == ExerciseEntry.class){
+                //((ExerciseEntry) activeFragment).onUpdateClick(v);
+                newFragment = new ExerciseParent();
+            } else if (activeFragment.getClass() == DietEntry.class){
+                ((DietEntry) activeFragment).onUpdateClick(v);
+                newFragment = new DietParent();
+            } else if (activeFragment.getClass() == MedicationEntry.class){
+                //((MedicationEntry) activeFragment).onUpdateClick(v);
+                newFragment = new MedicationParent();
+            }
+            //replaces the current fragment with the parent fragment
+            replaceFragment(newFragment);
+            
+            //Hide keyboard if open
+            View view = this.getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
+    }
+
+    /**************************************************************************
+     *  Manages onClick events for each modules Entry done button.
+     *  The current fragment is retrieved and identified and replaces with its parent fragment
+     * @param v
+     **************************************************************************/
+    public void EntryDeleteOnClick(View v) {
+        //Initialize to home screen in case the fragment active is not found in the following, it will not crash and just go back to home
+        Fragment newFragment = new HomeScreen();
+
+        //if fragment exists
+        if (activeFragment != null && activeFragment.isVisible()) {
+            //Determines which module entry activity is active and then replaces it with its parent fragment
+            if(activeFragment.getClass() == MoodEntry.class) {
+                //((MoodEntry) activeFragment).onDeleteClick(v);
+                newFragment = new MoodParent();
+            } else if (activeFragment.getClass() == SleepEntry.class){
+                //((SleepEntry) activeFragment).onDeleteClick(v);
+                newFragment = new SleepParent();
+            } else if (activeFragment.getClass() == ExerciseEntry.class){
+                //((ExerciseEntry) activeFragment).onDeleteClick(v);
+                newFragment = new ExerciseParent();
+            } else if (activeFragment.getClass() == DietEntry.class){
+                //((DietEntry) activeFragment).onDeleteClick(v);
+                newFragment = new DietParent();
+            } else if (activeFragment.getClass() == MedicationEntry.class){
+                //((MedicationEntry) activeFragment).onDeleteClick(v);
+                newFragment = new MedicationParent();
+            }
+
+            //replaces the current fragment with the parent fragment
+            replaceFragment(newFragment);
+
+            //Hide keyboard
+            View view = this.getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
+    }
+
     public void EntryAcceptOnClick(View v) {
         //Initialize to home screen in case the fragment active is not found in the following, it will not crash and just go back to home
         Fragment newFragment = new HomeScreen();
@@ -497,6 +578,11 @@ public class NavigationDrawerActivity extends AppCompatActivity
     public void returnToLoggedInHomePage()
     {
         replaceFragment(new HomeScreen_Logged_In());
+    }
+
+    public void returnToAppHomePage()
+    {
+        replaceFragment(new HomeScreen());
     }
 
     /**

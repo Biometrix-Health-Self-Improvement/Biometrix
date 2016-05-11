@@ -32,17 +32,12 @@ public class CreateLogin extends Fragment  implements AsyncResponse {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-
-    private String returnResult;
-
     private String username;
     private String password;
     private String confirmedPassword;
     private String email;
 
-    private String mParam1;
     View v;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
@@ -54,15 +49,11 @@ public class CreateLogin extends Fragment  implements AsyncResponse {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment CreateLogin.
      */
-    public static CreateLogin newInstance(String param1, String param2) {
+    public static CreateLogin newInstance() {
         CreateLogin fragment = new CreateLogin();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -70,10 +61,6 @@ public class CreateLogin extends Fragment  implements AsyncResponse {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
 
         try{
             NavigationDrawerActivity nav = (NavigationDrawerActivity) getActivity();
@@ -161,16 +148,7 @@ public class CreateLogin extends Fragment  implements AsyncResponse {
      */
     public void processFinish(String result)
     {
-        returnResult = result;
-
-        JSONObject jsonObject;
-        jsonObject = JsonCVHelper.processServerJsonString(result, v.getContext(), "Could not create login");
-
-        if (jsonObject != null)
-        {
-            Toast.makeText(v.getContext(), "Please check your email (and spam folder)", Toast.LENGTH_LONG).show();
-            getActivity().getFragmentManager().popBackStack();
-        }
-
+        JsonCVHelper.processServerJsonStringHomeScreen(result, v.getContext(), null, null,
+                (NavigationDrawerActivity)getActivity());
     }
 }

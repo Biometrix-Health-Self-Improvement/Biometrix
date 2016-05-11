@@ -160,9 +160,19 @@
                 android:singleLine="true" />
 
             <Button
-                android:id="@+id/submitSleepButton"
+                android:id="@+id/sleep_entry_done_button"
                 style="@style/sleep_done_button"
                 android:onClick="EntryDoneOnClick" />
+
+            <Button
+                android:id="@+id/sleep_entry_update_button"
+                style="@style/sleep_update_button"
+                android:onClick="EntryUpdateOnClick" />
+
+            <Button
+                android:id="@+id/sleep_entry_delete_button"
+                style="@style/sleep_delete_button"
+                android:onClick="EntryDeleteOnClick" />
 
         </TableLayout>
     </ScrollView>

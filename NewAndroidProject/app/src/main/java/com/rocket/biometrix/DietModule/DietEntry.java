@@ -99,7 +99,13 @@ public class DietEntry extends Fragment implements AsyncResponse {
 
         if (uid != null)
         {
+            dietView.findViewById(R.id.diet_entry_done_button).setVisibility(View.GONE);
             SettingsAndEntryHelper.repopulateEntryPage(dietView, tablename, Integer.parseInt(uid));
+        }
+        else
+        {
+            dietView.findViewById(R.id.diet_entry_update_button).setVisibility(View.GONE);
+            dietView.findViewById(R.id.diet_entry_delete_button).setVisibility(View.GONE);
         }
 
         return view;
@@ -156,6 +162,42 @@ public class DietEntry extends Fragment implements AsyncResponse {
 
     }
 
+    public void onUpdateClick(View v)
+    {
+        String dateText = ((TextView)dietView.findViewById(R.id.DietStartDateTextView)).getText().toString();
+        dateText = StringDateTimeConverter.fixDate(dateText);
+
+        //String[] dietEntryData = {null, username, null, dateText, foodName, meal, servingSize,
+        //        calories, totalFat, satFat, transFat, chol, sodium, totalCarbs, fiber, sugars,
+        //        protein, vitaminA, vitaminB, calcium, iron, notes};
+        //The below has essentially the affect of the comment above
+        String[] dietEntryData = SettingsAndEntryHelper.prepareColumnArray(dietView,
+                LocalStorageAccessDiet.TABLE_NAME, dateText, null);
+
+        //Retrieves column names from the class
+        String[] columnNames = LocalStorageAccessDiet.getColumns();
+
+
+        if (columnNames.length == dietEntryData.length)
+        {
+            ContentValues rowToBeInserted = new ContentValues();
+            int dataIndex = 0;
+
+            for (String column : columnNames)
+            {
+                rowToBeInserted.put(column, dietEntryData[dataIndex]);
+                dataIndex++;
+            }
+
+            //Call insert method
+            LocalStorageAccessDiet.insertFromContentValues(rowToBeInserted, dietView.getContext());
+
+            Sync sync = new Sync(v.getContext());
+            sync.databaseUpdateOrUpdateSyncTable(this, rowToBeInserted, Integer.parseInt(uid), 0, LocalStorageAccessDiet.TABLE_NAME);
+        }
+
+    }
+
     /**
      * Called asynchronously when the call to the webserver is done. This method updates the webID
      * reference that is stored on the local database
@@ -167,22 +209,6 @@ public class DietEntry extends Fragment implements AsyncResponse {
         //Getting context for LSA constructor
         Context context = dietView.getContext();
 
-        JSONObject jsonObject;
-        jsonObject = JsonCVHelper.processServerJsonString(result, context, "Could not create diet entry on web database");
-
-        if (jsonObject != null)
-        {
-            int[] tableIDs = new int[2];
-            JsonCVHelper.getIDColumns(tableIDs, jsonObject);
-
-            if (tableIDs[0] != -1 && tableIDs[1] != -1)
-            {
-                LocalStorageAccessDiet.updateWebIDReference(tableIDs[0], tableIDs[1], context, true);
-            }
-            else
-            {
-                Toast.makeText(context, "There was an error processing information from the webserver", Toast.LENGTH_LONG).show();
-            }
-        }
+        JsonCVHelper.processServerJsonString(result, context, LocalStorageAccessDiet.TABLE_NAME);
     }
 }

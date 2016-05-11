@@ -158,37 +158,7 @@ public class GetLogin extends Fragment implements AsyncResponse {
      */
     public void processFinish(String result)
     {
-        returnResult = result;
-
-        JSONObject jsonObject;
-
-        jsonObject = JsonCVHelper.processServerJsonString(returnResult, v.getContext(), "Login Failed");
-
-        if (jsonObject != null)
-        {
-            try
-            {
-                //If the json object passes back a token then it was a login
-                if (jsonObject.has("Token"))
-                {
-                    Toast.makeText(v.getContext(), "Login Successful!", Toast.LENGTH_LONG).show();
-
-                    //Logs the user in with their login token.
-                    LocalAccount.Login(username, jsonObject.getString("Token"));
-
-                    
-                    getActivity().getFragmentManager().popBackStack();
-                } else
-                //Assume it was a password reset
-                {
-                    Toast.makeText(v.getContext(), "Check your email (and your spam folder) for your reset link", Toast.LENGTH_LONG).show();
-                }
-            }
-            catch (JSONException jsonExcept)
-            {
-                Toast.makeText(v.getContext(), "Something went wrong with the server's return", Toast.LENGTH_LONG).show();
-            }
-        }
-
+        JsonCVHelper.processServerJsonStringHomeScreen(returnResult, v.getContext(), null, null,
+                (NavigationDrawerActivity) getActivity());
     }
 }

@@ -139,7 +139,13 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
 
         if (uid != null)
         {
+            onCreateView.findViewById(R.id.ex_entry_done_button).setVisibility(View.GONE);
             SettingsAndEntryHelper.repopulateEntryPage(onCreateView, tablename, Integer.parseInt(uid));
+        }
+        else
+        {
+            onCreateView.findViewById(R.id.exercise_entry_delete_button).setVisibility(View.GONE);
+            onCreateView.findViewById(R.id.exercise_entry_update_button).setVisibility(View.GONE);
         }
         return v;
     }
@@ -231,24 +237,6 @@ public class ExerciseEntry extends Fragment implements AsyncResponse{
         //Getting context for LSA constructor
         Context context = onCreateView.getContext();
 
-        JSONObject jsonObject;
-        jsonObject = JsonCVHelper.processServerJsonString(result, context, "Could not create exercise entry on web database");
-
-        if (jsonObject != null)
-        {
-            int[] tableIDs = new int[2];
-            JsonCVHelper.getIDColumns(tableIDs, jsonObject);
-
-            if (tableIDs[0] != -1 && tableIDs[1] != -1)
-            {
-                LocalStorageAccessExercise.updateWebIDReference(tableIDs[0], tableIDs[1], context, true);
-            }
-            else
-            {
-                Toast.makeText(context, "There was an error processing information from the webserver", Toast.LENGTH_LONG).show();
-            }
-
-        }
-
+        JsonCVHelper.processServerJsonString(result, context, LocalStorageAccessExercise.TABLE_NAME);
     }
 }

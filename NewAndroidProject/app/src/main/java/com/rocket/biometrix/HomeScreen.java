@@ -303,40 +303,8 @@ public class HomeScreen extends Fragment implements GoogleApiClient.OnConnection
         hideProgressDialog();
         String returnResult = result;
 
-        JSONObject jsonObject;
-
-        jsonObject = JsonCVHelper.processServerJsonString(returnResult, homeScreenView.getContext(), "Login Failed");
-
-        if (jsonObject != null)
-        {
-            try
-            {
-                //If the json object passes back a token then it was a login
-                if (jsonObject.has("Google") )
-                {
-                    //Logins the google account user with their id as their "username"
-                    LocalAccount.Login(acct, jsonObject.getString("Token"));
-
-                    Toast.makeText(homeScreenView.getContext(), "Google sign in succeeded!", Toast.LENGTH_LONG).show();
-                    NavigationDrawerActivity nav = (NavigationDrawerActivity) getActivity();
-                    nav.returnToLoggedInHomePage();
-                }
-                else if (jsonObject.has("Token"))
-                {
-                    Toast.makeText(homeScreenView.getContext(), "Login Successful!", Toast.LENGTH_LONG).show();
-
-                    //Logs the user in with their login token.
-                    LocalAccount.Login(username, jsonObject.getString("Token"));
-
-                    NavigationDrawerActivity nav = (NavigationDrawerActivity) getActivity();
-                    nav.returnToLoggedInHomePage();
-                }
-            }
-            catch (JSONException jsonExcept)
-            {
-                Toast.makeText(homeScreenView.getContext(), "Something went wrong with the server's return", Toast.LENGTH_LONG).show();
-            }
-        }
+        JsonCVHelper.processServerJsonStringHomeScreen(returnResult, homeScreenView.getContext(), username,
+                acct, (NavigationDrawerActivity)getActivity());
 
     }
 }

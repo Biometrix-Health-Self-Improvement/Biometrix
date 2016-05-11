@@ -106,107 +106,18 @@ public class MoodEntry extends Fragment implements AsyncResponse {
         SettingsAndEntryHelper.makeDisabledEntryViewsInvisible(view, LocalStorageAccessMood.TABLE_NAME);
         if (uid != null)
         {
+            view.findViewById(R.id.mood_entry_done_button).setVisibility(View.GONE);
             SettingsAndEntryHelper.repopulateEntryPage(view, tablename, Integer.parseInt(uid));
+        }
+        else
+        {
+            view.findViewById(R.id.mood_entry_update_button).setVisibility(View.GONE);
+            view.findViewById(R.id.mood_entry_delete_button).setVisibility(View.GONE);
         }
         return view;
     }
 
 
-    /**************************************************************************
-     * Sets on rating bar listener to change the description text for the rating bar
-     * @param view the view the rating bar is in
-     **************************************************************************/
-    private void setRatingBarListener(final View view) {
-        /*
-        //Depression
-        SeekBar rating = (SeekBar)view.findViewById(R.id.moodDepressedRating);//the rating bar
-        rating.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
-                TextView desc = (TextView) view.findViewById(R.id.moodDepressedDesc);//description of rating
-                setRatingLabel(desc, progress);
-            }
-        });
-
-        //Elevated
-        rating = (SeekBar)view.findViewById(R.id.moodElevatedRating);//the rating bar
-        rating.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
-                TextView desc = (TextView) view.findViewById(R.id.moodElevatedDesc);//description of rating
-                setRatingLabel(desc, progress);
-            }
-        });
-
-        //Irritability
-        rating = (SeekBar) view.findViewById(R.id.moodIrritabilityRating);//the rating bar
-        rating.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
-                TextView desc = (TextView) view.findViewById(R.id.moodIrritabilityDesc);//description of rating
-                setRatingLabel(desc, progress);
-            }
-        });
-
-        //Anxiety
-        rating = (SeekBar) view.findViewById(R.id.moodAnxietyRating);//the rating bar
-        rating.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                TextView desc = (TextView) view.findViewById(R.id.moodAnxietyDesc);//description of rating
-                setRatingLabel(desc, progress);
-            }
-        });*/
-
-    }
-
-    private void setRatingLabel(TextView desc, int prog){
-        String str = null;
-        switch (prog) { //get string based on rating
-            case 0: //none
-                str = getResources().getString(R.string.mood_rating_none);
-                break;
-            case 1: //mild
-                str = getResources().getString(R.string.mood_rating_mild);
-                break;
-            case 2: //moderate
-                str = getResources().getString(R.string.mood_rating_mod);
-                break;
-            case 3: //severe
-                str = getResources().getString(R.string.mood_rating_sev);
-                break;
-            case 4: //very severe
-                str = getResources().getString(R.string.mood_rating_vsev);
-                break;
-        }
-        desc.setText(str);
-    }
 
 
     public void onDoneClick(View v) {
@@ -268,23 +179,7 @@ public class MoodEntry extends Fragment implements AsyncResponse {
         //Getting context for LSA constructor
         Context context = view.getContext();
 
-        JSONObject jsonObject;
-        jsonObject = JsonCVHelper.processServerJsonString(result, context, "Could not create mood entry on web database");
-
-        if (jsonObject != null)
-        {
-            int[] tableIDs = new int[2];
-            JsonCVHelper.getIDColumns(tableIDs, jsonObject);
-
-            if (tableIDs[0] != -1 && tableIDs[1] != -1)
-            {
-                LocalStorageAccessMood.updateWebIDReference(tableIDs[0], tableIDs[1], context, true);
-            }
-            else
-            {
-                Toast.makeText(context, "There was an error processing information from the webserver", Toast.LENGTH_LONG).show();
-            }
-        }
+        JsonCVHelper.processServerJsonString(result, context, LocalStorageAccessMood.TABLE_NAME);
     }
 
 }

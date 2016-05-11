@@ -134,6 +134,16 @@
                 style="@style/exercise_done_button"
                 android:onClick="EntryDoneOnClick"/>
 
+            <Button
+                android:id="@+id/exercise_entry_update_button"
+                style="@style/exercise_update_button"
+                android:onClick="EntryUpdateOnClick" />
+
+            <Button
+                android:id="@+id/exercise_entry_delete_button"
+                style="@style/exercise_delete_button"
+                android:onClick="EntryDeleteOnClick" />
+
         </TableLayout>
     </ScrollView>
 

@@ -253,7 +253,13 @@ public class SleepEntry extends Fragment implements AsyncResponse {
         SettingsAndEntryHelper.makeDisabledEntryViewsInvisible(entryView, LocalStorageAccessSleep.TABLE_NAME);
         if (uid != null)
         {
+            entryView.findViewById(R.id.sleep_entry_done_button).setVisibility(View.GONE);
             SettingsAndEntryHelper.repopulateEntryPage(entryView, tablename, Integer.parseInt(uid));
+        }
+        else
+        {
+            entryView.findViewById(R.id.sleep_entry_update_button).setVisibility(View.GONE);
+            entryView.findViewById(R.id.sleep_entry_delete_button).setVisibility(View.GONE);
         }
         return v;
     }
@@ -382,21 +388,6 @@ public class SleepEntry extends Fragment implements AsyncResponse {
         //Getting context for LSA constructor
         Context context = entryView.getContext();
 
-        JSONObject jsonObject;
-        jsonObject = JsonCVHelper.processServerJsonString(result, context, "Could not create sleep entry on web database");
-
-        if (jsonObject != null)
-        {
-            int[] tableIDs = new int[2];
-            JsonCVHelper.getIDColumns(tableIDs, jsonObject);
-
-            if (tableIDs[0] != -1 && tableIDs[1] != -1)
-            {
-                LocalStorageAccessSleep.updateWebIDReference(tableIDs[0], tableIDs[1], context, true);
-            } else
-            {
-                Toast.makeText(context, "There was an error processing information from the webserver", Toast.LENGTH_LONG).show();
-            }
-        }
+        JsonCVHelper.processServerJsonString(result, context, LocalStorageAccessSleep.TABLE_NAME);
     }
 }

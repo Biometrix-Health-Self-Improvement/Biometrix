@@ -99,7 +99,13 @@ public class MedicationEntry extends Fragment implements AsyncResponse{
         SettingsAndEntryHelper.makeDisabledEntryViewsInvisible(entryView, LocalStorageAccessMedication.TABLE_NAME);
         if (uid != null)
         {
+            entryView.findViewById(R.id.medicaiton_entry_done_button).setVisibility(View.GONE);
             SettingsAndEntryHelper.repopulateEntryPage(entryView, tablename, Integer.parseInt(uid));
+        }
+        else
+        {
+            entryView.findViewById(R.id.medication_entry_delete_button).setVisibility(View.GONE);
+            entryView.findViewById(R.id.medication_entry_update_button).setVisibility(View.GONE);
         }
         return view;
     }
@@ -177,21 +183,6 @@ public class MedicationEntry extends Fragment implements AsyncResponse{
         //Getting context for LSA constructor
         Context context = entryView.getContext();
 
-        JSONObject jsonObject;
-        jsonObject = JsonCVHelper.processServerJsonString(result, context, "Could not create medication entry on web database");
-
-        if (jsonObject != null)
-        {
-            int[] tableIDs = new int[2];
-            JsonCVHelper.getIDColumns(tableIDs, jsonObject);
-
-            if (tableIDs[0] != -1 && tableIDs[1] != -1)
-            {
-                LocalStorageAccessMedication.updateWebIDReference(tableIDs[0], tableIDs[1], context, true);
-            } else
-            {
-                Toast.makeText(context, "There was an error processing information from the webserver", Toast.LENGTH_LONG).show();
-            }
-        }
+        JsonCVHelper.processServerJsonString(result, context, LocalStorageAccessMedication.TABLE_NAME);
     }
 }

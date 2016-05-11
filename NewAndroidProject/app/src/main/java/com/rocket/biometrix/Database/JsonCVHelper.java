@@ -5,7 +5,9 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.rocket.biometrix.Login.LocalAccount;
+import com.rocket.biometrix.NavigationDrawerActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -69,16 +71,17 @@ public class JsonCVHelper
     /**
      * Processes the string returned by the server and attempts to convert it into Json. Displays
      * error messages if the parsing fails, the return has an error, or the return is not verified.
+     * Then calls the appropriate method to process the string (e.g. for inserts this
      * @param jsonString The string variable that is to be converted into Json
      * @param context The context to display the toasts when the operation fails
-     * @param unverifiedMessage The message to display if the Verified flag is not set by the server
-     *                          upon return
+     * @param tableName The name of the table that results are being processed for
      * @return The JSONObject that corresponds to the string passed in. If the parse failed, or the
      * message is unverified, this returns null instead.
      */
-    public static JSONObject processServerJsonString(String jsonString, Context context, String unverifiedMessage)
+    public static void processServerJsonString(String jsonString, Context context, String tableName)
     {
         JSONObject jsonObject;
+        String operation = null;
 
         //Tries to parse the returned result as a json object.
         try
@@ -90,13 +93,14 @@ public class JsonCVHelper
             jsonObject = null;
         }
 
-        //If the return could not be parsed, then it was not a successful login
+        //If the return could not be parsed, then it was not a successful operation
         if (jsonObject == null)
         {
             Toast.makeText(context, "Something went wrong with the server's return", Toast.LENGTH_LONG).show();
         }
         else
         {
+            //Parse the JSON and determine if there is an error
             try
             {
                 if (jsonObject.has("Error"))
@@ -105,14 +109,35 @@ public class JsonCVHelper
                     jsonObject = null;
                 }
                 //If the operation succeeded
-                else if ((Boolean)jsonObject.get("Verified") )
-                {
-
-                }
                 else
                 {
-                    jsonObject = null;
-                    Toast.makeText(context, unverifiedMessage, Toast.LENGTH_LONG).show();
+                    String unverifiedMessage;
+
+                    operation = jsonObject.getString("Operation");
+
+                    switch (jsonObject.getString("Operation") )
+                    {
+                        case "Insert":
+                            unverifiedMessage = "Could not create " + tableName.toLowerCase() + " entry on the web database";
+                            break;
+                        case "Update":
+                            unverifiedMessage = "Could not update " + tableName.toLowerCase() + " entry on the web database";
+                            break;
+                        case "Delete":
+                            unverifiedMessage = "Could not delete " + tableName.toLowerCase() + " entry on the web database";
+                            break;
+                        case "Sync":
+                            unverifiedMessage = "Could not sync databases";
+                            break;
+                        default:
+                            unverifiedMessage = "Unrecognized error occurred";
+                            break;
+                    }
+                    if (!(Boolean)jsonObject.get("Verified") )
+                    {
+                        jsonObject = null;
+                        Toast.makeText(context, unverifiedMessage, Toast.LENGTH_LONG).show();
+                    }
                 }
             }
             catch (JSONException jsonExcept)
@@ -122,7 +147,142 @@ public class JsonCVHelper
             }
         }
 
-        return jsonObject;
+        //If there was no error above, proceed with processing
+        if (jsonObject != null)
+        {
+            switch (operation)
+            {
+                case "Insert":
+                    int[] tableIDs = new int[2];
+                    JsonCVHelper.getIDColumns(tableIDs, jsonObject);
+
+                    if (tableIDs[0] != -1 && tableIDs[1] != -1) {
+
+                        switch(tableName)
+                        {
+                            case LocalStorageAccessDiet.TABLE_NAME:
+                                LocalStorageAccessDiet.updateWebIDReference(tableIDs[0], tableIDs[1], context, true);
+                                break;
+                            case LocalStorageAccessExercise.TABLE_NAME:
+                                LocalStorageAccessExercise.updateWebIDReference(tableIDs[0], tableIDs[1], context, true);
+                                break;
+                            case LocalStorageAccessMedication.TABLE_NAME:
+                                LocalStorageAccessMedication.updateWebIDReference(tableIDs[0], tableIDs[1], context, true);
+                                break;
+                            case LocalStorageAccessMood.TABLE_NAME:
+                                LocalStorageAccessMood.updateWebIDReference(tableIDs[0], tableIDs[1], context, true);
+                                break;
+                            case LocalStorageAccessSleep.TABLE_NAME:
+                                LocalStorageAccessSleep.updateWebIDReference(tableIDs[0], tableIDs[1], context, true);
+                                break;
+                        }
+                    } else {
+                        Toast.makeText(context, "There was an error processing information from the webserver", Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                case "Update":
+                case "Delete":
+                    try {
+                        LocalStorageAccess.getInstance(context).deleteEntryFromSyncTable(context, tableName,
+                                jsonObject.getInt("WebKey"), false);
+                    }
+                    catch (JSONException exception)
+                    {
+                        Toast.makeText(context, "Unable to delete from sync table. This change may happen again on next sync.", Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                case "Sync":
+                    JsonCVHelper.processSyncJsonReturn(jsonObject, context);
+                    Toast.makeText(context, "Database sync complete", Toast.LENGTH_LONG).show();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+
+    /**
+     * Processes json server returns for method calls on the home page or related to accounts.
+     * @param jsonString The string to process
+     * @param context The current context used for toasts
+     * @param username The username. Used for Login operation only, can be null or any value for
+     *                 other operations
+     * @param acct A reference to the google account logging in. Can be null if the operation is
+     *             not a google login
+     * @param navdrawerReference A reference to the navigation drawer activity so that
+     */
+    public static void processServerJsonStringHomeScreen(String jsonString, Context context, String username,
+                                                         GoogleSignInAccount acct, NavigationDrawerActivity navdrawerReference) {
+        JSONObject jsonObject;
+
+        //Tries to parse the returned result as a json object.
+        try {
+            jsonObject = new JSONObject(jsonString);
+        } catch (JSONException jsonExcept) {
+            jsonObject = null;
+        }
+
+        //If the return could not be parsed, then it was not a successful operation
+        if (jsonObject == null) {
+            Toast.makeText(context, "Something went wrong with the server's return", Toast.LENGTH_LONG).show();
+        } else {
+            //Parse the JSON and determine if there is an error
+            try {
+                if (jsonObject.has("Error")) {
+                    Toast.makeText(context, jsonObject.getString("Error"), Toast.LENGTH_LONG).show();
+                }
+                //If the operation succeeded
+                else {
+                    switch (jsonObject.getString("Operation"))
+                    {
+                        case "Login":
+                            if (jsonObject.has("Token") ) {
+                            Toast.makeText(context, "Login Successful!", Toast.LENGTH_LONG).show();
+
+                            //Logs the user in with their login token.
+                            LocalAccount.Login(username, jsonObject.getString("Token"));
+                            navdrawerReference.returnToLoggedInHomePage();
+                            }
+                            else
+                            {
+                                Toast.makeText(context, "Login Failed", Toast.LENGTH_LONG).show();
+                            }
+                            break;
+                        case "GoogleLogin":
+                            if (jsonObject.has("Token") ) {
+                            //Logins the google account user with their id as their "username"
+                            LocalAccount.Login(acct, jsonObject.getString("Token"));
+
+                            Toast.makeText(context, "Google sign in succeeded!", Toast.LENGTH_LONG).show();
+                            navdrawerReference.returnToLoggedInHomePage();
+                            }
+                            else
+                            {
+                                Toast.makeText(context, "Login Failed", Toast.LENGTH_LONG).show();
+                            }
+                            break;
+                        case "Add":
+                            if (jsonObject.getBoolean("Verified") ) {
+                                Toast.makeText(context, "Please check your email (and spam folder)", Toast.LENGTH_LONG).show();
+                                navdrawerReference.returnToAppHomePage();
+                            }
+                            else
+                            {
+                                Toast.makeText(context, "Unable to create account", Toast.LENGTH_LONG).show();
+                            }
+                            break;
+                        case "Reset":
+                            Toast.makeText(context, "Check your email (and your spam folder) for your reset link", Toast.LENGTH_LONG).show();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            } catch (JSONException jsonExcept) {
+                Toast.makeText(context, "Unable to retrieve needed data from server's return", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     /**
@@ -132,7 +292,7 @@ public class JsonCVHelper
      *                 respectively
      * @param jsonObject The json object to pull the IDs out of
      */
-    public static void getIDColumns(int colArray[], JSONObject jsonObject)
+    private static void getIDColumns(int colArray[], JSONObject jsonObject)
     {
         if(colArray.length != 2)
         {
@@ -157,7 +317,7 @@ public class JsonCVHelper
      *                   by the webserver
      * @param context The current context, this is needed since this operation does
      */
-    public static void processSyncJsonReturn(JSONObject jsonObject, Context context)
+    private static void processSyncJsonReturn(JSONObject jsonObject, Context context)
     {
         int num_elements = 0;
 
@@ -377,16 +537,25 @@ public class JsonCVHelper
 
                         if (!columnName.equals(unneededColumn) && !columnName.equals("UserID"))
                         {
-                            String value = colJson.getString("Value");
+                            String value;
 
-                            if (columnName.equals(LocalStorageAccessSleep.DURATION) )
+                            if(colJson.isNull("Value") )
                             {
-                                value = trimDurationString(value);
+                                value = null;
                             }
-                            else if(columnName.equals(LocalStorageAccessSleep.TIME) || columnName.equals(LocalStorageAccessExercise.TIME) ||
-                                    columnName.equals(LocalStorageAccessMedication.TIME) || columnName.equals(LocalStorageAccessMood.TIME))
+                            else
                             {
-                                value = convertTimeString(value);
+                                value = colJson.getString("Value");
+
+                                if (columnName.equals(LocalStorageAccessSleep.DURATION) )
+                                {
+                                    value = trimDurationString(value);
+                                }
+                                else if(columnName.equals(LocalStorageAccessSleep.TIME) || columnName.equals(LocalStorageAccessExercise.TIME) ||
+                                        columnName.equals(LocalStorageAccessMedication.TIME) || columnName.equals(LocalStorageAccessMood.TIME))
+                                {
+                                    value = convertTimeString(value);
+                                }
                             }
 
                             rowToBeInserted.put(columnName, value);

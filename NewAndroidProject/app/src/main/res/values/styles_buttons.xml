@@ -22,17 +22,47 @@
     <style name="mood_done_button" parent="done_button">
         <item name="android:background">#B048B5</item>
     </style>
+    <style name="mood_update_button" parent="mood_done_button">
+        <item name="android:text">@string/update_button</item>
+    </style>
+    <style name="mood_delete_button" parent="mood_done_button">
+        <item name="android:text">@string/delete_button</item>
+    </style>
     <style name="sleep_done_button" parent="done_button">
         <item name="android:background">#6495ED</item>
+    </style>
+    <style name="sleep_update_button" parent="sleep_done_button">
+        <item name="android:text">@string/update_button</item>
+    </style>
+    <style name="sleep_delete_button" parent="sleep_done_button">
+        <item name="android:text">@string/delete_button</item>
     </style>
     <style name="exercise_done_button" parent="done_button">
         <item name="android:background">#FFB249</item>
     </style>
+    <style name="exercise_update_button" parent="exercise_done_button">
+        <item name="android:text">@string/update_button</item>
+    </style>
+    <style name="exercise_delete_button" parent="exercise_done_button">
+        <item name="android:text">@string/delete_button</item>
+    </style>
     <style name="diet_done_button" parent="done_button">
         <item name="android:background">#4CC552</item>
     </style>
+    <style name="diet_update_button" parent="diet_done_button">
+        <item name="android:text">@string/update_button</item>
+    </style>
+    <style name="diet_delete_button" parent="diet_done_button">
+        <item name="android:text">@string/delete_button</item>
+    </style>
     <style name="medication_done_button" parent="done_button">
         <item name="android:background">#F9A7B0</item>
+    </style>
+    <style name="medication_update_button" parent="medication_done_button">
+        <item name="android:text">@string/update_button</item>
+    </style>
+    <style name="medication_delete_button" parent="medication_done_button">
+        <item name="android:text">@string/delete_button</item>
     </style>
     <style name="home_done_button" parent="done_button">
         <item name="android:background">#E42217</item>

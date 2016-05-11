@@ -104,8 +104,6 @@ public class Sync implements AsyncResponse
                 }
             }
 
-            String test = masterJson.toString();
-
             new DatabaseConnect(this).execute(DatabaseConnectionTypes.SYNC_DATABASES, masterJson.toString(),
                     LocalAccount.GetInstance().GetToken());
         }
@@ -461,14 +459,7 @@ public class Sync implements AsyncResponse
     @Override
     public void processFinish(String result)
     {
-        JSONObject masterJson;
-        masterJson = JsonCVHelper.processServerJsonString(result, context, "Could not sync databases");
-
-        if (masterJson != null)
-        {
-            JsonCVHelper.processSyncJsonReturn(masterJson, context);
-            Toast.makeText(context, "Database sync complete", Toast.LENGTH_LONG).show();
-        }
+        JsonCVHelper.processServerJsonString(result, context, "Could not sync databases");
     }
 
     /**

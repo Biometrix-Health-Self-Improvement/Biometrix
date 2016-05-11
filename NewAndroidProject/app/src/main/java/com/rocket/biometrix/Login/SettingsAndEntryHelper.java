@@ -392,6 +392,7 @@ public class SettingsAndEntryHelper {
                                 catch(Exception e)
                                 {
                                     Log.d("SpinnerException", e.getMessage());
+                                    ((Spinner)element).setSelection(0);
                                 }
 
                                 break;
@@ -405,7 +406,7 @@ public class SettingsAndEntryHelper {
                                 ((SeekBar) view.findViewById(R.id.sleepMinutesSeekBar)).setProgress(minutes);
                                 break;
                             case TEXT_VIEW_INT:
-                                ((TextView)element).setText(cursor.getString(colIndex));
+                                ((TextView) element).setText(Integer.toString(cursor.getInt(colIndex)));
                                 break;
                         }
                     }

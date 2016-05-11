@@ -13,6 +13,8 @@
     <string name="done_button">Done</string>
     <string name="accept_button">Accept</string>
     <string name="finished_button">Finished</string>
+    <string name="update_button">Update</string>
+    <string name="delete_button">Delete</string>
 
     <string name="date_prompt">Date: \u0020</string>
     <string name="time_prompt">Time: \u0020</string>
