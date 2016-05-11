@@ -285,7 +285,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
         Class fragClass = frag.getClass();
 
-        if (fragClass == HomeScreen.class || fragClass == HomeScreen_Logged_In.class) //TODO ad other reset/create login pages
+        if (fragClass == HomeScreen.class || fragClass == HomeScreen_Logged_In.class ||
+         fragClass == CreateLogin.class) //TODO ad other reset/create login pages
         {
             this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
                     getResources().getColor(R.color.background_home_color));
@@ -568,11 +569,22 @@ public class NavigationDrawerActivity extends AppCompatActivity
     }
 
     public void cancelButton(View v){
-        replaceFragment(new HomeScreen());
+        if (LocalAccount.isLoggedIn() ) {
+            replaceFragment(new HomeScreen_Logged_In());
+        }
+        else
+        {
+            replaceFragment(new HomeScreen());
+        }
     }
 
     public void createAccountButtonClick(View v){
         ((CreateLogin)activeFragment).createAccount();
+    }
+
+    public void createLoginHomeScreenButtonClick(View v)
+    {
+        replaceFragment(new CreateLogin());
     }
 
     public void returnToLoggedInHomePage()

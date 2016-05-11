@@ -114,7 +114,8 @@
                 android:textColorHighlight="@color/linked_text_highlight"
                 android:textColorLink="@color/linked_text_link"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true" />
+                android:layout_alignParentEnd="true"
+                android:onClick="createLoginHomeScreenButtonClick"/>
         </RelativeLayout>
     </LinearLayout>
 </FrameLayout>

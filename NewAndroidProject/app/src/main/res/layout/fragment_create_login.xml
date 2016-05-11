@@ -9,110 +9,71 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="false"
-        android:weightSum="1"
         style="@style/AppTheme">
 
-        <EditText
+        <ImageView
+            android:id="@+id/HomeScreenLogoImage"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/usernameText"
-            android:layout_gravity="center_horizontal"
-            android:textIsSelectable="false"
-            android:text="@string/login_username"
-            android:enabled="true"
-            android:textAlignment="center"
-            style="@style/AppTheme"
-            android:focusable="false"/>
+            android:layout_height="230dp"
+            android:layout_gravity="top"
+            android:padding="0dp"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_biologo" />
 
         <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="330dp"
+            android:layout_height="45dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
             android:ems="10"
             android:id="@+id/usernameEditText"
+            android:background="@drawable/edit_text_style"
             android:layout_gravity="center_horizontal"
             android:focusable="true"
             android:enabled="true"
+            android:hint="@string/login_username"
             android:clickable="true"
             android:inputType="textPersonName"
             style="@style/AppTheme" />
 
         <EditText
             style="@style/AppTheme"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/emailText"
-            android:layout_gravity="center_horizontal"
-            android:textIsSelectable="false"
-            android:text="@string/login_email"
-            android:enabled="true"
-            android:textAlignment="center"
-            android:focusable="false"/>
-
-        <EditText
-            style="@style/AppTheme"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
+            android:layout_width="330dp"
+            android:layout_height="45dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:background="@drawable/edit_text_style"
             android:id="@+id/emailEditText"
             android:layout_gravity="center_horizontal"
+            android:hint="@string/login_email"
             android:focusable="true"
             android:enabled="true"
             android:clickable="true"
             android:inputType="textEmailAddress" />
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            style="@style/AppTheme"
-            android:layout_weight="0.11" />
 
         <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/passwordText"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/login_password"
-            android:textAlignment="center"
-            style="@style/AppTheme"
-            android:textIsSelectable="false"
-            android:enabled="true"
-            android:focusable="false" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="330dp"
+            android:layout_height="45dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
             android:inputType="textPassword"
-            android:ems="10"
+            android:background="@drawable/edit_text_style"
             android:id="@+id/passwordEditText"
+            android:hint="@string/login_password"
             android:enabled="true"
             android:focusable="true"
-            android:clickable="true"
-            style="@style/AppTheme" />
+            android:clickable="true"/>
 
         <EditText
-            style="@style/AppTheme"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/confirmPasswordText"
-            android:text="@string/login_confirm_password"
-            android:textAlignment="center"
-            android:textIsSelectable="false"
-            android:enabled="true"
-            android:focusable="false"
-            android:inputType="none" />
-
-        <EditText
-            style="@style/AppTheme"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="330dp"
+            android:layout_height="45dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
             android:inputType="textPassword"
-            android:ems="10"
+            android:background="@drawable/edit_text_style"
             android:id="@+id/confirmPasswordEditText"
+            android:hint="@string/login_confirm_password"
             android:enabled="true"
             android:focusable="true"
             android:clickable="true"
