@@ -1,23 +1,20 @@
-
 <!--FRAGMENTS MUST BE IN "CONTAINER" OR EVERYTHING IS INVISIBLE-->
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+	
+	>
+<GridLayout 
               xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
+              android:alignparentleft="true"
+              android:alignparentright="true"
               android:orientation="vertical"
               tools:context=".GridLayout"
-              android:id="@+id/fragment_container"
+			  android:id="@+id/fragment_container"
+			  
+              
     >
-
-    <Button
-        android:text="BUTTON"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_columnWeight="3"
-        android:layout_rowWeight="3"
-        android:layout_row="0"
-        android:layout_column="2"/>
 
     <!--<fragment-->
         <!--android:id="@+id/EPEFragment"-->
@@ -30,3 +27,4 @@
 
 
 </GridLayout>
+</RelativeLayout>

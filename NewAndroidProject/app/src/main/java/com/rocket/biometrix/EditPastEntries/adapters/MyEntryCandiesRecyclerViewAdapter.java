@@ -40,6 +40,11 @@ public class MyEntryCandiesRecyclerViewAdapter extends RecyclerView.Adapter<Entr
         //Give layout of 'a' candy to the holder
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.fragment_entrycandies, null); //second param was null
         final EntryCandyViewHolder holder = new EntryCandyViewHolder(v);
+		
+		/*
+		http://developer.android.com/reference/android/widget/RelativeLayout.html
+		http://code.tutsplus.com/tutorials/android-user-interface-design-relative-layouts--mobile-4301
+		*/
 
             holder.recLayout.setOnClickListener(new View.OnClickListener() {
 
