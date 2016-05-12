@@ -62,6 +62,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
     public String mTblSignal;
     public String mUidSignal;
     Bundle mEditEntryB;
+    
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

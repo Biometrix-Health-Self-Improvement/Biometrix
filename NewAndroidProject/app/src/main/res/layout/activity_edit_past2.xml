@@ -7,14 +7,17 @@
 	>
 <GridLayout 
               xmlns:tools="http://schemas.android.com/tools"
-              android:alignparentleft="true"
-              android:alignparentright="true"
               android:orientation="vertical"
               tools:context=".GridLayout"
 			  android:id="@+id/fragment_container"
-			  
-              
-    >
+
+
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_alignParentLeft="false"
+    android:layout_alignParentTop="false"
+    android:layout_alignParentRight="false"
+    android:layout_alignParentBottom="true">
 
     <!--<fragment-->
         <!--android:id="@+id/EPEFragment"-->
