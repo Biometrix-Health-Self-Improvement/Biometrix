@@ -791,7 +791,7 @@ public class SettingsAndEntryHelper {
         returnList.add(new Pair<>(new String[] {MOOD_SAD}, new Integer[]{ R.id.moodSadLabel,
                 R.id.moodSadRating}));
         returnList.add(new Pair<>(new String[] {MOOD_HAPPY}, new Integer[]{R.id.moodHappyLabel,
-                R.id.moodElevatedRating}));
+                R.id.moodHappyRating}));
         returnList.add(new Pair<>(new String[] {MOOD_ANGER}, new Integer[]{R.id.moodAngerLabel,
                 R.id.moodAngerRating}));
 

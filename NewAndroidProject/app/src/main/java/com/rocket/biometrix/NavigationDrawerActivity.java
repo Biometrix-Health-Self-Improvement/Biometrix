@@ -216,16 +216,15 @@ public class NavigationDrawerActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        Fragment frag = new HomeScreen(); //intialize to homescreen in case something goes wrong it will not crash and just go back to home
+        Fragment frag;
 
-/*        if(id == R.id.nav_home_logged_in) {
+        if(LocalAccount.isLoggedIn())
             frag = new HomeScreen_Logged_In();
-        } else */
+        else
+            frag = new HomeScreen();
+
         if (id == R.id.nav_home){
-            if(LocalAccount.isLoggedIn())
-                frag = new HomeScreen_Logged_In();
-            else
-                frag = new HomeScreen();
+            //Do nothing since the default is to go home
         } else if (id == R.id.nav_mood_module) {
             frag = new MoodParent();
         } else if (id == R.id.nav_sleep_module) {
@@ -289,7 +288,8 @@ public class NavigationDrawerActivity extends AppCompatActivity
         Class fragClass = frag.getClass();
 
         if (fragClass == HomeScreen.class || fragClass == HomeScreen_Logged_In.class ||
-         fragClass == CreateLogin.class || fragClass == ResetLogin.class)
+         fragClass == CreateLogin.class || fragClass == ResetLogin.class ||
+                fragClass == ModuleSettings.class)
         {
             this.findViewById(R.id.navigation_drawer_fragment_content).setBackgroundColor(
                     getResources().getColor(R.color.background_home_color));
@@ -340,7 +340,12 @@ public class NavigationDrawerActivity extends AppCompatActivity
      **************************************************************************/
     public void CreateEntryOnClick(View v) {
         //Initialize to home screen in case the fragment active is not found in the following, it will not crash and just go back to home
-        Fragment newFragment = new HomeScreen();
+        Fragment newFragment;
+
+        if(LocalAccount.isLoggedIn())
+            newFragment = new HomeScreen_Logged_In();
+        else
+            newFragment = new HomeScreen();
 
         //if fragment exists
         if (activeFragment != null && activeFragment.isVisible()) {
@@ -372,7 +377,12 @@ public class NavigationDrawerActivity extends AppCompatActivity
      **************************************************************************/
     public void CreateEntryOnClickWithBundle(View v, Bundle bundle) {
         //Initialize to home screen in case the fragment active is not found in the following, it will not crash and just go back to home
-        Fragment newFragment = new HomeScreen();
+        Fragment newFragment;
+
+        if(LocalAccount.isLoggedIn())
+            newFragment = new HomeScreen_Logged_In();
+        else
+            newFragment = new HomeScreen();
 
         //if fragment exists
         if (activeFragment != null && activeFragment.isVisible()) {
@@ -404,7 +414,12 @@ public class NavigationDrawerActivity extends AppCompatActivity
      **************************************************************************/
     public void EntryDoneOnClick(View v) {
         //Initialize to home screen in case the fragment active is not found in the following, it will not crash and just go back to home
-        Fragment newFragment = new HomeScreen();
+        Fragment newFragment;
+
+        if(LocalAccount.isLoggedIn())
+            newFragment = new HomeScreen_Logged_In();
+        else
+            newFragment = new HomeScreen();
 
         //if fragment exists
         if (activeFragment != null && activeFragment.isVisible()) {
@@ -447,7 +462,12 @@ public class NavigationDrawerActivity extends AppCompatActivity
      **************************************************************************/
     public void EntryUpdateOnClick(View v) {
         //Initialize to home screen in case the fragment active is not found in the following, it will not crash and just go back to home
-        Fragment newFragment = new HomeScreen();
+        Fragment newFragment;
+
+        if(LocalAccount.isLoggedIn())
+            newFragment = new HomeScreen_Logged_In();
+        else
+            newFragment = new HomeScreen();
 
         //if fragment exists
         if (activeFragment != null && activeFragment.isVisible()) {
@@ -487,7 +507,12 @@ public class NavigationDrawerActivity extends AppCompatActivity
      **************************************************************************/
     public void EntryDeleteOnClick(View v) {
         //Initialize to home screen in case the fragment active is not found in the following, it will not crash and just go back to home
-        Fragment newFragment = new HomeScreen();
+        Fragment newFragment;
+
+        if(LocalAccount.isLoggedIn())
+            newFragment = new HomeScreen_Logged_In();
+        else
+            newFragment = new HomeScreen();
 
         //if fragment exists
         if (activeFragment != null && activeFragment.isVisible()) {
@@ -523,7 +548,12 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
     public void EntryAcceptOnClick(View v) {
         //Initialize to home screen in case the fragment active is not found in the following, it will not crash and just go back to home
-        Fragment newFragment = new HomeScreen();
+        Fragment newFragment;
+
+        if(LocalAccount.isLoggedIn())
+            newFragment = new HomeScreen_Logged_In();
+        else
+            newFragment = new HomeScreen();
 
         //if fragment exists
         if (activeFragment != null && activeFragment.isVisible()) {
