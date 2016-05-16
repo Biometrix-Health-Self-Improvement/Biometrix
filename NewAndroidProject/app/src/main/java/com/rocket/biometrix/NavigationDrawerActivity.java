@@ -26,6 +26,11 @@ import com.rocket.biometrix.Analysis.ExerciseGraph;
 import com.rocket.biometrix.Analysis.GraphBase;
 import com.rocket.biometrix.Analysis.MoodGraph;
 import com.rocket.biometrix.Analysis.SleepGraph;
+import com.rocket.biometrix.Database.LocalStorageAccessDiet;
+import com.rocket.biometrix.Database.LocalStorageAccessExercise;
+import com.rocket.biometrix.Database.LocalStorageAccessMedication;
+import com.rocket.biometrix.Database.LocalStorageAccessMood;
+import com.rocket.biometrix.Database.LocalStorageAccessSleep;
 import com.rocket.biometrix.Database.Sync;
 import com.rocket.biometrix.DietModule.DietEntry;
 import com.rocket.biometrix.DietModule.DietParent;
@@ -108,13 +113,21 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
                 FragmentTransaction transactionEE = getFragmentManager().beginTransaction();
             frag = PopulateEntryIntercept(mTblSignal);
+            mTblSignal = PopulateEntryTblSet(mTblSignal);
 
-            frag.setArguments(getIntent().getExtras());
+                Bundle ExplicitEditEntryBundle = new Bundle();
+                ExplicitEditEntryBundle.putString("tablename", mTblSignal);
+                ExplicitEditEntryBundle.putString("uid", mUidSignal);
+
+                frag.setArguments(ExplicitEditEntryBundle);
+
+            //frag.setArguments(getIntent().getExtras());
 
             transactionEE.replace(R.id.navigation_drawer_fragment_content, frag, mTblSignal);
             transactionEE.addToBackStack(mTblSignal);
             transactionEE.commit();
-            mTblSignal = null;}
+            mTblSignal = null;
+            }
 
         }
         
@@ -748,5 +761,35 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
 
         return EntryFrag;
+    }
+
+    public String PopulateEntryTblSet(String tableKey) {
+        String tablesRealName = "LOVEoneANOTHER";
+
+        //TODO: These DISGUSTING case statements will be made obsolete when manage entries, is executed in the main thread (need fragment manager tho).
+
+        switch (tableKey) {
+            case "exercise":
+                tablesRealName =  LocalStorageAccessExercise.TABLE_NAME;
+                break;
+            case "sleep":
+                tablesRealName = LocalStorageAccessSleep.TABLE_NAME;
+                break;
+            case "diet":
+                tablesRealName= LocalStorageAccessDiet.TABLE_NAME;
+                break;
+            case "mood":
+                tablesRealName = LocalStorageAccessMood.TABLE_NAME;
+                break;
+            case "medication":
+                tablesRealName = LocalStorageAccessMedication.TABLE_NAME;
+                break;
+
+            default:
+                throw new IllegalArgumentException(" " + tableKey);
+        }
+
+
+        return tablesRealName;
     }
 }
