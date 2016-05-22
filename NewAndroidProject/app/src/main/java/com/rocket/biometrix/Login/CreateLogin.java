@@ -85,16 +85,16 @@ public class CreateLogin extends Fragment  implements AsyncResponse {
     public void createAccount()
     {
         //Gets username, and email passwords from the edit Text boxes
-        EditText usernameEdit = (EditText) v.findViewById(R.id.usernameEditText);
+        EditText usernameEdit = (EditText) v.findViewById(R.id.CreateLoginUserNameEditText);
         username = usernameEdit.getText().toString();
 
-        EditText passwordEdit = (EditText) v.findViewById(R.id.passwordEditText);
+        EditText passwordEdit = (EditText) v.findViewById(R.id.CreateLoginPasswordEditText);
         password = passwordEdit.getText().toString();
 
-        EditText passwordConfirmEdit = (EditText) v.findViewById(R.id.confirmPasswordEditText);
+        EditText passwordConfirmEdit = (EditText) v.findViewById(R.id.CreateLoginConfirmPasswordEditText);
         confirmedPassword = passwordConfirmEdit.getText().toString();
 
-        EditText emailEdit = (EditText) v.findViewById(R.id.emailEditText);
+        EditText emailEdit = (EditText) v.findViewById(R.id.CreateLoginEmailEditText);
         email = emailEdit.getText().toString();
 
         //Ensures username is not blank

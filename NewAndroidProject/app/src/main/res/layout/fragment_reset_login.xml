@@ -1,18 +1,19 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_reset_login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Login.ResetLogin">
 
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/ResetLoginLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:weightSum="1"
-        style="@style/AppTheme">
+        android:layout_gravity="top|left|bottom|center|right"
+        android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/HomeScreenLogoImage"
+            android:id="@+id/ResetLoginLogoImage"
             android:layout_width="match_parent"
             android:layout_height="230dp"
             android:layout_gravity="top"
@@ -21,82 +22,44 @@
             android:src="@mipmap/ic_biologo" />
 
         <EditText
+            android:id="@+id/ResetLoginUserNameEditText"
             android:layout_width="330dp"
             android:layout_height="45dp"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp"
+            android:layout_gravity="center"
             android:background="@drawable/edit_text_style"
-            android:id="@+id/usernameEditText"
-            android:layout_gravity="center_horizontal"
-            android:focusable="true"
-            android:enabled="true"
-            android:clickable="true"
-            android:hint="@string/login_username"
-            android:inputType="textPersonName"
-            style="@style/AppTheme" />
+            android:hint="Enter User Name"
+            android:inputType="text"
+            android:paddingStart="4dp" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="3dp" />
 
         <EditText
+            android:id="@+id/ResetLoginEmailEditText"
             android:layout_width="330dp"
             android:layout_height="45dp"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp"
+            android:layout_gravity="center"
             android:background="@drawable/edit_text_style"
-            android:id="@+id/loginEnterEmailEditText"
-            android:layout_gravity="center_horizontal"
-            android:focusable="true"
-            android:hint="@string/login_enter_email_reset"
-            android:enabled="true"
-            android:clickable="true"
-            android:inputType="textEmailAddress" />
+            android:hint="Enter Email"
+            android:inputType="textEmailAddress"
+            android:paddingStart="4dp" />
 
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp" >
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                style="@style/AppTheme">
+        <Button
+            android:id="@+id/ResetOkButton"
+            android:onClick="resetPasswordButtonClick"
+            style="@style/ok_button" />
 
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".5"
-                    style="@style/AppTheme" />
+        <Button
+            android:id="@+id/resetCancelButton"
+            android:onClick="cancelButton"
+            style="@style/cancel_button" />
 
-                <Button
-                    style="@style/AppTheme"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/login_cancel"
-                    android:id="@+id/resetCancelButton"
-                    android:layout_weight="1"
-                    android:onClick="cancelButton"
-                    android:background="@color/colorButtonBackground" />
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    style="@style/AppTheme" />
-
-                <Button
-                    style="@style/AppTheme"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/login_ok"
-                    android:id="@+id/resetOKButton"
-                    android:textAlignment="center"
-                    android:layout_weight="1"
-                    android:onClick="resetPasswordButtonClick"
-                    android:background="@color/colorButtonBackground" />
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".5"
-                    style="@style/AppTheme" />
-            </LinearLayout>
-
+        </RelativeLayout>
     </LinearLayout>
-
 </FrameLayout>

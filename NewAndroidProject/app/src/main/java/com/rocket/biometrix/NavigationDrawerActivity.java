@@ -26,6 +26,7 @@ import com.rocket.biometrix.Analysis.ExerciseGraph;
 import com.rocket.biometrix.Analysis.GraphBase;
 import com.rocket.biometrix.Analysis.MoodGraph;
 import com.rocket.biometrix.Analysis.SleepGraph;
+import com.rocket.biometrix.Common.ContactUs;
 import com.rocket.biometrix.Database.Sync;
 import com.rocket.biometrix.DietModule.DietEntry;
 import com.rocket.biometrix.DietModule.DietParent;
@@ -163,12 +164,13 @@ public class NavigationDrawerActivity extends AppCompatActivity
         Fragment frag;
 
         switch(item.getItemId()) {
-            case R.id.action_help:
 
+            case R.id.action_ContactUs:
+                replaceFragment(new ContactUs());
                 return true;
+
             case R.id.action_settings:
                 Class fragClass = activeFragment.getClass();
-
                 if(fragClass.equals(SleepParent.class) || fragClass.equals(SleepGraph.class)
                         || fragClass.equals(SleepEntry.class))
                 {
