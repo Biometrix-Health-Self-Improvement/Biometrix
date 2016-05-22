@@ -424,11 +424,11 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
         if (LocalAccount.isLoggedIn()) {
             username = LocalAccount.GetInstance().GetUsername();
 
-            //TODO: Test if sync must be run first (Logging in taking 10+ minutes? WTF)
+            //TODO: Test if sync must be run first
             cur = db.query(table, null, date_col + " = ?" + " AND UserName = ?"
                     , new String[]{date, username}, null, null, null);
             //Log.v("LSA CURS", DatabaseUtils.dumpCursorToString(cur));
-            //TODO: In every single ALLGraph-> LSAmodule GetMonthEntries() Need same where clause + args (plus sync check, possible it won't work if unsynced?)
+            //TODO: In every single ALLGraph-> LSAmodule GetMonthEntries() Need same where clause + args
 
         }
         else{
