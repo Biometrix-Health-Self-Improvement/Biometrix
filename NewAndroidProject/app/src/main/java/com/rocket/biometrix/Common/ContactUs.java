@@ -1,25 +1,24 @@
-package com.rocket.biometrix.Settings;
+package com.rocket.biometrix.Common;
 
+import android.app.Fragment;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.rocket.biometrix.Login.SettingsAndEntryHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ModuleSettings.OnFragmentInteractionListener} interface
+ * {@link ContactUs.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ModuleSettings#newInstance} factory method to
+ * Use the {@link ContactUs#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ModuleSettings extends Fragment {
+public class ContactUs extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -31,7 +30,7 @@ public class ModuleSettings extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public ModuleSettings() {
+    public ContactUs() {
         // Required empty public constructor
     }
 
@@ -41,11 +40,11 @@ public class ModuleSettings extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ModuleSettings.
+     * @return A new instance of fragment ContactUs.
      */
     // TODO: Rename and change types and number of parameters
-    public static ModuleSettings newInstance(String param1, String param2) {
-        ModuleSettings fragment = new ModuleSettings();
+    public static ContactUs newInstance(String param1, String param2) {
+        ContactUs fragment = new ContactUs();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -64,7 +63,7 @@ public class ModuleSettings extends Fragment {
         try{
             NavigationDrawerActivity nav = (NavigationDrawerActivity) getActivity();
             //Change the title of the action bar to reflect the current fragment
-            nav.setActionBarTitleFromFragment(R.string.action_bar_title_module_settings);
+            nav.setActionBarTitleFromFragment(R.string.action_bar_title_Contact_Us);
             //set activities active fragment to this one
             nav.activeFragment = this;
         } catch (Exception e){}
@@ -72,26 +71,13 @@ public class ModuleSettings extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState)
-    {
-        View view = inflater.inflate(R.layout.fragment_module_settings, container, false);
+                             Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
-        SettingsAndEntryHelper.setupSwitches(view, SettingsAndEntryHelper.getAllModuleKeysAndRIDs(), true);
-
-        return view;
+        return inflater.inflate(R.layout.fragment_contact_us, container, false);
     }
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-    }
-
-    /**
-     * Commits changes to the local account
-     * @param v
-     */
-    public void onAcceptClick(View v) {
-        SettingsAndEntryHelper.storeSwitchValues(getView(), SettingsAndEntryHelper.getAllModuleKeysAndRIDs());
     }
 }

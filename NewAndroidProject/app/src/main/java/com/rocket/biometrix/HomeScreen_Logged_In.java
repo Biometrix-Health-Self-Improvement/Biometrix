@@ -94,7 +94,7 @@ public class HomeScreen_Logged_In extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
-        int id = item.getItemId();
+/*        int id = item.getItemId();
         if(id == R.id.action_help){
 
         } else if(id == R.id.action_settings){
@@ -102,8 +102,7 @@ public class HomeScreen_Logged_In extends Fragment {
             return true;
         } else if(id == R.id.action_logout){
 
-        }
-
+        }*/
         return super.onOptionsItemSelected(item);
     }
 

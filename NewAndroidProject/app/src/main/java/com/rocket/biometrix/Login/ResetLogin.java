@@ -90,10 +90,10 @@ public class ResetLogin extends Fragment implements AsyncResponse {
 
     public void resetPasswordClick()
     {
-        EditText usernameEdit =  (EditText) v.findViewById(R.id.usernameEditText);
+        EditText usernameEdit =  (EditText) v.findViewById(R.id.ResetLoginUserNameEditText);
         username = usernameEdit.getText().toString();
 
-        EditText emailEdit = (EditText) v.findViewById(R.id.loginEnterEmailEditText);
+        EditText emailEdit = (EditText) v.findViewById(R.id.ResetLoginEmailEditText);
         email = emailEdit.getText().toString();
 
         if (username.equals("") || email.equals("") )
