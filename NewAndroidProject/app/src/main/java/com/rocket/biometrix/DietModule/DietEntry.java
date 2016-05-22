@@ -5,25 +5,21 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.rocket.biometrix.Common.DateTimeSelectorPopulateTextView;
 import com.rocket.biometrix.Common.StringDateTimeConverter;
 import com.rocket.biometrix.Database.AsyncResponse;
 import com.rocket.biometrix.Database.JsonCVHelper;
-import com.rocket.biometrix.Database.LocalStorageAccess;
 import com.rocket.biometrix.Database.LocalStorageAccessDiet;
 import com.rocket.biometrix.Database.Sync;
 import com.rocket.biometrix.Login.SettingsAndEntryHelper;
 import com.rocket.biometrix.NavigationDrawerActivity;
 import com.rocket.biometrix.R;
 
-import org.json.JSONObject;
 
 /**
  * A simple {@link Fragment} subclass.

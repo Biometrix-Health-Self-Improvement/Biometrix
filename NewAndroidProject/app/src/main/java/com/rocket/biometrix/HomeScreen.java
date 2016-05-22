@@ -139,15 +139,15 @@ public class HomeScreen extends Fragment implements GoogleApiClient.OnConnection
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
-        int id = item.getItemId();
-        if(id == R.id.action_help) {
+/*        int id = item.getItemId();
+        if(id == R.id.action_ContactUs) {
 
         } else if(id == R.id.action_settings){
             Fragment frag = new ModuleSettings();
             return true;
         } else if(id == R.id.action_logout){
 
-        }
+        }*/
         return super.onOptionsItemSelected(item);
     }
 

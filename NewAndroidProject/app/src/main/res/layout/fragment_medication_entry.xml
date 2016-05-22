@@ -155,7 +155,7 @@
                 android:id="@+id/medicationDetailsEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/colorButtonBackground"
+                android:background="@color/colorBackgroundSecondary"
                 android:hint="@string/med_notes"
                 android:maxLines="1"
                 android:singleLine="true" />
