@@ -6,9 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import com.rocket.biometrix.Login.LocalAccount;
 
 /**
  * Created by tannalynn on 1/22/2016.
@@ -116,10 +114,16 @@ public class LocalStorageAccessMood {
             date +="0";
         date += month + "-01";
 
+        String username = LocalAccount.DEFAULT_NAME;
+        if (LocalAccount.isLoggedIn()) {
+            username = LocalAccount.GetInstance().GetUsername();
+        }
+
         SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_NAME, new String[]{DATE, TIME, DEP, ELEV, IRR, ANX, NOTE},
-                DATE + " BETWEEN (date(?)) AND (date(?, '+1 month','-1 day'))", new String[]{date, date}, null, null, DATE);
+                 DATE + " BETWEEN (date(?)) AND (date(?, '+1 month','-1 day'))" + " AND UserName = ?",
+                new String[]{date, date, username}, null, null, DATE);
 
 
         return cursor;
