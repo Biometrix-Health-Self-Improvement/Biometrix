@@ -1,12 +1,12 @@
 package com.rocket.biometrix.Database;
 
-import android.app.ActivityManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.LocalSocket;
 import android.widget.Toast;
+
+import com.rocket.biometrix.Login.LocalAccount;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -227,10 +227,17 @@ public class LocalStorageAccessDiet {
             date +="0";
         date += month + "-01";
 
+        //Evolution is a 'only good enough' solution.
+        String username = LocalAccount.DEFAULT_NAME;
+        if (LocalAccount.isLoggedIn()) {
+            username = LocalAccount.GetInstance().GetUsername();
+        }
+
         SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_NAME, new String[]{DATE, "SUM("+CALORIES+")", "SUM("+TOTALFAT+")", "SUM("+TOTALCARBS+")", "SUM("+FIBER+")", "SUM("+PROTEIN+")", "count(*)"},
-                DATE + " BETWEEN (date(?)) AND (date(?, '+1 month','-1 day'))", new String[]{date, date}, DATE, null, DATE);
+                DATE + " BETWEEN (date(?)) AND (date(?, '+1 month','-1 day')) AND UserName = ?",
+                new String[]{date, date, username}, DATE, null, DATE);
 
 
 

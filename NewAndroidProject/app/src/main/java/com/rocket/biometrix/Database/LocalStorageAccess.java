@@ -3,18 +3,16 @@ package com.rocket.biometrix.Database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 
 import com.rocket.biometrix.Login.LocalAccount;
 
-import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
@@ -420,10 +418,27 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
      */
     public static Cursor selectByDate(String date, String table, String date_col){
         SQLiteDatabase db= m_instance.getReadableDatabase();
+        Cursor cur;
+        String username = LocalAccount.DEFAULT_NAME;
 
-        Cursor cur = db.query(table, null, date_col + " = ?", new String[]{date}, null, null, null);
-        Log.v("LSA CURS", DatabaseUtils.dumpCursorToString(cur));
-        return cur;
+        if (LocalAccount.isLoggedIn()) {
+            username = LocalAccount.GetInstance().GetUsername();
+
+            //TODO: Test if sync must be run first
+            cur = db.query(table, null, date_col + " = ?" + " AND UserName = ?"
+                    , new String[]{date, username}, null, null, null);
+            //Log.v("LSA CURS", DatabaseUtils.dumpCursorToString(cur));
+            //TODO: In every single ALLGraph-> LSAmodule GetMonthEntries() Need same where clause + args
+
+        }
+        else{
+            cur = db.query(table, null, date_col + " = ?" + " AND UserName = ?"
+                    , new String[]{date, username}, null, null, null);
+
+
+        }
+            return cur;
+
     }
 
     //About the only Query I can think of that all modules will have in common.
@@ -444,9 +459,6 @@ public class LocalStorageAccess extends SQLiteOpenHelper {
                 buf.append( column+": "+cursor.getString(indexArray[indexesIndex])+" " );
                 indexesIndex++;
             }
-
-            // TODO: The below line appears unused, I commented it out.
-            //int cid = cursor.getInt(indexArray[0]); //cursor id, references rows by their primary key
         }
 
         return buf.toString();
