@@ -130,6 +130,37 @@ public class LocalStorageAccessMood {
     }
 
     /**
+     * Slight change to the above method, this returns an array with the information in the
+     * column passed in
+     * @param c Current context used for database access
+     * @param year The year as an int
+     * @param month Current month of year as an int
+     * @param columnName The name of the column to return
+     * @return Returns a cursor that contains the date in column one and the requested column in
+     * column index 1
+     */
+    public static Cursor getMonthEntriesForColumn(Context c, int year, int month, String columnName) {
+        String date = year + "-";
+        if(month <10)
+            date +="0";
+        date += month + "-01";
+
+        //Evolution is a 'only good enough' solution.
+        String username = LocalAccount.DEFAULT_NAME;
+        if (LocalAccount.isLoggedIn()) {
+            username = LocalAccount.GetInstance().GetUsername();
+        }
+
+        SQLiteDatabase db = LocalStorageAccess.getInstance(c).getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_NAME, new String[]{DATE, columnName},
+                DATE + " BETWEEN (date(?)) AND (date(?, '+1 month','-1 day')) AND UserName = ?",
+                new String[]{date, date, username}, DATE, null, DATE);
+
+        return cursor;
+    }
+
+    /**
      * Updates the ID that is stored locally for reference to the entry on the webserver
      * @param localID The ID number locally
      * @param webID The ID number on the web

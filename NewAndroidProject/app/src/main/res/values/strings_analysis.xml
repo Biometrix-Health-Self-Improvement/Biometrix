@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <string name="analysis_run_button">Run Analysis</string>
+    <string name="analysis_graph_button">Plot Graph</string>
     <string-array name="analysis_day_diff_spinner">
         <item>7</item>
         <item>6</item>

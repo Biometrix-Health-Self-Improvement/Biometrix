@@ -93,42 +93,26 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
 
-                    <Space
-                        android:layout_weight="1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-
-                    <Space
-                        android:layout_weight="1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-
                 </TableRow>
 
                 <TextView
                     android:layout_height="wrap_content"
-                    android:text="Test text"
+                    android:text=""
                     android:gravity="center"
-                    android:id="@+id/analysisOperationTextView"
-                    android:layout_span="3"
-                    android:layout_column="2"/>
+                    android:id="@+id/analysisOperationTextView"/>
 
                 <Space
                     android:layout_height="20dp"
-                    android:layout_span="1"
                     android:layout_width="wrap_content"/>
 
                 <Button
                     style="@style/analysis_finished_button"
                     android:id="@+id/runAnalysisButton"
                     android:text="@string/analysis_run_button"
-                    android:layout_span="1"
-                    android:onClick="onRunButtonClick"
-                    android:layout_column="2"/>
+                    android:onClick="onRunButtonClick"/>
 
                 <Space
-                    android:layout_height="20dp"
-                    android:layout_span="1"/>
+                    android:layout_height="20dp"/>
 
                 <TextView
                     android:layout_width="wrap_content"

@@ -613,7 +613,13 @@ public class NavigationDrawerActivity extends AppCompatActivity
 
     public void onRunButtonClick(View v)
     {
-        ((com.rocket.biometrix.Analysis.AnalysisFragment)activeFragment).onRunButtonClick(v);
+        if(activeFragment.getClass() == AnalysisFragment.class) {
+            ((AnalysisFragment) activeFragment).onRunButtonClick(v);
+        }
+        else if (activeFragment.getClass() == AllGraph.class)
+        {
+            ((AllGraph) activeFragment).populateGraph();
+        }
     }
 
     public void cancelButton(View v){

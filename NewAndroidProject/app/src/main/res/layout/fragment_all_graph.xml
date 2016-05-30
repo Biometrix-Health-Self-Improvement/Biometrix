@@ -34,37 +34,152 @@
         android:layout_height="match_parent"
         android:layout_below="@id/buttonNextAll">
 
-        <RelativeLayout
+        <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <com.jjoe64.graphview.GraphView
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:id="@+id/grapAllDep"
+                android:id="@+id/graphAll"
                 android:layout_marginTop="10dp"
                  />
 
-            <com.jjoe64.graphview.GraphView
+            <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:id="@+id/grapAllElev"
-                android:layout_marginTop="10dp"
-                android:layout_below="@+id/grapAllDep" />
+                android:layout_height="match_parent">
 
-            <com.jjoe64.graphview.GraphView
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:id="@+id/grapAllIrr"
-                android:layout_marginTop="10dp"
-                android:layout_below="@+id/grapAllElev" />
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/graphTableSpinner1"
+                    android:layout_column="0"
+                    android:layout_weight="1"
+                    android:spinnerMode="dropdown"/>
 
-            <com.jjoe64.graphview.GraphView
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:id="@+id/grapAllAnx"
-                android:layout_marginTop="10dp"
-                android:layout_below="@+id/grapAllIrr" />
-        </RelativeLayout>
+                <Space
+                    android:layout_weight="1"/>
+
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/graphTableSpinner2"
+                    android:layout_column="2"
+                    android:layout_weight="1"
+                    android:spinnerMode="dropdown"/>
+            </TableRow>
+            <TableRow>
+
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/graphColumnSpinner1"
+                    android:layout_column="0"
+                    android:layout_weight="1"
+                    android:spinnerMode="dropdown"/>
+
+                <Space
+                    android:layout_weight="1"/>
+
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/graphColumnSpinner2"
+                    android:layout_column="2"
+                    android:layout_weight="1"
+                    android:spinnerMode="dropdown"/>
+            </TableRow>
+
+            <Space
+                android:layout_height="10dp"
+                android:layout_width="wrap_content"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:text=""
+                android:gravity="center"
+                android:id="@+id/graphOperationTextView"/>
+
+            <Space
+                android:layout_height="10dp"
+                android:layout_width="wrap_content"/>
+
+            <Button
+                style="@style/analysis_finished_button"
+                android:id="@+id/plotGraphButton"
+                android:text="@string/analysis_graph_button"
+                android:onClick="onRunButtonClick"/>
+
+            <Space
+                android:layout_height="20dp"
+                android:layout_width="wrap_content"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:text=""
+                android:gravity="center"
+                android:id="@+id/graphColumnNameTextView1"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:text=""
+                android:gravity="left"
+                android:id="@+id/graphMinTextView1"/>
+
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:text=""
+                android:gravity="left"
+                android:id="@+id/graphMaxTextView1"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:text=""
+                android:gravity="left"
+                android:id="@+id/graphMeanTextView1"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:text=""
+                android:gravity="left"
+                android:id="@+id/graphMedianTextView1"/>
+
+            <Space
+                android:layout_height="20dp"
+                android:layout_width="wrap_content"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:text=""
+                android:gravity="center"
+                android:id="@+id/graphColumnNameTextView2"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:text=""
+                android:gravity="left"
+                android:id="@+id/graphMinTextView2"/>
+
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:text=""
+                android:gravity="left"
+                android:id="@+id/graphMaxTextView2"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:text=""
+                android:gravity="left"
+                android:id="@+id/graphMeanTextView2"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:text=""
+                android:gravity="left"
+                android:id="@+id/graphMedianTextView2"/>
+        </TableLayout>
+
     </ScrollView>
 </RelativeLayout>
