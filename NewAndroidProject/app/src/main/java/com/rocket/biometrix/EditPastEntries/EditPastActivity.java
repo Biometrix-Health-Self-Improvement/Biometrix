@@ -31,9 +31,32 @@ public class EditPastActivity extends AppCompatActivity
 
 //         Check that the activity is using the layout version with
 //         the fragment_container FrameLayout
-        if (findViewById(R.id.fragment_container) != null) {
+        if (findViewById(R.id.first_fragment_container) != null) {
 
-            View narutoView = findViewById(R.id.fragment_container);
+            View narutoView = findViewById(R.id.first_fragment_container);
+
+            // However, if we're being restored from a previous state,
+            // then we don't need to do anything and should return or else
+            // we could end up with overlapping fragments.
+            if (savedInstanceState != null) {
+                return;
+            }
+
+            // Create a new Fragment to be placed in the activity layout
+            //Made below global mutable
+            ECF = new EntryCandiesFragment();
+
+            // In case this activity was started with special instructions from an
+            // Intent, pass the Intent's extras to the fragment as arguments
+            ECF.setArguments(getIntent().getExtras());
+
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.first_fragment_container, ECF ,"TEST").commit();
+        }
+//////////////////////////// S A S U K E /////////////////////////////
+        if (findViewById(R.id.second_fragment_container) != null) {
+
+            View sasukeView = findViewById(R.id.second_fragment_container);
 
             // However, if we're being restored from a previous state,
             // then we don't need to do anything and should return or else
@@ -44,26 +67,16 @@ public class EditPastActivity extends AppCompatActivity
 
             // Create a new Fragment to be placed in the activity layout
             EditCalendar CalendarFragmenti = new EditCalendar();
-            //Made below global mutable
-            ECF = new EntryCandiesFragment();
 
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
             CalendarFragmenti.setArguments(getIntent().getExtras());
-            ECF.setArguments(getIntent().getExtras());
-
-
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, ECF).commit();
 
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, CalendarFragmenti).commit();
+                    .add(R.id.second_fragment_container, CalendarFragmenti, "TEST222").commit();
 
-
-
-
-            //narutoView.setLayoutParams();
+            //sasukeView.setLayoutParams();
 
         }
 

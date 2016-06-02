@@ -1,33 +1,24 @@
-<!--FRAGMENTS MUST BE IN "CONTAINER" OR EVERYTHING IS INVISIBLE-->
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="fill_parent"
-    android:layout_width="fill_parent"
-	
-	>
-<GridLayout 
-              xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
-              tools:context=".GridLayout"
-			  android:id="@+id/fragment_container"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+    >
 
+    <FrameLayout
+        android:id="@+id/first_fragment_container"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
 
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:layout_alignParentLeft="false"
-    android:layout_alignParentTop="false"
-    android:layout_alignParentRight="false"
-    android:layout_alignParentBottom="true">
+    </FrameLayout>
 
-    <!--<fragment-->
-        <!--android:id="@+id/EPEFragment"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_weight="2"-->
-        <!--android:layout_height="match_parent"-->
-        <!--class="com.rocket.biometrix.EditPastEntries.fragments.EntryCandiesFragment" >-->
-    <!--</fragment>-->
+    <FrameLayout
+        android:id="@+id/second_fragment_container"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
 
-
-
-</GridLayout>
-</RelativeLayout>
+    </FrameLayout>
+</LinearLayout>
+    <!--FRAGMENTS MUST BE IN "CONTAINER" OR EVERYTHING IS INVISIBLE-->
