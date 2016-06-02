@@ -7,7 +7,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginLeft="4dp">
 
         <TextView
             android:id="@+id/contact_alder_text"
@@ -17,7 +18,8 @@
             android:layout_toRightOf="@+id/contact_alder_image"
             android:textColor="@color/black"
             android:textAlignment="viewStart"
-            android:text="Branden Alder\n\nbranden.w.alder@gmail.com\n\nhttps://github.com/Trustyn" />
+            android:textSize="5.5pt"
+            android:text="Name: Branden Alder\n\nEmail: branden.w.alder@gmail.com\n\nGitHub: https://github.com/Trustyn" />
 
         <ImageView
             android:paddingLeft="-25dp"
@@ -36,7 +38,8 @@
             android:layout_below="@+id/contact_alder_text"
             android:textColor="@color/black"
             android:textAlignment="viewStart"
-            android:text="Troy (TJ) Riblett\n\ntroy.riblett@gmail.com\n\nhttps://github.com/troy-riblett " />
+            android:textSize="5.5pt"
+            android:text="Name: Troy (TJ) Riblett\n\nEmail: troy.riblett@gmail.com\n\nGitHub: https://github.com/troy-riblett " />
 
         <ImageView
             android:paddingLeft="-25dp"
@@ -56,7 +59,8 @@
             android:layout_below="@+id/contact_riblett_text"
             android:textColor="@color/black"
             android:textAlignment="viewStart"
-            android:text="Joseph (JP) Fallon\n\n(“List Professional Email”)\n\nhttps://github.com/JayGarxP " />
+            android:textSize="5.5pt"
+            android:text="Name: JP Fallon\n\nGitHub: https://github.com/JayGarxP " />
 
         <ImageView
             android:paddingLeft="-25dp"
@@ -77,7 +81,8 @@
             android:layout_below="@+id/contact_fallon_text"
             android:textColor="@color/black"
             android:textAlignment="viewStart"
-            android:text="Tanna McClure\n\ntanna.lynn.mcclure@gmail.com\n\nhttps://github.com/tannalynn " />
+            android:textSize="5.5pt"
+            android:text="Name: Tanna McClure\n\nEmail: tanna.lynn.mcclure@gmail.com\n\nGitHub: https://github.com/tannalynn " />
 
         <ImageView
             android:paddingLeft="-25dp"
